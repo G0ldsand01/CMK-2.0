@@ -1,0 +1,94 @@
+---
+import { Image } from "astro:assets";
+import { products } from "../../scripts/products";
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/product.css";
+
+export const getStaticPaths = async () => {
+  return products.map((product) => ({
+    params: { id: product.id.toString() },
+  }));
+};
+
+const { id } = Astro.params;
+const product = products.find((p) => p.id.toString() === id);
+---
+
+<Layout title={product ? "Viewing: " + product.name : "Product"}>
+  {
+    product ? (
+      <div class="product-details">
+        <div class="product">
+          <div class="product-info">
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={400}
+              height={400}
+            />
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <div class="product-rating">
+              <span class="product-rating-stars">
+                {"★".repeat(Math.floor(product.rating))}{" "}
+                {product.rating % 1 !== 0 ? "⭐" : ""}
+              </span>
+              <span class="product-rating-count">
+                ({product.reviews} reviews)
+              </span>
+            </div>
+            <div class="product-price">
+              <span class="product-price-currency">$</span>
+              <span class="product-price-amount">
+                {product.price.toFixed(2)}
+              </span>
+            </div>
+
+            <button
+              class="product-link-button"
+              id="add-to-cart-btn"
+              product-id={product.id}
+            >
+              {" "}
+              Add to cart
+            </button>
+
+            <button
+              class="product-link-button"
+              style="text-decoration: none; display: inline-block; margin-top: 1rem; display: flex; justify-content: center; align-items: center; position: relative;"
+            >
+              {" "}
+              Buy now
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div class="product-details">
+        <div class="product">
+          <h1>Product not found</h1>
+        </div>
+      </div>
+    )
+  }
+</Layout>
+
+<script>
+  import { actions } from "astro:actions";
+
+  const btn = document.getElementById("add-to-cart-btn")!;
+  const id = btn?.getAttribute("product-id")!.toString();
+
+  btn.addEventListener("click", () => addToCart(id));
+
+  async function addToCart(id: string) {
+    const { data, error } = await actions.addProductToCart({
+      id: id,
+    });
+    if (error) {
+        window.location.href = "/login";
+    } else {
+        window.location.href = "/cart";
+    }
+  }
+</script>

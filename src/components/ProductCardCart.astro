@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import { type Product as ProductType } from '../scripts/products';
+import "@/styles/product-card-cart.css";
+
+interface Props {
+    product: ProductType;
+}
+
+const { product } = Astro.props;
+
+---
+
+<div class="product" style="margin-top: 2rem;">
+    <div class="product-image">
+        <Image src={product.image} alt={product.name}/>
+    </div>
+    <div class="product-info">
+    <h3>{product.name}</h3>
+    <p>{product.description}</p>
+    <div class="product-price">${product.price.toFixed(
+        2
+    )}</div>
+    <button id="RemoveFromCartButton" product-id={product.id}>Remove from cart</button>
+    </div>
+</div>
+
+
+<script>
+    import { actions } from "astro:actions";
+
+    const btn = document.getElementById("RemoveFromCartButton")!;
+    const id = btn?.getAttribute("product-id")!.toString();
+
+    btn.addEventListener("click", () => removeFromCart(id));
+
+    async function  removeFromCart(id: string) {
+        const { data, error } = await actions.removeFromCart({
+            id: id,
+        });
+        if (error) {
+            window.location.href = "/login";
+        } else {
+            window.location.reload();
+        }
+    }
+</script>

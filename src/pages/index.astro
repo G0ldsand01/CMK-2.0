@@ -1,11 +1,48 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { products } from "../scripts/products";
+import "../styles/index.css";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Home">
+  <Header />
+  <main>
+    <div id="home">
+      <div class="title">
+        <h1>Welcome to CMK</h1>
+        <p>Customize your own mouse and keyboard with CMK</p>
+      </div>
+      <a href="#products" class="scroll-to-products">
+        <div class="middle">
+          <div class="mouse"></div>
+          <div class="scroll" style="margin-top: 50%">Scroll</div>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <div id="products">
+    <div class="title">
+      <h1>Our Products</h1>
+    </div>
+    <div class="products-grid">
+      {products.map((product) => <ProductCard product={product} />)}
+    </div>
+    <a href="products.html" class="button">
+      <button class="view-all-button">View All Products</button>
+    </a>
+  </div>
 </Layout>
+
+<script>
+  document
+    .querySelector(".scroll-to-products")!
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      document
+        .querySelector("#products")!
+        .scrollIntoView({ behavior: "smooth" });
+    });
+</script>

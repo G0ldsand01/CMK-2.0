@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #E7DCDC;
+    background-color: #121212;
+}
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: #292929;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    display: block;
+    color: #E7DCDC;
+    text-align: center;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+} 
+
+.login-form {
+    width: 90%;
+    max-width: 800px;
+    background-color: #292929;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-form:hover {
+    
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border: solid 3px #434343a2;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 1rem;
+}
+label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #E7DCDC;
+    text-align: left;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+
+input, textarea {
+    width: 90%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #E7DCDC;
+    color: #292929;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    background-color: #292929;
+    color: #E7DCDC;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    background-color: #E7DCDC;
+    color: #292929;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    display: block;
+}
+
+button:hover {
+    background-color: #292929;
+    color: #E7DCDC;
+    border: solid 2px #E7DCDC;
+}

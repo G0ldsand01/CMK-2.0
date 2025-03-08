@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import { type Product as ProductType } from '../scripts/products';
+import "@/styles/product-card.css";
+
+interface Props {
+    product: ProductType;
+}
+
+const { product } = Astro.props;
+
+---
+
+<div class="product ">
+    <div class="product-image">
+        <Image src={product.image} alt={product.name}/>
+    </div>
+    <div class="product-info">
+    <h3>{product.name}</h3>
+    <p>{product.description}</p>
+    <div class="product-price">${product.price.toFixed(
+        2
+    )}</div>
+    <a href={"/product/" + product.id} class="button">
+        <button class="product-link-button">View Details</button>
+    </a>
+    </div>
+</div>

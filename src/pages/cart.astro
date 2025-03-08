@@ -1,0 +1,52 @@
+---
+import { app } from "../firebase/server";
+import { getAuth } from "firebase-admin/auth";
+import Layout from "../layouts/Layout.astro";
+import { actions } from "astro:actions";
+import ProductCardCart from "@/components/ProductCardCart.astro";
+import type { Product } from "@/scripts/products";
+import "@/styles/cart.css";
+
+const auth = getAuth(app);
+
+/* Check current session */
+if (!Astro.cookies.has("__session")) {
+  return Astro.redirect("/login");
+}
+const sessionCookie = Astro.cookies.get("__session")!.value;
+const decodedCookie = await auth.verifySessionCookie(sessionCookie);
+const user = await auth.getUser(decodedCookie.uid);
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+const { data, error } = await Astro.callAction(actions.getCart, {});
+if (error) {
+    console.log(error);
+    return Astro.redirect("/login");
+}
+const cart: Product[] = JSON.parse(data);
+console.log(cart);
+---
+
+<Layout title="Cart">
+    <div class="pt-25">
+        <div class="title">
+            <h1>Your cart</h1>
+        </div>
+        <div class="cart-items" id="products">
+            {cart.length > 0 ? cart.map((product: Product) => {
+                return (
+                    <ProductCardCart product={product} />
+                )
+            })
+            : <h1>Your cart is empty</h1>}
+            
+        </div>
+        <div class="checkbutton">
+            <button id="checkout-btn">Checkout</button>
+        </div>
+    </div>
+</Layout>
+
