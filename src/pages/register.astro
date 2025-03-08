@@ -1,19 +1,41 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import "../styles/login.css";
 ---
-<Layout title="Login">
-  <div class="container pt-25">
-    <h1>Login</h1>
-    <center>
-      <form action="/api/auth/register" method="POST">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" />
-        <label for="email" for="email">Email</label>
-        <input type="email" name="email" id="email" />
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" />
-        <button type="submit">Login</button>
-      </form>
-    </center>
+<head>
+    <link rel="shortcut icon" href="../public/favicon.svg" type="image/x-icon">
+    <title>Register | CMK</title>
+
+</head>
+  <div class="container">
+    <h1>Register</h1>
+    <form action="/api/auth/register" method="POST">
+      <p>Already have an account? <a href="/login">Login</a></p>
+      <label type="text" name="name">Username</label>
+      <input type="text" name="name" id="username" placeholder="How should we call you?" />
+      <label for="email" for="email">Email</label>
+      <input type="email" name="email" id="email" placeholder="example@example.com" />
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" placeholder="Must be at least 8 characters long" />
+      <label for="password">Confirm Password</label>
+      <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Must be the same as above" />
+      <button type="submit">Login</button>
+    </form>
   </div>
-</Layout>
+
+  <script>
+    // verify passwords match
+    const password = document.getElementById("password")!;
+    const confirmPassword = document.getElementById("confirmPassword")!;
+
+    password.addEventListener("input", () => {
+      // @ts-expect-error
+      if (password.value !== confirmPassword.value) {
+        // @ts-expect-error
+        confirmPassword.setCustomValidity("Passwords do not match");
+      } else {
+        // @ts-expect-error
+        confirmPassword.setCustomValidity("");
+      }
+    });
+  </script>
+

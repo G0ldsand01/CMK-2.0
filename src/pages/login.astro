@@ -1,8 +1,7 @@
 ---
 import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
-import Layout from "../layouts/Layout.astro";
-
+import "../styles/login.css";
 /* Check if the user is authenticated */
 const auth = getAuth(app);
 if (Astro.cookies.has("__session")) {
@@ -13,20 +12,27 @@ if (Astro.cookies.has("__session")) {
   }
 }
 ---
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="../public/favicon.svg" type="image/x-icon">
+    <title>Sign in | CMK</title>
 
-<Layout title="Sign in">
-  <div class="pt-25">
-    <h1>Sign in</h1>
-    <p>New here? <a href="/register">Create an account</a></p>
+</head> 
+
+  <div class="container">
+    <h1>Welcome Back</h1>
+    
     <form action="/api/auth/signin" method="post">
       <label for="email" for="email">Email</label>
       <input type="email" name="email" id="email" />
       <label for="password">Password</label>
       <input type="password" name="password" id="password" />
+      <p>Forgot your password? <a href="/forgot">Reset it</a></p>
+      <p>New here? <a href="/register">Create an account</a></p>
       <button type="submit">Login</button>
     </form>
   </div>
-</Layout>
 <script>
   import {
     getAuth,

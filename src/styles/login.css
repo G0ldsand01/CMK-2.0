@@ -1,6 +1,11 @@
+/* Global styles */
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html {
   box-sizing: border-box;
 }
 
@@ -86,6 +91,17 @@ form {
   width: 100%;
   margin: 1rem;
 }
+.firstname label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #e7dcdc;
+  text-align: left;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  
+}
 label {
   font-size: 1.2rem;
   font-weight: bold;
@@ -97,7 +113,7 @@ label {
   margin-right: 0.5rem;
 }
 
-input,
+input, 
 textarea {
   width: 90%;
   padding: 0.75rem;
@@ -113,6 +129,7 @@ textarea {
 input:focus,
 textarea:focus {
   background-color: #292929;
+  border: solid 2px #e7dcdc;
   color: #e7dcdc;
 }
 
@@ -122,6 +139,7 @@ textarea {
 }
 
 button {
+  margin-top: 1rem;
   padding: 0.75rem 1.5rem;
   background-color: #e7dcdc;
   color: #292929;
@@ -136,7 +154,7 @@ button {
 button:hover {
   background-color: #292929;
   color: #e7dcdc;
-  border: solid 2px #e7dcdc;
+  border: none;
 }
 p a {
   color: #e7dcdc;
@@ -146,5 +164,6 @@ p a:hover {
   color: #ffffff;
 }
 p {
+  margin-top: 1rem;
   margin-bottom: 1em;
 }

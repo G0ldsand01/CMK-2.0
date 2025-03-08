@@ -1,0 +1,64 @@
+---
+import "../styles/login.css";
+import { Astro } from 'astro';
+import { app } from "../firebase/server";
+import { getAuth } from "firebase-admin/auth";
+---
+
+<head>
+
+    <title>Forgot Password | CMK</title>
+    <link rel="shortcut icon" href="../public/favicon.svg" type="image/x-icon">
+</head>
+
+<div class="container">
+  <h1>Reset Your Password</h1>
+    <p id="Message"></p>
+  <form id="reset-form">
+    <input
+      type="email"
+      id="reset-email"
+      placeholder="Enter your email"
+      required
+    /><br />
+    <button type="submit">Send Reset Link</button>
+  </form>
+  <p><a href="login.html">Back to Login</a></p>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import {
+      getAuth,
+      sendPasswordResetEmail,
+    } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAiVI9XV3_XEP0uULr4JmTGZ5pjJ1y2N_A",
+      authDomain: "cmkinc.firebaseapp.com",
+      projectId: "cmkinc",
+      storageBucket: "cmkinc.firebasestorage.app",
+      messagingSenderId: "75608099110",
+      appId: "1:75608099110:web:11cec5fa31b26433cc19e7",
+      measurementId: "G-RWDHKH1X3K",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document
+      .getElementById("reset-form")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("reset-email").value;
+
+        try {
+          await sendPasswordResetEmail(auth, email);
+          alert("Password reset link sent!");
+          window.location.href = "/login"; // Redirect to login page
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      });
+  </script>
+  

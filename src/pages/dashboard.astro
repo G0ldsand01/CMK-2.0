@@ -1,29 +1,180 @@
 ---
 import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
-import Layout from "../layouts/Layout.astro";
+import { getFirestore } from "firebase-admin/firestore";
+import "../styles/dashboard.css";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import { CircleUser, X } from 'lucide-react';
 
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-/* Check current session */
 if (!Astro.cookies.has("__session")) {
   return Astro.redirect("/login");
 }
 const sessionCookie = Astro.cookies.get("__session")!.value;
-const decodedCookie = await auth.verifySessionCookie(sessionCookie);
-const user = await auth.getUser(decodedCookie.uid);
+let user;
+
+try {
+  const decodedCookie = await auth.verifySessionCookie(sessionCookie);
+  user = await auth.getUser(decodedCookie.uid);
+} catch (error) {
+  return Astro.redirect("/login");
+}
 
 if (!user) {
   return Astro.redirect("/login");
 }
+
+const ordersSnapshot = await db
+  .collection("orders")
+  .where("userId", "==", user.uid)
+  .get();
+
+const orders = ordersSnapshot.docs.map((doc) => doc.data());
 ---
 
-<Layout title="dashboard">
-    <div class="pt-25">
-        <h1>Welcome {user.displayName}</h1>
-        <p>We are happy to see you here</p>
-        <form action="/api/auth/signout">
-            <button type="submit">Sign out</button>
-        </form>
+<DashboardLayout title="Dashboard">
+  <div class="main-layout">
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+      <nav>
+        <ul>
+          <li><a href="/dashboard" class="active">Dashboard</a></li>
+          <li><a href="orders">Orders</a></li>
+          <li><a href="">Tracking</a></li>
+          <li><a href="/settings">Settings</a></li>
+        </ul>
+        <a class="return-to-home" href="/">Return to Home</a>
+      </nav>
     </div>
-</Layout>
+
+    <!-- Content Section -->
+    <div class="content">
+      <div class="head">
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+          <h1>Welcome Back, {user.displayName}</h1>
+          <p>Here's your dashboard</p>
+        </div>
+
+        <!-- Profile Section -->
+        
+
+        <!-- Profile Info with Popover -->
+        <div class="profile-info">
+          
+          <button id="popoverTrigger">
+            <div class="profile-picture">
+              <CircleUser />
+              </svg>
+            </div>
+            {user.displayName}</button>
+          <div
+            id="popoverContent"
+            class="popover-content"
+            style="display: none;"
+          >
+            <div class="popover-header">
+              <h3>Profile</h3>
+              <button id="closePopover" class="close-button">
+                <X />
+              </button>
+            </div>
+            <div class="popover-body">
+              <p>Username: {user.displayName}</p>
+              <p>Email: {user.email}</p>
+              <p>Phone Number: {user.phoneNumber}</p>
+            </div>
+            <div class="popover-footer">
+              <button class="btn btn-primary">Edit Profile</button>
+              <form action="/api/auth/signout" method="post">
+                <button type="submit" class="btn btn-secondary">Logout</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Section: Orders -->
+      <div class="main">
+        <h2>Your Orders</h2>
+        <div class="orders">
+          <ul>
+            {
+              orders.map((order) => (
+                <Fragment key={order.orderId as string}>
+                  <li>
+                    <h3>Order ID: {order.orderId}</h3>
+                    <p>Order Date: {order.orderDate}</p>
+                    <p>Order Status: {order.status}</p>
+                    <p>Total: ${order.total}</p>
+                  </li>
+                </Fragment>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script>
+  // JavaScript to toggle popover visibility
+  const popoverTrigger = document.getElementById("popoverTrigger");
+  const popoverContent = document.getElementById("popoverContent");
+  const closePopover = document.getElementById("closePopover");
+
+  if (popoverTrigger) {
+    popoverTrigger.addEventListener("click", () => {
+      if (popoverContent) {
+        popoverContent.style.display =
+          popoverContent.style.display === "none" ? "block" : "none";
+        handlePopoverPosition();
+      }
+    });
+  }
+
+  if (closePopover) {
+    closePopover.addEventListener("click", () => {
+      if (popoverContent) {
+        popoverContent.style.display = "none";
+      }
+    });
+  }
+
+  const handlePopoverPosition = () => {
+    if (!popoverTrigger || !popoverContent) return;
+
+    const triggerRect = popoverTrigger.getBoundingClientRect();
+    const popoverRect = popoverContent.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let positionClass = "bottom-edge"; // Default position
+
+    // Check if the popover would go out of the right edge
+    if (triggerRect.right + popoverRect.width > viewportWidth) {
+      positionClass = "right-edge";
+      popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
+    } else {
+      popoverContent.style.left = `${triggerRect.left}px`;
+    }
+
+    // Check if the popover would go out of the bottom edge
+    if (triggerRect.bottom + popoverRect.height > viewportHeight) {
+      positionClass = "top-edge";
+      popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
+    } else {
+      popoverContent.style.top = `${triggerRect.bottom}px`;
+    }
+
+    popoverContent.classList.add(positionClass);
+  };
+</script>
