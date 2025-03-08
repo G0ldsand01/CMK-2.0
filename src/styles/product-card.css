@@ -84,3 +84,30 @@ button:hover {
     align-items: center;
     position: relative;
 }
+
+@media screen and (max-width: 768px) {
+    .product {
+        padding: 1rem;
+        box-shadow: none;
+    }
+
+    .product-image img {
+        max-height: 150px;
+    }
+
+    .product-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .product-info p {
+        font-size: 0.8rem;
+    }
+
+    .product-price {
+        font-size: 1rem;
+    }
+
+    .product-link button {
+        padding: 0.4rem 0.8rem;
+    }
+}
