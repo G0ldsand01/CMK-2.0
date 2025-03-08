@@ -1,4 +1,4 @@
-# Astro Starter Kit: Basics
+# Penis
 
 ```sh
 npm create astro@latest -- --template basics
