@@ -3,13 +3,16 @@ import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import "../styles/dashboard.css";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/ui/popover";
+// import {  Popover,  PopoverContent,  PopoverTrigger,} from "@components/ui/popover";
 import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { CircleUser, X } from 'lucide-react';
+import { CircleUser, X } from "lucide-react";
+// import Chart from "../components/Chart.astro";
+import OrderChart from "../components/OrderChart.jsx";
+import { getStripeOrders } from "../Utils/getStripeOrders.js";
+
+const stripeOrders = await getStripeOrders();
+
+
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -37,54 +40,49 @@ const ordersSnapshot = await db
   .get();
 
 const orders = ordersSnapshot.docs.map((doc) => doc.data());
+const allOrders = [...orders, ...stripeOrders];
+const chartData = allOrders.map((order) => ({
+  date: order.orderDate,
+  total: parseFloat(order.total),
+}));
+
 ---
 
 <DashboardLayout title="Dashboard">
-  <div class="main-layout">
-    <!-- Sidebar Section -->
+  <div class="main-layout modern-design">
     <div class="sidebar">
       <nav>
         <ul>
           <li><a href="/dashboard" class="active">Dashboard</a></li>
           <li><a href="orders">Orders</a></li>
-          <li><a href="">Tracking</a></li>
           <li><a href="/settings">Settings</a></li>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
     </div>
 
-    <!-- Content Section -->
     <div class="content">
       <div class="head">
-        <!-- Welcome Message -->
         <div class="welcome-message">
           <h1>Welcome Back, {user.displayName}</h1>
           <p>Here's your dashboard</p>
         </div>
 
-        <!-- Profile Section -->
-        
-
-        <!-- Profile Info with Popover -->
         <div class="profile-info">
-          
-          <button id="popoverTrigger">
+          <button id="popoverTrigger" class="animated-button">
             <div class="profile-picture">
               <CircleUser />
-              </svg>
             </div>
-            {user.displayName}</button>
+            {user.displayName}
+          </button>
           <div
             id="popoverContent"
-            class="popover-content"
+            class="popover-content animated"
             style="display: none;"
           >
             <div class="popover-header">
               <h3>Profile</h3>
-              <button id="closePopover" class="close-button">
-                <X />
-              </button>
+              <button id="closePopover" class="close-button"><X /></button>
             </div>
             <div class="popover-body">
               <p>Username: {user.displayName}</p>
@@ -101,14 +99,22 @@ const orders = ordersSnapshot.docs.map((doc) => doc.data());
         </div>
       </div>
 
-      <!-- Main Content Section: Orders -->
       <div class="main">
         <h2>Your Orders</h2>
+
+        <div class="chart-container">
+          <OrderChart data={chartData} client:only="react" />
+        </div>
+
+        <div class="filters">
+          <input type="text" id="searchInput" placeholder="Search orders..." />
+        </div>
+
         <div class="orders">
-          <ul>
+          <ul id="orderList">
             {
-              orders.map((order) => (
-                <Fragment key={order.orderId as string}>
+              allOrders.map((order) => (
+                <Fragment key={order.orderId}>
                   <li>
                     <h3>Order ID: {order.orderId}</h3>
                     <p>Order Date: {order.orderDate}</p>
