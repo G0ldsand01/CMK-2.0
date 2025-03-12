@@ -21,6 +21,6 @@ Key features include:
 
 Alternatively, you can provide a link to a live demo:
 
-[Link to live demo] (https://cmk-2.0.vercel.app](https://cmk-2-0-tau.vercel.app/)
+[Link to live demo](https://cmk-2-0-tau.vercel.app/))
 
 If you have a video demo you can insert that also.
