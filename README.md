@@ -16,8 +16,8 @@ Key features include:
 
 ## Preview
 
-[![image](https://github.com/user-attachments/assets/34e0cd63-4325-41aa-a240-a97275613d19)
-]
+![image](https://github.com/user-attachments/assets/34e0cd63-4325-41aa-a240-a97275613d19)
+
 
 Alternatively, you can provide a link to a live demo:
 
