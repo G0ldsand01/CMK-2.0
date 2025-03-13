@@ -3,132 +3,109 @@ import { Image } from "astro:assets";
 import { products } from "../../scripts/products";
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
-import { actions } from "astro:actions";
 import "../../styles/product.css";
-
-export const getStaticPaths = async () => {
-  return products.map((product) => ({
-    params: { id: product.id.toString() },
-  }));
-};
-
+import { actions } from "astro:actions";
+import { Toaster, toast } from 'sonner'; // Correct import
 const { id } = Astro.params;
 const product = products.find((p) => p.id.toString() === id);
 ---
+
 <head>
-  <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
 <Layout title={product ? "Viewing: " + product.name : "Product"}>
-  <Header />
-  {
-    product ? (
-      <div class="product-details">
-        <div class="product">
-          <div class="product-info">
-            <Image
-              src={product.image}
-              alt={product.name}
-              width={400}
-              height={400}
-            />
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            <div class="product-rating">
-              <span class="product-rating-stars">
-                {"★".repeat(Math.floor(product.rating))}{" "}
-                {product.rating % 1 !== 0 ? "⭐" : ""}
-              </span>
-              <span class="product-rating-count">
-                ({product.reviews} reviews)
-              </span>
+    <Header />
+    {
+        product ? (
+            <div class="product-details">
+                <div class="product">
+                    <div class="product-info">
+                        <Image src={product.image} alt={product.name} width={400} height={400} />
+                        <h3>{product.name}</h3>
+                        <p>{product.description}</p>
+                        <div class="product-rating">
+                            <span class="product-rating-stars">{"★".repeat(Math.floor(product.rating))} </span>
+                            <span class="product-rating-count">({product.reviews} reviews)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="product-price-currency">$</span>
+                            <span class="product-price-amount">{product.price.toFixed(2)}</span>
+                        </div>
+                        <button
+                            class="snipcart-add-item button"
+                            id="snipcart-add-item"
+                            data-item-id={product.id}
+                            data-item-price={product.price.toFixed(2)}
+                            data-item-description={product.description}
+                            data-item-image={product.image}
+                            data-item-name={product.name}
+                            data-item-url={Astro.url}
+                        >
+                            Add to cart
+                        </button>
+                        <button
+                            class=" snipcart-add-item snipcart-checkout"
+                            data-item-id={product.id}
+                            data-item-price={product.price.toFixed(2)}
+                            data-item-description={product.description}
+                            data-item-image={product.image}
+                            data-item-name={product.name}
+                            data-item-url={Astro.url}
+                        >
+                            Buy now
+                        </button>
+                    </div>
+                </div>
+                <Toaster />
             </div>
-            <div class="product-price">
-              <span class="product-price-currency">$</span>
-              <span class="product-price-amount">
-                {product.price.toFixed(2)}
-              </span>
+        ) : (
+            <div class="product-details">
+                <div class="product">
+                    <h1>Product not found</h1>
+                </div>
             </div>
-
-            <button
-  class="snipcart-add-item"
-  data-item-id={product.id}
-  data-item-price={product.price.toFixed(2)}
-  data-item-description={product.description}
-  data-item-image={product.image}
-  data-item-name={product.name}
-  data-item-url={Astro.url}
-
->
-
-  Add to cart
-</button>
-
-
-
-<button
-  class="snipcart-add-item"
-  data-item-id={product.id}
-  data-item-price={product.price.toFixed(2)}
-  data-item-description={product.description}
-  data-item-image={product.image}
-  data-item-name={product.name}
-  data-item-url={./product/{product.id}}
->
-
-  Buy now
-</button>
-
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div class="product-details">
-        <div class="product">
-          <h1>Product not found</h1>
-        </div>
-      </div>
-    )
-  }
-  
+        )
+    }
 </Layout>
 <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
+
 <script>
-  window.SnipcartSettings = {
-    publicApiKey:
-      "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
-      loadStrategy: "on-user-interaction",
-  version: "3.7.1",
-  addProductBehavior: "none",
-  modalStyle: "side"
-  };
+    import { actions } from "astro:actions";
+    import { toast } from 'sonner'; // Correct import
 
-  (function() {
-    let script = document.createElement("script");
-    script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
-    script.async = true;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-<script>
-  import { actions } from "astro:actions";
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.querySelector(".snipcart-add-item");
+        if (!btn) return;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.querySelector(".snipcart-add-item");
-  if (!btn) return; // Évite l'erreur si le bouton n'existe pas
-
-  const id = btn.getAttribute("data-item-id")?.toString();
-  btn.addEventListener("click", () => addToCart(id));
-});
-
-  async function addToCart(id: string) {
-    const { data, error } = await actions.addProductToCart({
-      id: id,
+        const id = btn.getAttribute("data-item-id")?.toString();
+        btn.addEventListener("click", () => {
+        console.log("Before toast");
+        addToCart(id);
+        toast("The product has been added to your cart!");
+        console.log("After toast");
+      });
     });
-    if (error) {
-      window.location.href = "/login";
-    } else {
-      window.location.href = "/cart";
+
+    async function addToCart(id: string) {
+        const { data, error } = await actions.addProductToCart({
+            id: id,
+        });
     }
-  }
+
+    window.SnipcartSettings = {
+        publicApiKey: "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
+        loadStrategy: "on-user-interaction",
+        version: "3.7.1",
+        addProductBehavior: "none",
+        modalStyle: "side",
+    };
+
+    (function () {
+        let script = document.createElement("script");
+        script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
+        script.async = true;
+        document.getElementsByTagName("head")[0].appendChild(script);
+    })();
 </script>

@@ -38,7 +38,8 @@ if (Astro.cookies.has("__session")) {
     getAuth,
     inMemoryPersistence,
     signInWithEmailAndPassword,
-  } from "firebase/auth";
+  }  
+  from "firebase/auth";
   import { app } from "../firebase/client";
 
   const auth = getAuth(app);

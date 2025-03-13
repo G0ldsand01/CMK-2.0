@@ -1,164 +1,253 @@
 ---
-import { CircuitBoard, ShoppingBag } from 'lucide-react';
+import { CircuitBoard, ShoppingBag } from "lucide-react";
+import { products } from "../scripts/products";
+const { id } = Astro.params;
+const product = products.find((p) => p.id.toString() === id);
+import "@styles/snipcart.css";
 ---
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
 <header>
-	
-	<div class="logo">
-	  <CircuitBoard />
-	  <a href="/">CMK</a>
-	</div>
-	<nav>
-	  <ul>
-		<li><a href="/">Home</a></li>
-		<li><a href="/products">Products</a></li>
-		<li><a href="/about">About Us</a></li>
-		<li><a href="/contact">Contact Us</a></li>  
-	  </ul>
-	</nav>
-	<!-- Auth Buttons or Profile Section -->
-	<div id="auth-buttons" class="login" style="list-style: none">
-	  <li>
-		<a href="/login" style="margin-left: 1em; margin-right: 1em"
-		  >Login</a
-		>
-		<a href="/register" style="margin-left: 1em; margin-right: 1em">
-		  <button style="display: inline-block; flex-direction: row">
-			Register
-		  </button>
-		</a>
-		<a href="/cart" id="cart-link" style="position: relative; display: inline-block;">
-		  <ShoppingBag />
-		  <span id="cart-count" style="position: absolute; top: -5px; right: -5px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">0</span>
-		</a>
-		
-	  </li>
-	</div>
-	<!-- Profile Section - hidden by default -->
-	<div id="profile-section" style="display: none">
-	  <img
-		id="profile-picture"
-		src=""
-		alt="Profile Picture"
-		width="40"
-		height="40"
-	  />
-	  <button id="logout-btn">Logout</button>
-	</div>
-	<button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
-	  <svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		fill="none"
-		stroke="#E7DCDC"
-		stroke-width="2"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	  >
-		<line x1="4" y1="12" x2="20" y2="12" />
-		<line x1="4" y1="6" x2="20" y2="6" />
-		<line x1="4" y1="18" x2="20" y2="18" />
-	  </svg>
-	</button>
-	<nav class="overlay-nav">
-	  <button class="close-menu">
-		<svg
-		  xmlns="http://www.w3.org/2000/svg"
-		  width="48"
-		  height="48"
-		  fill="none"
-		  stroke="#E7DCDC"
-		  stroke-width="2"
-		  stroke-linecap="round"
-		  stroke-linejoin="round"
-		>
-		  <line x1="18" y1="6" x2="6" y2="18" />
-		  <line x1="6" y1="6" x2="18" y2="18" />
-		</svg>
-	  </button>
-	  <ul>
-		<li><a href="/">Home</a></li>
-		<li><a href="/products">Products</a></li>
-		<li><a href="/about">About Us</a></li>
-		<li><a href="/contact">Contact Us</a></li>
-		<li><a href="/login">Login</a></li>
-		<li><a href="/register">Register</a></li>
-		<li><a href="/cart" id="cart-link" style="position: relative; display: inline-block;">
-		  <ShoppingBag />
-		  <span id="cart-count" style="position: absolute; top: -5px; right: -5px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">0</span>
-		</a></li>
-	  </ul>
-	</nav>
-  </header>
+  <div class="logo">
+    <CircuitBoard />
+    <a href="/">CMK</a>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/products">Products</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact Us</a></li>
+    </ul>
+  </nav>
+  <!-- Auth Buttons or Profile Section -->
+  <div id="auth-buttons" class="login" style="list-style: none">
+    <li>
+      <a href="/login" style="margin-left: 1em; margin-right: 1em">Login</a>
+      <a href="/register" style="margin-left: 1em; margin-right: 1em">
+        <button style="display: inline-block; flex-direction: row"
+          >Register</button
+        >
+      </a>
+      <button class="snipcart-checkout" data-item-url={Astro.url}>
+        <ShoppingBag />
+        <span
+          id="cart-count"
+          style="position: absolute; top: 4em; right: 11rem; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
+          >0</span
+        >
+      </button>
+    </li>
+  </div>
+  <!-- Profile Section - hidden by default -->
+  <div id="profile-section" style="display: none">
+    <img
+      id="profile-picture"
+      src=""
+      alt="Profile Picture"
+      width="40"
+      height="40"
+    />
+    <button id="logout-btn">Logout</button>
+  </div>
+  <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="#E7DCDC"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+      <line x1="4" y1="6" x2="20" y2="6"></line>
+      <line x1="4" y1="18" x2="20" y2="18"></line>
+    </svg>
+  </button>
+  <nav class="overlay-nav">
+    <button class="close-menu">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        fill="none"
+        stroke="#E7DCDC"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/products">Products</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact Us</a></li>
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Register</a></li>
+      <li>
+        <button class="snipcart-checkout" data-item-url={Astro.url}>
+          <ShoppingBag />
+          <span
+            id="cart-count"
+            style="position: absolute; top: -5px; right: -5px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
+            >0</span
+          >
+        </button>
+      </li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
+</main>
+
+<script>
+  window.SnipcartSettings = {
+    publicApiKey:
+      "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
+    loadStrategy: "on-user-interaction",
+    version: "3.7.1",
+    addProductBehavior: "none",
+    modalStyle: "side",
+  };
+
+  (function () {
+    let script = document.createElement("script");
+    script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
+    script.async = true;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+<script>
+  import { actions } from "astro:actions";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.querySelector(".snipcart-add-item");
+    if (!btn) return; // Évite l'erreur si le bouton n'existe pas
+
+    const id = btn.getAttribute("data-item-id")?.toString();
+    btn.addEventListener("click", () => addToCart(id));
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("snipcart.ready", () => {
+    const cartCounts = document.querySelectorAll("#cart-count"); // Prend en compte les deux compteurs
+
+    function updateCartCount() {
+      const itemCount = Snipcart.store.getState().cart.items.count;
+      cartCounts.forEach((cartCount) => {
+        cartCount.textContent = itemCount > 0 ? itemCount : "0";
+      });
+    }
+
+    // Mise à jour initiale
+    updateCartCount();
+
+    // Mise à jour en temps réel lors d'ajouts/retraits du panier
+    Snipcart.store.subscribe(updateCartCount);
+  });
+});
+  function menuToggleFunction() {
+    const overlayNav = document.querySelector(".overlay-nav");
+    overlayNav.classList.toggle("active");
+  }
+  function updateProfileSection(isLoggedIn) {
+    const profileSection = document.getElementById("profile-section")!;
+    const authButtons = document.getElementById("auth-buttons")!;
+
+    if (isLoggedIn) {
+      profileSection.style.display = "block";
+      authButtons.style.display = "none";
+    } else {
+      profileSection.style.display = "none";
+      authButtons.style.display = "flex";
+    }
+  }
+</script>
 
 <style>
-	header {
+  #snipcart {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+  }
+  header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
     background: rgba(0, 0, 0, 0.8);
-    color: #E7DCDC;
+    color: #e7dcdc;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 900;
+    z-index: 100;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-header .logo {
+  }
+  header .logo {
     display: flex;
     align-items: center;
     gap: 1rem;
-}
+  }
 
-header .logo svg {
+  header .logo svg {
     width: 50px;
     height: 50px;
-}
+  }
 
-header a {
-    
+  header a {
     text-decoration: none;
-    color: #E7DCDC;
-    font-size: 16PX;
-}
+    color: #e7dcdc;
+    font-size: 16px;
+  }
 
-nav ul {
+  nav ul {
     display: flex;
     gap: 2rem;
-}
+  }
 
-nav ul li {
+  nav ul li {
     list-style: none;
-}
+  }
 
-nav ul li a {
-    font: 1.4rem 'grandstander', sans-serif;
-    color: #E7DCDC;
+  nav ul li a {
+    font:
+      1.4rem "grandstander",
+      sans-serif;
+    color: #e7dcdc;
     text-decoration: none;
     transition: color 0.3s ease;
-}
+  }
 
-nav ul li a:hover {
+  nav ul li a:hover {
     color: #f2efa4;
     text-decoration: underline;
-}
+  }
 
-#menu-toggle {
+  #menu-toggle {
     position: absolute;
-    
+
     right: 1rem;
     background: none;
     border: none;
     cursor: pointer;
     display: none;
     font-size: 2rem;
-    color: #E7DCDC;
+    color: #e7dcdc;
     z-index: 991;
-}
-.close-menu {
+  }
+  .close-menu {
     position: absolute;
     top: 1rem;
     right: 0rem;
@@ -166,44 +255,46 @@ nav ul li a:hover {
     border: none;
     cursor: pointer;
     font-size: 2rem;
-    color: #E7DCDC;
-}
-#profile-section img {
+    color: #e7dcdc;
+  }
+  #profile-section img {
     border-radius: 50%;
     margin-right: 10px;
-}
+  }
 
-#profile-section button {
+  #profile-section button {
     padding: 5px 10px;
     background-color: #292929;
     color: white;
     border: none;
     cursor: pointer;
-}
+  }
 
-#profile-section button:hover {
-    background-color: #E7DCDC;
+  #profile-section button:hover {
+    background-color: #e7dcdc;
     color: #292929;
-}
+  }
 
-button {
+  button {
     padding: 0.75rem 1.5rem;
-    background-color: #E7DCDC;
+    background-color: #e7dcdc;
     color: #292929;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
     text-align: center;
     display: block;
-}
+  }
 
-button:hover {
+  button:hover {
     background-color: #292929;
-    color: #E7DCDC;
-    border: solid 2px #E7DCDC;
-}
-.button {
+    color: #e7dcdc;
+    border: solid 2px #e7dcdc;
+  }
+  .button {
     text-decoration: none;
     display: inline-block;
     margin-top: 1rem;
@@ -211,8 +302,8 @@ button:hover {
     justify-content: center;
     align-items: center;
     position: relative;
-}
-.overlay-nav {
+  }
+  .overlay-nav {
     display: none;
     position: fixed;
     top: 0;
@@ -224,95 +315,97 @@ button:hover {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-}
+  }
 
-.overlay-nav ul {
+  .overlay-nav ul {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     text-align: center;
-}
+  }
 
-.overlay-nav ul li a {
+  .overlay-nav ul li a {
     font-size: 2rem;
-    color: #E7DCDC;
+    color: #e7dcdc;
     text-decoration: none;
     transition: color 0.3s ease;
-}
+  }
 
-.overlay-nav ul li a:hover {
+  .overlay-nav ul li a:hover {
     color: #f2efa4;
-}
+  }
 
-.overlay-nav.active {
+  .overlay-nav.active {
     display: flex;
     animation: fadeIn 0.3s ease;
-}
-#auth-buttons {
+  }
+  #auth-buttons {
     display: flex;
     align-items: center;
     gap: 1rem;
-}
-#auth-buttons a {
-    font: 1rem 'grandstander', sans-serif;
-    color: #E7DCDC;
+  }
+  #auth-buttons a {
+    font:
+      1rem "grandstander",
+      sans-serif;
+    color: #e7dcdc;
     text-decoration: none;
-}
-#auth-buttons button {
+  }
+  #auth-buttons button {
     background-color: #27ae60;
     color: #fff;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 5px;
     cursor: pointer;
-}
-#auth-buttons button:hover {
+  }
+  #auth-buttons button:hover {
     background-color: #2ecc71;
-}
+  }
 
-
-
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     #menu-toggle {
-        display: block;
+      display: block;
     }
 
     nav ul {
-        display: none;
+      display: none;
     }
 
     .overlay-nav ul li a {
-        font-size: 1.5rem;
+      font-size: 1.5rem;
     }
     .login {
-        display: none;
+      display: none;
     }
     #auth-buttons {
-        display: none;
-        align-items: center;
-        gap: 1rem;
+      display: none;
+      align-items: center;
+      gap: 1rem;
     }
     #auth-buttons a {
-        font: 1rem 'grandstander', sans-serif;
-        color: #E7DCDC;
-        text-decoration: none;
+      font:
+        1rem "grandstander",
+        sans-serif;
+      color: #e7dcdc;
+      text-decoration: none;
     }
     #auth-buttons button {
-        background-color: #27ae60;
-        color: #fff;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        cursor: pointer;
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
     }
-}
-@keyframes fadeIn {
+  }
+  @keyframes fadeIn {
     from {
-        opacity: 0;
+      opacity: 0;
     }
     to {
-        opacity: 1;
+      opacity: 1;
     }
-}
+  }
 </style>
