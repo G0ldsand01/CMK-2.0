@@ -2,6 +2,8 @@
 import { Image } from "astro:assets";
 import { products } from "../../scripts/products";
 import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import { actions } from "astro:actions";
 import "../../styles/product.css";
 
 export const getStaticPaths = async () => {
@@ -13,8 +15,12 @@ export const getStaticPaths = async () => {
 const { id } = Astro.params;
 const product = products.find((p) => p.id.toString() === id);
 ---
+<head>
+  <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css">
+</head>
 
 <Layout title={product ? "Viewing: " + product.name : "Product"}>
+  <Header />
   {
     product ? (
       <div class="product-details">
@@ -45,21 +51,34 @@ const product = products.find((p) => p.id.toString() === id);
             </div>
 
             <button
-              class="product-link-button"
-              id="add-to-cart-btn"
-              product-id={product.id}
-            >
-              {" "}
-              Add to cart
-            </button>
+  class="snipcart-add-item"
+  data-item-id={product.id}
+  data-item-price={product.price.toFixed(2)}
+  data-item-description={product.description}
+  data-item-image={product.image}
+  data-item-name={product.name}
+  data-item-url={Astro.url}
 
-            <button
-              class="product-link-button"
-              style="text-decoration: none; display: inline-block; margin-top: 1rem; display: flex; justify-content: center; align-items: center; position: relative;"
-            >
-              {" "}
-              Buy now
-            </button>
+>
+
+  Add to cart
+</button>
+
+
+
+<button
+  class="snipcart-add-item"
+  data-item-id={product.id}
+  data-item-price={product.price.toFixed(2)}
+  data-item-description={product.description}
+  data-item-image={product.image}
+  data-item-name={product.name}
+  data-item-url={./product/{product.id}}
+>
+
+  Buy now
+</button>
+
           </div>
         </div>
       </div>
@@ -71,24 +90,45 @@ const product = products.find((p) => p.id.toString() === id);
       </div>
     )
   }
+  
 </Layout>
+<div id="snipcart" hidden="true" style="z-index: 1000;"></div>
+<script>
+  window.SnipcartSettings = {
+    publicApiKey:
+      "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
+      loadStrategy: "on-user-interaction",
+  version: "3.7.1",
+  addProductBehavior: "none",
+  modalStyle: "side"
+  };
 
+  (function() {
+    let script = document.createElement("script");
+    script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
+    script.async = true;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 <script>
   import { actions } from "astro:actions";
 
-  const btn = document.getElementById("add-to-cart-btn")!;
-  const id = btn?.getAttribute("product-id")!.toString();
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.querySelector(".snipcart-add-item");
+  if (!btn) return; // Évite l'erreur si le bouton n'existe pas
 
+  const id = btn.getAttribute("data-item-id")?.toString();
   btn.addEventListener("click", () => addToCart(id));
+});
 
   async function addToCart(id: string) {
     const { data, error } = await actions.addProductToCart({
       id: id,
     });
     if (error) {
-        window.location.href = "/login";
+      window.location.href = "/login";
     } else {
-        window.location.href = "/cart";
+      window.location.href = "/cart";
     }
   }
 </script>

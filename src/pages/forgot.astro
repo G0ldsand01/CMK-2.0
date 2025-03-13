@@ -1,8 +1,5 @@
 ---
 import "../styles/login.css";
-import { Astro } from 'astro';
-import { app } from "../firebase/server";
-import { getAuth } from "firebase-admin/auth";
 ---
 
 <head>
@@ -12,9 +9,11 @@ import { getAuth } from "firebase-admin/auth";
 </head>
 
 <div class="container">
+  
   <h1>Reset Your Password</h1>
     <p id="Message"></p>
   <form id="reset-form">
+    <label for="reset-email" style="text-align: left;">Enter your email</label><br />
     <input
       type="email"
       id="reset-email"
@@ -28,7 +27,6 @@ import { getAuth } from "firebase-admin/auth";
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import {
-      getAuth,
       sendPasswordResetEmail,
     } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 

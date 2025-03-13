@@ -91,17 +91,6 @@ form {
   width: 100%;
   margin: 1rem;
 }
-.firstname label {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  display: block;
-  color: #e7dcdc;
-  text-align: left;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  
-}
 label {
   font-size: 1.2rem;
   font-weight: bold;

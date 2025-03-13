@@ -1,7 +1,7 @@
 ---
 import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
-import "../styles/login.css";
+import "@styles/login.css";
 /* Check if the user is authenticated */
 const auth = getAuth(app);
 if (Astro.cookies.has("__session")) {
@@ -25,9 +25,9 @@ if (Astro.cookies.has("__session")) {
     
     <form action="/api/auth/signin" method="post">
       <label for="email" for="email">Email</label>
-      <input type="email" name="email" id="email" />
+      <input type="email" name="email" id="email" placeholder="example@example.com"/>
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" />
+      <input type="password" name="password" id="password" placeholder="***********"/>
       <p>Forgot your password? <a href="/forgot">Reset it</a></p>
       <p>New here? <a href="/register">Create an account</a></p>
       <button type="submit">Login</button>
