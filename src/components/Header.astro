@@ -1,6 +1,6 @@
 ---
 import { CircuitBoard, ShoppingBag } from "lucide-react";
-import { products } from "../scripts/products";
+import { products } from "../lib/products";
 const { id } = Astro.params;
 const product = products.find((p) => p.id.toString() === id);
 import "@styles/snipcart.css";

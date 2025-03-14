@@ -1,9 +1,9 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { getAuth } from "firebase-admin/auth";
+import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { app } from '../firebase/server';
-import { products } from '../scripts/products';
+import { app } from '../lib/firebase/server';
+import { products } from '../lib/products';
 
 const db = getFirestore(app);
 
@@ -15,12 +15,12 @@ export const server = {
     handler: async (input, ctx) => {
       try {
         const auth = getAuth(app);
-        const sessionCookie = ctx.cookies.get("__session")?.value;
+        const sessionCookie = ctx.cookies.get('__session')?.value;
 
         if (!sessionCookie) {
           throw new ActionError({
-            code: "UNAUTHORIZED",
-            message: "Need to be logged in",
+            code: 'UNAUTHORIZED',
+            message: 'Need to be logged in',
           });
         }
 
@@ -28,8 +28,8 @@ export const server = {
 
         if (!decodedCookie) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
@@ -37,16 +37,16 @@ export const server = {
 
         if (!user) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
-        const product = products.find(p => p.id.toString() === input.id);
+        const product = products.find((p) => p.id.toString() === input.id);
         if (!product) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something went wrong',
           });
         }
 
@@ -68,8 +68,8 @@ export const server = {
       } catch (error) {
         console.error(error);
         throw new ActionError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     },
@@ -78,12 +78,12 @@ export const server = {
     handler: async (input, ctx) => {
       try {
         const auth = getAuth(app);
-        const sessionCookie = ctx.cookies.get("__session")?.value;
+        const sessionCookie = ctx.cookies.get('__session')?.value;
 
         if (!sessionCookie) {
           throw new ActionError({
-            code: "UNAUTHORIZED",
-            message: "Need to be logged in",
+            code: 'UNAUTHORIZED',
+            message: 'Need to be logged in',
           });
         }
 
@@ -91,8 +91,8 @@ export const server = {
 
         if (!decodedCookie) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
@@ -100,8 +100,8 @@ export const server = {
 
         if (!user) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
@@ -113,14 +113,16 @@ export const server = {
           cart = userDoc.data()!.cart || [];
         }
 
-        const detailedCart = cart.map((id: number) => products.find(p => p.id === id));
+        const detailedCart = cart.map((id: number) =>
+          products.find((p) => p.id === id)
+        );
 
-      return JSON.stringify(detailedCart);
+        return JSON.stringify(detailedCart);
       } catch (error) {
         console.error(error);
         throw new ActionError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     },
@@ -132,12 +134,12 @@ export const server = {
     handler: async (input, ctx) => {
       try {
         const auth = getAuth(app);
-        const sessionCookie = ctx.cookies.get("__session")?.value;
+        const sessionCookie = ctx.cookies.get('__session')?.value;
 
         if (!sessionCookie) {
           throw new ActionError({
-            code: "UNAUTHORIZED",
-            message: "Need to be logged in",
+            code: 'UNAUTHORIZED',
+            message: 'Need to be logged in',
           });
         }
 
@@ -145,8 +147,8 @@ export const server = {
 
         if (!decodedCookie) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
@@ -154,16 +156,16 @@ export const server = {
 
         if (!user) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Need to be logged in",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Need to be logged in',
           });
         }
 
-        const product = products.find(p => p.id.toString() === input.id);
+        const product = products.find((p) => p.id.toString() === input.id);
         if (!product) {
           throw new ActionError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something went wrong',
           });
         }
 
@@ -185,8 +187,8 @@ export const server = {
       } catch (error) {
         console.error(error);
         throw new ActionError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     },

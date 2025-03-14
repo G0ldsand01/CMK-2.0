@@ -1,5 +1,5 @@
 ---
-import { app } from "../firebase/server";
+import { app } from "../lib/firebase/server.js";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import "../styles/dashboard.css";
@@ -8,7 +8,7 @@ import DashboardLayout from "@/layouts/DashboardLayout.astro";
 import { CircleUser, X } from "lucide-react";
 // import Chart from "../components/Chart.astro";
 import OrderChart from "../components/OrderChart.jsx";
-import { getStripeOrders } from "../Utils/getStripeOrders.js";
+import { getStripeOrders } from "../lib/getStripeOrders.js";
 
 const stripeOrders = await getStripeOrders();
 
