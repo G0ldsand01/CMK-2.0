@@ -24,24 +24,29 @@ import "@styles/snipcart.css";
     </ul>
   </nav>
   <!-- Auth Buttons or Profile Section -->
-  <div id="auth-buttons" class="login" style="list-style: none">
-    <li>
-      <a href="/login" style="margin-left: 1em; margin-right: 1em">Login</a>
-      <a href="/register" style="margin-left: 1em; margin-right: 1em">
-        <button style="display: inline-block; flex-direction: row"
-          >Register</button
-        >
-      </a>
-      <button class="snipcart-checkout" data-item-url={Astro.url}>
-        <ShoppingBag />
-        <span
-          id="cart-count"
-          style="position: absolute; top: 4em; right: 11rem; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
-          >0</span
-        >
+  <div id="auth-buttons" class="login" style="display: flex; align-items: center; gap: 1rem">
+    <a href="/login" style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
+       onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
+       onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';">
+      Login
+    </a>
+  
+    <a href="/register" style="text-decoration: none;">
+      <button style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+        onmouseover="this.style.backgroundColor='#2ecc71';"
+        onmouseout="this.style.backgroundColor='#27ae60';">
+        Register
       </button>
-    </li>
+    </a>
+  
+    <button class="snipcart-checkout" data-item-url="{Astro.url}" style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+      onmouseover="this.style.backgroundColor='#3d3d3d';"
+      onmouseout="this.style.backgroundColor='#292929';">
+      <ShoppingBag />
+      <span id="cart-count" style="background: #e7dcdc; color: #292929; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;">0</span>
+    </button>
   </div>
+  
   <!-- Profile Section - hidden by default -->
   <div id="profile-section" style="display: none">
     <img
