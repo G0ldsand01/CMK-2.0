@@ -1,6 +1,6 @@
 ---
 import Header from "../components/Header.astro"
-import '@styles/globals.css'
+import '@styles/global.css'
 interface Props {
 	title: string;
 	navbar?: boolean;
@@ -31,16 +31,16 @@ const { title, navbar } = Astro.props
 	// const menuToggle = document.getElementById('menu-toggle');
 	const closeMenu = document.querySelector('.close-menu');
 	const overlayNav = document.querySelector('.overlay-nav');
-  
+
 	// menuToggle.addEventListener('click', () => {
 	//   console.log("Salutations mes cher camarade 1");
 	// 	overlayNav.classList.add('active');
 	// });
-  
+
 	closeMenu.addEventListener('click', () => {
 		overlayNav.classList.remove('active');
 	});
-  
+
 	function menuToggleFunction() {
 	  overlayNav.classList.toggle('active');
 	}

@@ -2,7 +2,7 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { app } from '../lib/firebase/server';
+import { app } from '../firebase/server';
 import { products } from '../lib/products';
 
 const db = getFirestore(app);
