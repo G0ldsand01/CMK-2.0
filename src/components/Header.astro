@@ -43,7 +43,7 @@ import "@styles/snipcart.css";
       onmouseover="this.style.backgroundColor='#3d3d3d';"
       onmouseout="this.style.backgroundColor='#292929';">
       <ShoppingBag />
-      <span id="cart-count" style="background: #e7dcdc; color: #292929; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;">0</span>
+      <span id="cart-count" style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;">0</span>
     </button>
   </div>
   
@@ -98,11 +98,11 @@ import "@styles/snipcart.css";
       <li><a href="/login">Login</a></li>
       <li><a href="/register">Register</a></li>
       <li>
-        <button class="snipcart-checkout" data-item-url={Astro.url}>
+        <button class="snipcart-checkout" data-item-url="(astro.url)">
           <ShoppingBag />
           <span
             id="cart-count"
-            style="position: absolute; top: -5px; right: -5px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
+            style="position: relative; top: -30px; right: -15px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
             >0</span
           >
         </button>
@@ -164,18 +164,7 @@ import "@styles/snipcart.css";
     const overlayNav = document.querySelector(".overlay-nav");
     overlayNav.classList.toggle("active");
   }
-  function updateProfileSection(isLoggedIn) {
-    const profileSection = document.getElementById("profile-section")!;
-    const authButtons = document.getElementById("auth-buttons")!;
 
-    if (isLoggedIn) {
-      profileSection.style.display = "block";
-      authButtons.style.display = "none";
-    } else {
-      profileSection.style.display = "none";
-      authButtons.style.display = "flex";
-    }
-  }
 </script>
 
 <style>
@@ -280,7 +269,7 @@ import "@styles/snipcart.css";
     color: #292929;
   }
 
-  button {
+  #auth-buttons button {
     padding: 0.75rem 1.5rem;
     background-color: #e7dcdc;
     color: #292929;
@@ -369,7 +358,7 @@ import "@styles/snipcart.css";
     background-color: #2ecc71;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 980px) {
     #menu-toggle {
       display: block;
     }
@@ -381,29 +370,12 @@ import "@styles/snipcart.css";
     .overlay-nav ul li a {
       font-size: 1.5rem;
     }
-    .login {
-      display: none;
-    }
+
     #auth-buttons {
-      display: none;
-      align-items: center;
-      gap: 1rem;
-    }
-    #auth-buttons a {
-      font:
-        1rem "grandstander",
-        sans-serif;
-      color: #e7dcdc;
-      text-decoration: none;
-    }
-    #auth-buttons button {
-      background-color: #27ae60;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    display: none !important;
+}
+
+
   }
   @keyframes fadeIn {
     from {

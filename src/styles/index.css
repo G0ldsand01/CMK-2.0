@@ -153,6 +153,7 @@ font-style: normal;
     text-decoration: none;
     color: #E7DCDC;
 }
+
 @media screen and (max-width: 768px) {
     #home {
         width: 100%;

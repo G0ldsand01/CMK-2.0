@@ -4,8 +4,7 @@ import { products } from "../../lib/products";
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import "../../styles/product.css";
-import { actions } from "astro:actions";
-import { Toaster, toast } from 'sonner'; // Correct import
+import { Toaster } from 'sonner'; // Correct import
 const { id } = Astro.params;
 const product = products.find((p) => p.id.toString() === id);
 ---
@@ -70,39 +69,36 @@ const product = products.find((p) => p.id.toString() === id);
     }
 </Layout>
 <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
-
 <script>
     import { actions } from "astro:actions";
-    import { toast } from 'sonner'; // Correct import
+    // Removed unused import
 
     document.addEventListener("DOMContentLoaded", () => {
         const btn = document.querySelector(".snipcart-add-item");
         if (!btn) return;
 
-        const id = btn.getAttribute("data-item-id")?.toString();
-        btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-item-id")?.toString() || "";
+    btn.addEventListener("click", async () => {
         console.log("Before toast");
-        addToCart(id);
-        toast("The product has been added to your cart!");
+        if (id) {
+            await addToCart(id);
+            await actions.addProductToCart({
+                id: id,
+            });
+        } else {
+            console.error("Product ID is undefined.");
+        }
         console.log("After toast");
-      });
     });
-
-    async function addToCart(id: string) {
-        const { data, error } = await actions.addProductToCart({
-            id: id,
-        });
-    }
-
-    window.SnipcartSettings = {
-        publicApiKey: "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
+    });
+    (window as any).SnipcartSettings = {
+        "publicApiKey": "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
         loadStrategy: "on-user-interaction",
         version: "3.7.1",
         addProductBehavior: "none",
-        modalStyle: "side",
+        modalStyle: "side"
     };
-
-    (function () {
+    (function () { 
         let script = document.createElement("script");
         script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
         script.async = true;
