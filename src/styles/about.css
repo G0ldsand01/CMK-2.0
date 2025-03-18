@@ -93,7 +93,17 @@ img {
 .title h2:hover {
     font-size: 1.7rem;
 }
-
+#cart button {
+    padding: 1.5rem;
+    background-color: #e7dcdc00;
+    color: #292929;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    display: block;
+}
 .button {
     text-decoration: none;
     display: inline-block;

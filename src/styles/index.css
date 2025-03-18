@@ -16,6 +16,20 @@ ul {
     list-style: none;
 }
 
+button {
+    position: relative;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    background: none;
+    color: #fff;
+}
 img {
     
     height: auto;
