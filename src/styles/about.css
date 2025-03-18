@@ -129,34 +129,6 @@ img {
     background-color: #ffbb33;
 }
 
-.navbar a {
-    color: #E7DCDC;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.navbar a:hover {
-    color: #FFD700;
-}
-
-.overlay-nav {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 2rem;
-    transition: opacity 0.3s ease;
-}
-
-.overlay-nav a {
-    color: #E7DCDC;
-    padding: 1rem;
-    text-decoration: none;
-    display: block;
-    font-size: 1.2rem;
-    transition: color 0.3s ease;
-}
-
-.overlay-nav a:hover {
-    color: #FFD700;
-}
 
 /* Media Queries */
 @media screen and (max-width: 768px) {
