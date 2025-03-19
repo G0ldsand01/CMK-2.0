@@ -1,5 +1,6 @@
 ---
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
+import { CartCheckout } from '@lloydjatkinson/astro-snipcart/astro';
 import '@styles/snipcart.css';
 ---
 
@@ -112,14 +113,20 @@ import '@styles/snipcart.css';
       <li><a href="/login">Login</a></li>
       <li><a href="/register">Register</a></li>
       <li>
-        <button id="cart" class="snipcart-checkout" data-item-url="(astro.url)">
-          <ShoppingBag />
-          <span
-            id="cart-count"
-            style="position: relative; top: -30px; right: -15px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
-            >0</span
+        <CartCheckout>
+          <button
+            id="cart"
+            class="snipcart-checkout"
+            data-item-url="(astro.url)"
           >
-        </button>
+            <ShoppingBag />
+            <span
+              id="cart-count"
+              style="position: relative; top: -30px; right: -15px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
+              >0</span
+            >
+          </button>
+        </CartCheckout>
       </li>
     </ul>
   </nav>
@@ -146,8 +153,6 @@ import '@styles/snipcart.css';
   })();
 </script>
 <script>
-  import { actions } from 'astro:actions';
-
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.querySelector('.snipcart-add-item');
     if (!btn) return; // Évite l'erreur si le bouton n'existe pas

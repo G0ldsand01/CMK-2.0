@@ -17,6 +17,9 @@ importers:
       '@astrojs/vercel':
         specifier: ^8.1.2
         version: 8.1.2(astro@5.5.3(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2))(react@19.0.0)(rollup@4.34.9)
+      '@lloydjatkinson/astro-snipcart':
+        specifier: ^0.3.0
+        version: 0.3.0(astro@5.5.3(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2))
       '@radix-ui/react-popover':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -811,6 +814,11 @@ packages:
     resolution: {integrity: sha512-7pJzOWzPm6oJUxml+PCDRzYQ4A1hTMHAciTAHfFK4fkbDZX33nWPVG7Y3vqdKtslcwAzwmrNDc6sXy2nwWnbiw==}
     cpu: [x64]
     os: [win32]
+
+  '@lloydjatkinson/astro-snipcart@0.3.0':
+    resolution: {integrity: sha512-kKPDHWvrgCYh8imKsi+LX+w88FvRq7g6lG6hqzAkf4Dlzr0xwCaJJLHlVcCIQcoJTYPiRJpT3cne99iNjsya8w==}
+    peerDependencies:
+      astro: ^1.0.0-beta.0
 
   '@mapbox/node-pre-gyp@2.0.0':
     resolution: {integrity: sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg==}
@@ -4432,6 +4440,10 @@ snapshots:
 
   '@libsql/win32-x64-msvc@0.4.7':
     optional: true
+
+  '@lloydjatkinson/astro-snipcart@0.3.0(astro@5.5.3(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2))':
+    dependencies:
+      astro: 5.5.3(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.34.9)(typescript@5.8.2)
 
   '@mapbox/node-pre-gyp@2.0.0':
     dependencies:

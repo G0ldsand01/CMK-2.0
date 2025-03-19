@@ -96,9 +96,6 @@ const product = productActions.data;
       console.log('Before toast');
       if (id) {
         await addToCart(id);
-        await actions.addProductToCart({
-          id: id,
-        });
       } else {
         console.error('Product ID is undefined.');
       }

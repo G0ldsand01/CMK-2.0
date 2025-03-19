@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets';
-import { type Product as ProductType } from '../lib/products';
 import '@/styles/product-card.css';
+import type { Product } from 'astro:db';
 
 interface Props {
-  product: ProductType;
+  product: typeof Product.$inferSelect;
 }
 
 const { product } = Astro.props;

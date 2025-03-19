@@ -12,6 +12,7 @@
     "@astrojs/db": "^0.14.8",
     "@astrojs/react": "^4.2.1",
     "@astrojs/vercel": "^8.1.2",
+    "@lloydjatkinson/astro-snipcart": "^0.3.0",
     "@radix-ui/react-popover": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.6",

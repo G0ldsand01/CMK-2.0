@@ -1,47 +1,42 @@
 ---
-import Header from "../components/Header.astro"
-import '@styles/global.css'
+import Header from '../components/Header.astro';
+import { SnipcartSetup } from '@lloydjatkinson/astro-snipcart/astro';
+import '@styles/global.css';
 interface Props {
-	title: string;
-	navbar?: boolean;
+  title: string;
+  navbar?: boolean;
 }
 
-const { title, navbar } = Astro.props
+const { title, navbar } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title} | CMK</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-	</head>
-	<body>
-		{ navbar ? <Header/> : null }
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | CMK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
+      rel="stylesheet"
+    />
+    <SnipcartSetup />
+  </head>
+  <body>
+    {navbar ? <Header /> : null}
+    <slot />
+  </body>
 </html>
 
 <script is:inline>
-	// const menuToggle = document.getElementById('menu-toggle');
-	const closeMenu = document.querySelector('.close-menu');
-	const overlayNav = document.querySelector('.overlay-nav');
+  const closeMenu = document.querySelector('.close-menu');
+  const overlayNav = document.querySelector('.overlay-nav');
 
-	// menuToggle.addEventListener('click', () => {
-	//   console.log("Salutations mes cher camarade 1");
-	// 	overlayNav.classList.add('active');
-	// });
-
-	closeMenu.addEventListener('click', () => {
-		overlayNav.classList.remove('active');
-	});
-
-	function menuToggleFunction() {
-	  overlayNav.classList.toggle('active');
-	}
-  </script>
+  closeMenu.addEventListener('click', () => {
+    overlayNav.classList.remove('active');
+  });
+</script>
