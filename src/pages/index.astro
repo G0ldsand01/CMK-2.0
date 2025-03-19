@@ -1,13 +1,17 @@
 ---
-import Header from "../components/Header.astro";
-import Layout from "../layouts/Layout.astro";
-import ProductCard from "../components/ProductCard.astro";
-import { products } from "../lib/products";
-import "../styles/index.css";
+import Header from '../components/Header.astro';
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import '../styles/index.css';
+import { products as productsActions } from '../actions/products';
+
+const bestProductsActions = await Astro.callAction(
+  productsActions.getBestProducts
+);
+const bestProducts = bestProductsActions.data;
 ---
 
-<Layout title="Home">
-  <Header />
+<Layout title="Home" navbar={true}>
   <main>
     <div id="home">
       <div class="title">
@@ -28,7 +32,7 @@ import "../styles/index.css";
       <h1>Our Products</h1>
     </div>
     <div class="products-grid">
-      {products.map((product) => <ProductCard product={product} />)}
+      {bestProducts.map((product) => <ProductCard product={product} />)}
     </div>
     <a href="products.html" class="button">
       <button class="view-all-button">View All Products</button>
@@ -38,11 +42,11 @@ import "../styles/index.css";
 
 <script>
   document
-    .querySelector(".scroll-to-products")!
-    .addEventListener("click", function (e) {
+    .querySelector('.scroll-to-products')!
+    .addEventListener('click', function (e) {
       e.preventDefault();
       document
-        .querySelector("#products")!
-        .scrollIntoView({ behavior: "smooth" });
+        .querySelector('#products')!
+        .scrollIntoView({ behavior: 'smooth' });
     });
 </script>

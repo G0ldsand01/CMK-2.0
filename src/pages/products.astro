@@ -1,23 +1,27 @@
 ---
 import Header from '../components/Header.astro';
 import Layout from '../layouts/Layout.astro';
-import { products } from '../lib/products';
-import { Image } from 'astro:assets';
 import ProductCard from '../components/ProductCard.astro';
-import "../styles/index.css";
-import "../styles/products.css";
+import '../styles/index.css';
+import '../styles/products.css';
+import { products as productsActions } from '../actions/products';
+
+const bestProductsActions = await Astro.callAction(
+  productsActions.getBestProducts
+);
+const bestProducts = bestProductsActions.data;
 ---
 
-<Layout title="Products">
-    <Header />
-    <div id="products">
-        <div class="title" style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }">
-            <h1>Our Products</h1>
-        </div>
-        <div class="products-grid">
-            {products.map((product) => (
-                <ProductCard product={product} />
-            ))}
-        </div>
+<Layout title="Products" navbar={true}>
+  <div id="products">
+    <div
+      class="title"
+      style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }"
+    >
+      <h1>Our Products</h1>
     </div>
+    <div class="products-grid">
+      {bestProducts.map((product) => <ProductCard product={product} />)}
+    </div>
+  </div>
 </Layout>
