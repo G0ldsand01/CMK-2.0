@@ -8,6 +8,7 @@ import { products } from '../lib/products';
 const db = getFirestore(app);
 
 export const server = {
+  products,
   addProductToCart: defineAction({
     input: z.object({
       id: z.string(),

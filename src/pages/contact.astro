@@ -1,140 +1,140 @@
 ---
-import Header from '../components/Header.astro';
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout title="Contact Us">
-    <Header />
-    <div id="contact">
-        <div class="title" style="text-align: center; margin-top: 5rem;">
-            <h1>Contact Us</h1>
-        </div>
-        <center>
-            <div class="contact-form">
-                <form action="">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
-                        <span class="error">This field is required</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                        <span class="error">This field is required</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" required></textarea>
-                        <span class="error">This field is required</span>
-                    </div>
-                    <button type="submit" class="button">Send Message</button>
-                </form>
-            </div>
-        </center>
+
+<Layout title="Contact Us" navbar={true}>
+  <div id="contact">
+    <div class="title" style="text-align: center; margin-top: 5rem;">
+      <h1>Contact Us</h1>
     </div>
+    <center>
+      <div class="contact-form">
+        <form action="">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+            <span class="error">This field is required</span>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+            <span class="error">This field is required</span>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+            <span class="error">This field is required</span>
+          </div>
+          <button type="submit" class="button">Send Message</button>
+        </form>
+      </div>
+    </center>
+  </div>
 </Layout>
 
 <style>
-    * {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+  }
 
-body {
+  body {
     font-family: 'Poppins', sans-serif;
     font-size: 1rem;
     line-height: 1.5;
-    color: #E7DCDC;
+    color: #e7dcdc;
     background-color: #121212;
-}
+  }
 
-.title {
+  .title {
     text-align: center;
     padding: 2rem;
-    color: #E7DCDC;
-    font-family: "Atkinson Hyperlegible Next", serif;
+    color: #e7dcdc;
+    font-family: 'Atkinson Hyperlegible Next', serif;
     font-optical-sizing: auto;
     font-weight: 200;
     font-style: normal;
-}
+  }
 
-.title h1 {
+  .title h1 {
     font-size: 3rem;
     font-weight: 600;
-}
-.contact-form {
+  }
+  .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;  
+    gap: 1rem;
     margin-top: 2rem;
     margin-bottom: 4rem;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-}
-.contact-form button {
+  }
+  .contact-form button {
     padding: 0.75rem 1.5rem;
-    background-color: #E7DCDC;
+    background-color: #e7dcdc;
     color: #292929;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
     text-align: center;
     display: block;
-}
-.contact-form button:hover {
+  }
+  .contact-form button:hover {
     background-color: #292929;
-    color: #E7DCDC;
-    border: solid 2px #E7DCDC;
-}
-.contact-form button a{
+    color: #e7dcdc;
+    border: solid 2px #e7dcdc;
+  }
+  .contact-form button a {
     text-decoration: none;
     color: #292929;
-}
-.contact-form button:hover{
+  }
+  .contact-form button:hover {
     text-decoration: none;
-    color: #E7DCDC;
-}
-.contact-form label {
+    color: #e7dcdc;
+  }
+  .contact-form label {
     display: block;
-    font:  1.4rem 'Atkinson Hyperlegible Next', serif;
-}
-.contact-form input {
+    font:
+      1.4rem 'Atkinson Hyperlegible Next',
+      serif;
+  }
+  .contact-form input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #E7DCDC;
+    border: 1px solid #e7dcdc;
     border-radius: 0.5rem;
-}
-.contact-form textarea {
+  }
+  .contact-form textarea {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #E7DCDC;
+    border: 1px solid #e7dcdc;
     border-radius: 0.5rem;
-}
+  }
 
-
-
-
-@media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     #home {
-        width: 100%;
-        padding: 1rem;
-        border-radius: 0 0 16px 16px;
-        box-shadow: none;
+      width: 100%;
+      padding: 1rem;
+      border-radius: 0 0 16px 16px;
+      box-shadow: none;
     }
 
     .title {
-        padding: 1rem;
-        font-size: 1.2rem;
+      padding: 1rem;
+      font-size: 1.2rem;
     }
 
     .title h1 {
-        font-size: 2rem;
+      font-size: 2rem;
     }
 
     .title h2 {
-        font-size: 1rem;
+      font-size: 1rem;
     }
-}
+  }
 </style>

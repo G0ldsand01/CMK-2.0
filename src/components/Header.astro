@@ -1,9 +1,6 @@
 ---
-import { CircuitBoard, ShoppingBag } from "lucide-react";
-import { products } from "../lib/products";
-const { id } = Astro.params;
-const product = products.find((p) => p.id.toString() === id);
-import "@styles/snipcart.css";
+import { CircuitBoard, ShoppingBag } from 'lucide-react';
+import '@styles/snipcart.css';
 ---
 
 <head>
@@ -24,29 +21,46 @@ import "@styles/snipcart.css";
     </ul>
   </nav>
   <!-- Auth Buttons or Profile Section -->
-  <div id="auth-buttons" class="login" style="display: flex; align-items: center; gap: 1rem">
-    <a href="/login" style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
-       onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
-       onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';">
+  <div
+    id="auth-buttons"
+    class="login"
+    style="display: flex; align-items: center; gap: 1rem"
+  >
+    <a
+      href="/login"
+      style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
+      onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
+      onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';"
+    >
       Login
     </a>
-  
+
     <a href="/register" style="text-decoration: none;">
-      <button style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+      <button
+        style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
         onmouseover="this.style.backgroundColor='#2ecc71';"
-        onmouseout="this.style.backgroundColor='#27ae60';">
+        onmouseout="this.style.backgroundColor='#27ae60';"
+      >
         Register
       </button>
     </a>
-  
-    <button class="snipcart-checkout" data-item-url="{Astro.url}" style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+
+    <button
+      class="snipcart-checkout"
+      data-item-url="{Astro.url}"
+      style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
       onmouseover="this.style.backgroundColor='#3d3d3d';"
-      onmouseout="this.style.backgroundColor='#292929';">
+      onmouseout="this.style.backgroundColor='#292929';"
+    >
       <ShoppingBag />
-      <span id="cart-count" style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;">0</span>
+      <span
+        id="cart-count"
+        style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
+        >0</span
+      >
     </button>
   </div>
-  
+
   <!-- Profile Section - hidden by default -->
   <div id="profile-section" style="display: none">
     <img
@@ -98,7 +112,7 @@ import "@styles/snipcart.css";
       <li><a href="/login">Login</a></li>
       <li><a href="/register">Register</a></li>
       <li>
-        <button id= "cart" class="snipcart-checkout" data-item-url="(astro.url)">
+        <button id="cart" class="snipcart-checkout" data-item-url="(astro.url)">
           <ShoppingBag />
           <span
             id="cart-count"
@@ -117,54 +131,53 @@ import "@styles/snipcart.css";
 <script>
   window.SnipcartSettings = {
     publicApiKey:
-      "ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5",
-    loadStrategy: "on-user-interaction",
-    version: "3.7.1",
-    addProductBehavior: "none",
-    modalStyle: "side",
+      'ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5',
+    loadStrategy: 'on-user-interaction',
+    version: '3.7.1',
+    addProductBehavior: 'none',
+    modalStyle: 'side',
   };
 
   (function () {
-    let script = document.createElement("script");
-    script.src = "https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js";
+    let script = document.createElement('script');
+    script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
     script.async = true;
-    document.getElementsByTagName("head")[0].appendChild(script);
+    document.getElementsByTagName('head')[0].appendChild(script);
   })();
 </script>
 <script>
-  import { actions } from "astro:actions";
+  import { actions } from 'astro:actions';
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.querySelector(".snipcart-add-item");
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelector('.snipcart-add-item');
     if (!btn) return; // Évite l'erreur si le bouton n'existe pas
 
-    const id = btn.getAttribute("data-item-id")?.toString();
-    btn.addEventListener("click", () => addToCart(id));
+    const id = btn.getAttribute('data-item-id')?.toString();
+    btn.addEventListener('click', () => addToCart(id));
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-  document.addEventListener("snipcart.ready", () => {
-    const cartCounts = document.querySelectorAll("#cart-count"); // Prend en compte les deux compteurs
+  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('snipcart.ready', () => {
+      const cartCounts = document.querySelectorAll('#cart-count'); // Prend en compte les deux compteurs
 
-    function updateCartCount() {
-      const itemCount = Snipcart.store.getState().cart.items.count;
-      cartCounts.forEach((cartCount) => {
-        cartCount.textContent = itemCount > 0 ? itemCount : "0";
-      });
-    }
+      function updateCartCount() {
+        const itemCount = Snipcart.store.getState().cart.items.count;
+        cartCounts.forEach((cartCount) => {
+          cartCount.textContent = itemCount > 0 ? itemCount : '0';
+        });
+      }
 
-    // Mise à jour initiale
-    updateCartCount();
+      // Mise à jour initiale
+      updateCartCount();
 
-    // Mise à jour en temps réel lors d'ajouts/retraits du panier
-    Snipcart.store.subscribe(updateCartCount);
+      // Mise à jour en temps réel lors d'ajouts/retraits du panier
+      Snipcart.store.subscribe(updateCartCount);
+    });
   });
-});
   function menuToggleFunction() {
-    const overlayNav = document.querySelector(".overlay-nav");
-    overlayNav.classList.toggle("active");
+    const overlayNav = document.querySelector('.overlay-nav');
+    overlayNav.classList.toggle('active');
   }
-
 </script>
 
 <style>
@@ -217,7 +230,7 @@ import "@styles/snipcart.css";
 
   nav ul li a {
     font:
-      1.4rem "grandstander",
+      1.4rem 'grandstander',
       sans-serif;
     color: #e7dcdc;
     text-decoration: none;
@@ -341,7 +354,7 @@ import "@styles/snipcart.css";
   }
   #auth-buttons a {
     font:
-      1rem "grandstander",
+      1rem 'grandstander',
       sans-serif;
     color: #e7dcdc;
     text-decoration: none;
@@ -372,10 +385,8 @@ import "@styles/snipcart.css";
     }
 
     #auth-buttons {
-    display: none !important;
-}
-
-
+      display: none !important;
+    }
   }
   @keyframes fadeIn {
     from {

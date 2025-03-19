@@ -4,11 +4,21 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 ---
 
-<Layout title="About Us">
-    <Header />
-<div class="title" style="text-align: center; margin-top: 5rem;">
+<Layout title="About Us" navbar={true}>
+  <div class="title" style="text-align: center; margin-top: 5rem;">
     <h1>About Us</h1>
-    <p>CMK is a company that specializes in customizing computer peripherals. We offer a wide range of customization options for your mouse and keyboard. Our products are designed to be durable and reliable, with a focus on performance and aesthetics. Whether you are a gamer, designer, or office worker, we have the perfect product for you. Our team of experts is dedicated to providing you with
-        the best possible experience, from start to finish. We are committed to delivering high-quality products that meet your needs and exceed your expectations. At CMK, we believe that customization is key to unlocking your full potential. Let us help you create the perfect setup for your needs. Contact us today to learn more about our products and services.</p>
-</div>
+    <p>
+      CMK is a company that specializes in customizing computer peripherals. We
+      offer a wide range of customization options for your mouse and keyboard.
+      Our products are designed to be durable and reliable, with a focus on
+      performance and aesthetics. Whether you are a gamer, designer, or office
+      worker, we have the perfect product for you. Our team of experts is
+      dedicated to providing you with the best possible experience, from start
+      to finish. We are committed to delivering high-quality products that meet
+      your needs and exceed your expectations. At CMK, we believe that
+      customization is key to unlocking your full potential. Let us help you
+      create the perfect setup for your needs. Contact us today to learn more
+      about our products and services.
+    </p>
+  </div>
 </Layout>
