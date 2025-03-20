@@ -8,19 +8,17 @@ import dotenv from 'dotenv';
 
 import vercel from '@astrojs/vercel';
 
-import db from '@astrojs/db';
-
 dotenv.config();
 
 // https://astro.build/config
 export default defineConfig({
   // prefetch: true,
-  integrations: [react(), db()],
+  integrations: [react()],
 
   output: 'server',
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
 
   adapter: vercel(),

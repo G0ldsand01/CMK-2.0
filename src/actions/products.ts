@@ -1,16 +1,16 @@
+import { Product } from '@lloydjatkinson/astro-snipcart/astro';
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, desc, eq, Product } from 'astro:db';
+import { getFirestore } from 'firebase-admin/firestore';
+import { app } from '@/firebase/server';
+
+const db = getFirestore(app);
 
 export const products = {
   getBestProducts: defineAction({
     handler: async () => {
-      const product = await db
-        .select()
-        .from(Product)
-        .orderBy(desc(Product.rating))
-        .limit(8);
-      return product;
+      const products = await db.collection('products').limit(8).get();
+      return products.docs.map((doc) => doc.data());
     },
   }),
   getProductById: defineAction({
@@ -18,11 +18,11 @@ export const products = {
       id: z.number(),
     }),
     handler: async (input, ctx) => {
-      const [product] = await db
-        .select()
-        .from(Product)
-        .where(eq(Product.id, input.id));
-      return product;
+      const product = await db
+        .collection('products')
+        .doc(String(input.id))
+        .get();
+      return product.data();
     },
   }),
 };
