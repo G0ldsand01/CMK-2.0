@@ -156,7 +156,7 @@ font-style: normal;
     margin-left: auto;
     margin-right: auto;
 }
-.view-all-button button{
+.view-all-button{
     padding: 0.75rem 1.5rem;
     background-color: #E7DCDC;
     color: #292929;
@@ -167,7 +167,7 @@ font-style: normal;
     text-align: center;
     display: block;
 }
-.view-all-button button:hover {
+.view-all-button:hover {
     background-color: #292929;
     color: #E7DCDC;
     border: solid 2px #E7DCDC;
@@ -179,20 +179,6 @@ font-style: normal;
 .view-all-button button:hover{
     text-decoration: none;
     color: #E7DCDC;
-}
-body, html {
-    height: 100%;
-    margin: 0;
-    overflow-y: auto; /* Ensures vertical scrolling is enabled */
-}
-
-.container {
-    min-height: 100vh; /* Ensures the container takes up full viewport height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
 }
 @media screen and (max-width: 768px) {
     #home {
