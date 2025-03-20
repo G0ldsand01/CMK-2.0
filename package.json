@@ -9,7 +9,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/db": "^0.14.8",
     "@astrojs/react": "^4.2.1",
     "@astrojs/vercel": "^8.1.2",
     "@lloydjatkinson/astro-snipcart": "^0.3.0",
