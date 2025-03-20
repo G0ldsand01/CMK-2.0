@@ -37,7 +37,9 @@ const bestProducts = bestProductsActions.data;
           bestProducts.map((product) => <ProductCard product={product} />)
       }
     </div>
-    <button class="view-all-button" onclick="window.location.href='products.html'">View All Products</button>
+    <button class="view-all-button" onclick="window.location.href='products'">
+      <a href="/products">View All Products</a>
+    </button>
   </div>
 </Layout>
 
