@@ -103,8 +103,7 @@ const product = productActions.data;
     });
   });
   (window as any).SnipcartSettings = {
-    publicApiKey:
-      'ZWU2NTliNzEtOWJlZS00ZGY2LWJiNmItNDE3YzFjNzNmNGY3NjM4Nzc0NjkyMzU3MTM1OTI5',
+    publicApiKey: process.env.SNIPCART_PUBLIC_KEY,
     loadStrategy: 'on-user-interaction',
     version: '3.7.1',
     addProductBehavior: 'none',
