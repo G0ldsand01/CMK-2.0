@@ -18,11 +18,12 @@ export const products = {
       id: z.number(),
     }),
     handler: async (input, ctx) => {
-      const product = await db
-        .collection('products')
-        .doc(String(input.id))
-        .get();
-      return product.data();
+      const products = await db.collection('products').get();
+      const productsData = products.docs.map((doc) => doc.data());
+
+      const product = productsData.find((doc) => doc.id === input.id);
+
+      return product;
     },
   }),
 };
