@@ -102,17 +102,4 @@ const product = productActions.data;
       console.log('After toast');
     });
   });
-  (window as any).SnipcartSettings = {
-    publicApiKey: process.env.SNIPCART_PUBLIC_KEY,
-    loadStrategy: 'on-user-interaction',
-    version: '3.7.1',
-    addProductBehavior: 'none',
-    modalStyle: 'side',
-  };
-  (function () {
-    let script = document.createElement('script');
-    script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
-    script.async = true;
-    document.getElementsByTagName('head')[0].appendChild(script);
-  })();
 </script>
