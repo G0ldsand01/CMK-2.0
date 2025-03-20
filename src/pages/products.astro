@@ -21,12 +21,19 @@ const bestProducts = bestProductsActions.data;
       <h1>Our Products</h1>
     </div>
     <div class="products-grid">
-      {bestProducts.map((product) => <ProductCard product={product} />)}
+      {
+        bestProducts && bestProducts.length > 0 ? (
+          bestProducts.map((product) => <ProductCard product={product} />)
+        ) : (
+          <p>No products found</p>
+        )
+      }
     </div>
   </div>
 </Layout>
 <style>
-  html, body {
+  html,
+  body {
     height: 100%;
     margin: 0;
     overflow-y: auto; /* Ensures vertical scrolling is enabled */
