@@ -1,10 +1,10 @@
 ---
-import { Image } from 'astro:assets';
-import { products as productsActions } from '../../actions/products';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import '../../styles/product.css';
-import { Toaster } from 'sonner'; // Correct import
+import { Image } from "astro:assets";
+import { products as productsActions } from "../../actions/products";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import "../../styles/product.css";
+import { Toaster } from "sonner"; // Correct import
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
   id: Number(id),
@@ -17,7 +17,7 @@ const product = productActions.data;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
-<Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
+<Layout title={product ? "Viewing: " + product.name : "Product"}>
   <Header />
   {
     product ? (
@@ -25,7 +25,7 @@ const product = productActions.data;
         <div class="product">
           <div class="product-info">
             <Image
-              src={'/api/image/' + product.image + '.png'}
+              src={"/api/image/" + product.image + ".png"}
               alt={product.name}
               width={400}
               height={400}
@@ -34,7 +34,7 @@ const product = productActions.data;
             <p>{product.description}</p>
             <div class="product-rating">
               <span class="product-rating-stars">
-                {'★'.repeat(Math.floor(product.rating))}{' '}
+                {"★".repeat(Math.floor(product.rating))}{" "}
               </span>
               <span class="product-rating-count">
                 ({product.reviews} reviews)
@@ -43,25 +43,34 @@ const product = productActions.data;
             <div class="product-price">
               <span class="product-price-currency">$</span>
               <span class="product-price-amount">
-                {product.price.toFixed(2) || '0.00'}
+                {product.price.toFixed(2) || "0.00"}
               </span>
             </div>
+
+            <div class="tooltip-container">
+              <button
+                class="snipcart-add-item button"
+                id="popoverTrigger"
+                data-item-id={product.id}
+                data-item-price={product.price.toFixed(2) || "0.00"}
+                data-item-description={product.description}
+                data-item-image={product.image}
+                data-item-name={product.name}
+                data-item-url={Astro.url}
+              >
+                Add to Cart
+              </button>
+              <div class="popover-content" id="popoverContent">
+                <p>
+                  <shopping-basket />
+                  <span>{product.name} has been added to your cart!</span>
+                </p>
+              </div>
+            </div>
             <button
-              class="snipcart-add-item button"
-              id="snipcart-add-item"
+              class="snipcart-add-item snipcart-checkout"
               data-item-id={product.id}
-              data-item-price={product.price.toFixed(2) || '0.00'}
-              data-item-description={product.description}
-              data-item-image={product.image}
-              data-item-name={product.name}
-              data-item-url={Astro.url}
-            >
-              Add to cart
-            </button>
-            <button
-              class=" snipcart-add-item snipcart-checkout"
-              data-item-id={product.id}
-              data-item-price={product.price.toFixed(2) || '0.00'}
+              data-item-price={product.price.toFixed(2) || "0.00"}
               data-item-description={product.description}
               data-item-image={product.image}
               data-item-name={product.name}
@@ -83,23 +92,107 @@ const product = productActions.data;
   }
 </Layout>
 <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
+<style>
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .button {
+    background-color: #e2e2e2;
+    border: 1px solid hsl(var(--border));
+    color: #292929;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .popover-content {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* add glassmorphism effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.5);
+    /* add rounded corners */
+    border-radius: 10px;
+    width: max-content; 
+    z-index: 1000;
+    display: none;
+  }
+
+  .popover-content p {
+    margin: 0;
+    color : #292929;
+    font-size: 1rem;
+  }
+
+  .popover-content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent transparent;
+  }
+</style>
+
 <script>
-  import { actions } from 'astro:actions';
-  // Removed unused import
+  // Client-side JavaScript for the popover functionality
+  let hideTimeout: number | null = null;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.querySelector('.snipcart-add-item');
-    if (!btn) return;
+  // Function to run after the DOM is fully loaded
+  function initializePopover() {
+    const trigger = document.getElementById("popoverTrigger");
+    const content = document.getElementById("popoverContent");
+    
+    console.log("Trigger element:", trigger);
+    console.log("Content element:", content);
 
-    const id = btn.getAttribute('data-item-id')?.toString() || '';
-    btn.addEventListener('click', async () => {
-      console.log('Before toast');
-      if (id) {
-        await addToCart(id);
-      } else {
-        console.error('Product ID is undefined.');
-      }
-      console.log('After toast');
-    });
-  });
+    if (trigger && content) {
+      // Ensure popover is hidden initially
+      content.style.display = "none";
+
+      trigger.addEventListener("click", () => {
+        console.log("Button clicked");
+        // Don't stop propagation as it might interfere with snipcart
+        
+        // Clear any existing timeout
+        if (hideTimeout !== null) {
+          clearTimeout(hideTimeout);
+        }
+
+        // Show the popover
+        content.style.display = "block";
+        console.log("Popover shown, setting timeout");
+
+        // Set a new timeout to hide after 5 seconds
+        hideTimeout = setTimeout(() => {
+          console.log("Timeout triggered, hiding popover");
+          content.style.display = "none";
+        }, 5000);
+      });
+    }
+  }
+
+  // Run when the DOM is loaded
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializePopover);
+  } else {
+    initializePopover();
+  }
+
+  // Also run when Snipcart might be initialized
+  document.addEventListener('snipcart.ready', initializePopover);
 </script>
+
