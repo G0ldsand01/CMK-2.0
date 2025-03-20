@@ -51,3 +51,19 @@ const bestProducts = bestProductsActions.data;
         .scrollIntoView({ behavior: 'smooth' });
     });
 </script>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
+
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+</style>
