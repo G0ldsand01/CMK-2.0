@@ -136,8 +136,20 @@ import '@styles/snipcart.css';
 </main>
 
 <script>
+  declare global {
+    interface Window {
+      SnipcartSettings: {
+        publicApiKey: string;
+        loadStrategy: string;
+        version: string;
+        addProductBehavior: string;
+        modalStyle: string;
+      };
+    }
+  }
+
   window.SnipcartSettings = {
-    publicApiKey: process.env.PUBLIC_SNIPCART_API_KEY,
+    publicApiKey: process.env.PUBLIC_SNIPCART_API_KEY as string,
     loadStrategy: 'on-user-interaction',
     version: '3.7.1',
     addProductBehavior: 'none',
@@ -165,6 +177,7 @@ import '@styles/snipcart.css';
       const cartCounts = document.querySelectorAll('#cart-count'); // Prend en compte les deux compteurs
 
       function updateCartCount() {
+        // @ts-expect-error Snipcart is not defined in the global scope
         const itemCount = Snipcart.store.getState().cart.items.count;
         cartCounts.forEach((cartCount) => {
           cartCount.textContent = itemCount > 0 ? itemCount : '0';
@@ -175,6 +188,7 @@ import '@styles/snipcart.css';
       updateCartCount();
 
       // Mise à jour en temps réel lors d'ajouts/retraits du panier
+      // @ts-expect-error Snipcart is not defined in the global scope
       Snipcart.store.subscribe(updateCartCount);
     });
   });

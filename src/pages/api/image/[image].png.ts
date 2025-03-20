@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 export const GET: APIRoute = async ({ params }) => {
   const name = params.image;
@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ params }) => {
     'src',
     'assets',
     'images',
-    name + '.png'
+    `${name}.png`
   );
   const image = await readFile(imagePath);
   return new Response(image, {
