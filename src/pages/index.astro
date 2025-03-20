@@ -37,9 +37,9 @@ const bestProducts = bestProductsActions.data;
           bestProducts.map((product) => <ProductCard product={product} />)
       }
     </div>
-    <a href="products.html" class="button">
-      <button class="view-all-button">View All Products</button>
-    </a>
+    <button class="view-all-button" onclick="window.location.href='products'">
+      <a href="/products">View All Products</a>
+    </button>
   </div>
 </Layout>
 
@@ -53,3 +53,19 @@ const bestProducts = bestProductsActions.data;
         .scrollIntoView({ behavior: 'smooth' });
     });
 </script>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
+
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+</style>
