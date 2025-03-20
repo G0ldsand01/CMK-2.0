@@ -137,8 +137,7 @@ import '@styles/snipcart.css';
 
 <script>
   window.SnipcartSettings = {
-    publicApiKey:
-      '{PUBLIC_SNIPCART_KEY}',
+    publicApiKey: process.env.SNIPCART_PUBLIC_KEY,
     loadStrategy: 'on-user-interaction',
     version: '3.7.1',
     addProductBehavior: 'none',
