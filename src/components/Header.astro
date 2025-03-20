@@ -137,7 +137,7 @@ import '@styles/snipcart.css';
 
 <script>
   window.SnipcartSettings = {
-    publicApiKey: process.env.SNIPCART_PUBLIC_KEY,
+    publicApiKey: process.env.PUBLIC_SNIPCART_API_KEY,
     loadStrategy: 'on-user-interaction',
     version: '3.7.1',
     addProductBehavior: 'none',
@@ -185,7 +185,9 @@ import '@styles/snipcart.css';
     }
   }
 
-  document.getElementById('menu-toggle')?.addEventListener('click', menuToggleFunction);
+  document
+    .getElementById('menu-toggle')
+    ?.addEventListener('click', menuToggleFunction);
 </script>
 
 <style>
