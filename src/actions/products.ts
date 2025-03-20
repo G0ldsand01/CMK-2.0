@@ -1,4 +1,3 @@
-import { Product } from '@lloydjatkinson/astro-snipcart/astro';
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -10,6 +9,7 @@ export const products = {
   getBestProducts: defineAction({
     handler: async () => {
       const products = await db.collection('products').limit(8).get();
+      console.log(products.docs.map((doc) => doc.data()));
       return products.docs.map((doc) => doc.data());
     },
   }),
