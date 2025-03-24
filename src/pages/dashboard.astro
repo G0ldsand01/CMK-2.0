@@ -5,11 +5,11 @@ import { getFirestore } from 'firebase-admin/firestore';
 import '../styles/dashboard.css';
 // import {  Popover,  PopoverContent,  PopoverTrigger,} from "@components/ui/popover";
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { CircleUser, X } from 'lucide-react';
+import { CircleUser, X , Heart, ShoppingBag } from 'lucide-react';
 // import Chart from "../components/Chart.astro";
 import OrderChart from '../components/OrderChart.jsx';
 import { getStripeOrders } from '../lib/getStripeOrders.js';
-
+import Layout from '../layouts/Layout.astro';
 const stripeOrders = await getStripeOrders();
 
 const auth = getAuth(app);
@@ -44,15 +44,22 @@ const chartData = allOrders.map((order) => ({
   total: parseFloat(order.total),
 }));
 ---
-
+<Layout title="Products" navbar={true}>
 <DashboardLayout title="Dashboard">
+  <div class="chip-container">
+    <a href="/dashboard" class="chip active">Dashboard</a>
+    <a href="/orders" class="chip">My Orders</a>
+    <a href="/settings" class="chip">My Account Settings</a>
+    <a href="/logout" class="chip">Logout</a>
+</div>
   <div class="main-layout modern-design">
     <div class="sidebar">
       <nav>
         <ul>
           <li><a href="/dashboard" class="active">Dashboard</a></li>
-          <li><a href="orders">Orders</a></li>
-          <li><a href="/settings">Settings</a></li>
+          <li><a href="orders"> My Orders</a></li>
+          <li><a href="/settings">My Account Settings</a></li>
+          <li><a href="/logout">Logout</a></li>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
@@ -64,70 +71,244 @@ const chartData = allOrders.map((order) => ({
           <h1>Welcome Back, {user.displayName}</h1>
           <p>Here's your dashboard</p>
         </div>
-
-        <div class="profile-info">
-          <button id="popoverTrigger" class="animated-button">
-            <div class="profile-picture">
-              <CircleUser />
-            </div>
-            {user.displayName}
-          </button>
-          <div
-            id="popoverContent"
-            class="popover-content animated"
-            style="display: none;"
-          >
-            <div class="popover-header">
-              <h3>Profile</h3>
-              <button id="closePopover" class="close-button"><X /></button>
-            </div>
-            <div class="popover-body">
-              <p>Username: {user.displayName}</p>
-              <p>Email: {user.email}</p>
-              <p>Phone Number: {user.phoneNumber}</p>
-            </div>
-            <div class="popover-footer">
-              <button class="btn btn-primary">Edit Profile</button>
-              <form action="/api/auth/signout" method="post">
-                <button type="submit" class="btn btn-secondary">Logout</button>
-              </form>
-            </div>
-          </div>
-        </div>
       </div>
-
-      <div class="main">
-        <h2>Your Orders</h2>
-
-        <div class="chart-container">
-          <OrderChart data={chartData} client:only="react" />
+      <div class="menu">
+        <div class="nav-to-order">
+          <div class="icon">
+            <ShoppingBag />
+          </div>
+          <h2>Orders</h2>
+          <p2>
+            Check the history of all your orders & their status
+          </p2>
+          <a href="/orders">My Orders</a>
         </div>
-
-        <div class="filters">
-          <input type="text" id="searchInput" placeholder="Search orders..." />
-        </div>
-
-        <div class="orders">
-          <ul id="orderList">
-            {
-              allOrders.map((order) => (
-                <Fragment key={order.orderId}>
-                  <li>
-                    <h3>Order ID: {order.orderId}</h3>
-                    <p>Order Date: {order.orderDate}</p>
-                    <p>Order Status: {order.status}</p>
-                    <p>Total: ${order.total}</p>
-                  </li>
-                </Fragment>
-              ))
-            }
-          </ul>
+        <div class="my-whislist">
+          <div class="icon">
+          <Heart />
+          </div>
+          <h2>My Wishlist</h2>
+          <p2>
+            Add products to your wishlist
+          </p2>
+          <a href="/wishlist">My Wishlist</a>
         </div>
       </div>
     </div>
   </div>
 </DashboardLayout>
+</Layout>
+<style>
+  /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    height: 100vh;
+}
+.chip-container {
+  display: none;
+}
+/* Sidebar Styling */
+.sidebar {
+    margin-top: 5rem;
+    width: 250px;
+    background-color: #121212;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    padding: 15px 20px;
+}
+
+.sidebar nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar nav ul li a:hover,
+.sidebar nav ul li a.active {
+    color: #121212;
+    background-color: rgb(39, 174, 96);
+}
+
+/* Content Section */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styling */
+.head {
+    margin-top: 5em;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome-message {
+    flex: 1;
+}
+
+.welcome-message h1 {
+    color: #2C3E50;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.welcome-message p {
+    color: #7F8C8D;
+    font-size: 16px;
+}
+
+/* Return to Home Button */
+.return-to-home {
+    color: #ecf0f1;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    background-color: rgb(39, 174, 96);
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.return-to-home:hover {
+    background-color: #1abc9c;
+}
+
+/* Menu Section */
+.menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5rem;
+    width: 50%;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #121212;
+    color: #fff;
+    margin: auto;
+}
+
+.nav-to-order, .my-whislist {
+    flex: 1 1 45%;
+    text-align: center;
+    border: #121212 2px solid;
+    border-radius: 16px;
+    margin: 10px;
+    padding: 10px;
+}
+.nav-to-order h2, .my-whislist h2 {
+    color: #2C3E50;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.nav-to-order a, .my-whislist a {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    border : #2C3E50 2px solid;
+    width: 10rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #1abc7e83;
+}
+
+.nav-to-order a:hover, .my-whislist a:hover {
+    background-color: #1abc9c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .chip-container {
+      margin-top: 6rem;
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .chip {
+        background-color: rgb(39, 174, 96);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+        flex: 1 1 40%;
+        text-align: center;
+    }
+
+    .chip:hover {
+        background-color: #1abc9c;
+    }
+}
+
+@media (max-width: 480px) {
+    .chip {
+        flex: 1 1 100%;
+    }
+    .nav-to-order, .my-whislist {
+        flex: 1 1 100%;
+    }
+}
+</style>
 <script>
   // JavaScript to toggle popover visibility
   const popoverTrigger = document.getElementById('popoverTrigger');
