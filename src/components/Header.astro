@@ -8,6 +8,9 @@ import '@styles/snipcart.css';
 import { getSecret } from 'astro:env/server';
 
 const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
+import { getSession } from 'auth-astro/server';
+
+const session = await getSession(Astro.request)
 ---
 
 <head>
@@ -77,7 +80,7 @@ const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
       width="40"
       height="40"
     />
-    <button id="logout-btn">Logout</button>
+    <button id="logout">Logout</button>
   </div>
   <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
     <svg
@@ -159,6 +162,8 @@ const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
   document
     .getElementById('menu-toggle')
     ?.addEventListener('click', menuToggleFunction);
+    const { signOut } = await import("auth-astro/client")
+    document.querySelector("#logout").onclick = () => signOut()
 </script>
 
 <style>
