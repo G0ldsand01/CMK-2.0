@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import '@/styles/product-card.css';
-import type { Product } from 'astro:db';
+import type { productsTable } from '@/db/schema';
 
 interface Props {
-  product: typeof Product.$inferSelect;
+  product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -22,8 +22,8 @@ const { product } = Astro.props;
   <div class="product-info">
     <h3>{product.name}</h3>
     <p>{product.description}</p>
-    <div class="product-price">${product.price.toFixed(2)}</div>
-    <a href={'/product/' + product.id} class="button">
+    <div class="product-price">${Number(product.price).toFixed(2)}</div>
+    <a href={'/product/' + product.id} class="button" data-astro-prefetch>
       <button class="product-link-button">View Details</button>
     </a>
   </div>

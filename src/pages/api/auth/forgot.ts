@@ -1,4 +1,3 @@
-import { app } from '../../../firebase/server';
 import { getAuth } from 'firebase-admin/auth';
 
 export async function onRequest(req: Request): Promise<Response> {

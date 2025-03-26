@@ -31,6 +31,34 @@ const { title, navbar } = Astro.props;
     <slot />
   </body>
 </html>
+<script>
+  declare global {
+    interface Window {
+      SnipcartSettings: {
+        publicApiKey: string;
+        loadStrategy: string;
+        version: string;
+        addProductBehavior: string;
+        modalStyle: string;
+      };
+    }
+  }
+
+  window.SnipcartSettings = {
+    publicApiKey: import.meta.env.PUBLIC_SNIPCART_API_KEY,
+    loadStrategy: 'on-user-interaction',
+    version: '3.7.1',
+    addProductBehavior: 'none',
+    modalStyle: 'side',
+  };
+
+  (function () {
+    let script = document.createElement('script');
+    script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
+    script.async = true;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  })();
+</script>
 
 <script is:inline>
   const closeMenu = document.querySelector('.close-menu');

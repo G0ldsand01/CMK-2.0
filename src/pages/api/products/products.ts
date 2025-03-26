@@ -1,11 +1,9 @@
-import { app } from '@/firebase/server';
 import type { APIRoute } from 'astro';
-import { getFirestore } from 'firebase-admin/firestore';
-
-const db = getFirestore(app);
+import db from '@/lib/db';
+import { productsTable } from '@/db/schema';
 
 export const GET: APIRoute = async ({ redirect, cookies }) => {
-  let product = await db.collection('products').get();
+  let product = await db.query.productsTable.findMany();
 
   if (!product) {
     return new Response(JSON.stringify({ error: 'No product found' }), {
@@ -13,7 +11,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
     });
   }
 
-  if (product.empty) {
+  if (product.length < 1) {
     const seeding = [
       {
         id: 1,
@@ -97,14 +95,13 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         reviews: 150,
       },
     ];
-    for (const product of seeding) {
-      await db.collection('products').add(product);
-    }
 
-    product = await db.collection('products').get();
+    await db.insert(productsTable).values(seeding);
+
+    product = await db.query.productsTable.findMany();
   }
 
-  return new Response(JSON.stringify(product.docs.map((doc) => doc.data())), {
+  return new Response(JSON.stringify(product), {
     status: 200,
   });
 };

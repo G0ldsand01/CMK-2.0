@@ -1,7 +1,13 @@
 ---
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
-import { CartCheckout } from '@lloydjatkinson/astro-snipcart/astro';
+import {
+  CartCheckout,
+  CartItemsCount,
+} from '@lloydjatkinson/astro-snipcart/astro';
 import '@styles/snipcart.css';
+import { getSecret } from 'astro:env/server';
+
+const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
 ---
 
 <head>
@@ -15,10 +21,10 @@ import '@styles/snipcart.css';
   </div>
   <nav>
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/products">Products</a></li>
-      <li><a href="/about">About Us</a></li>
-      <li><a href="/contact">Contact Us</a></li>
+      <li><a href="/" data-astro-prefetch>Home</a></li>
+      <li><a href="/products" data-astro-prefetch>Products</a></li>
+      <li><a href="/about" data-astro-prefetch>About Us</a></li>
+      <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
     </ul>
   </nav>
   <!-- Auth Buttons or Profile Section -->
@@ -57,7 +63,7 @@ import '@styles/snipcart.css';
       <span
         id="cart-count"
         style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-        >0</span
+        ><CartItemsCount /></span
       >
     </button>
   </div>
@@ -106,12 +112,12 @@ import '@styles/snipcart.css';
       </svg>
     </button>
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/products">Products</a></li>
-      <li><a href="/about">About Us</a></li>
-      <li><a href="/contact">Contact Us</a></li>
-      <li><a href="/login">Login</a></li>
-      <li><a href="/register">Register</a></li>
+      <li><a href="/" data-astro-prefetch>Home</a></li>
+      <li><a href="/products" data-astro-prefetch>Products</a></li>
+      <li><a href="/about" data-astro-prefetch>About Us</a></li>
+      <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
+      <li><a href="/login" data-astro-prefetch>Login</a></li>
+      <li><a href="/register" data-astro-prefetch>Register</a></li>
       <li>
         <CartCheckout>
           <button
@@ -134,35 +140,6 @@ import '@styles/snipcart.css';
 <main>
   <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
 </main>
-
-<script>
-  declare global {
-    interface Window {
-      SnipcartSettings: {
-        publicApiKey: string;
-        loadStrategy: string;
-        version: string;
-        addProductBehavior: string;
-        modalStyle: string;
-      };
-    }
-  }
-
-  window.SnipcartSettings = {
-    publicApiKey: process.env.PUBLIC_SNIPCART_API_KEY as string,
-    loadStrategy: 'on-user-interaction',
-    version: '3.7.1',
-    addProductBehavior: 'none',
-    modalStyle: 'side',
-  };
-
-  (function () {
-    let script = document.createElement('script');
-    script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
-    script.async = true;
-    document.getElementsByTagName('head')[0].appendChild(script);
-  })();
-</script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.querySelector('.snipcart-add-item');
@@ -172,26 +149,6 @@ import '@styles/snipcart.css';
     btn.addEventListener('click', () => addToCart(id));
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
-    document.addEventListener('snipcart.ready', () => {
-      const cartCounts = document.querySelectorAll('#cart-count'); // Prend en compte les deux compteurs
-
-      function updateCartCount() {
-        // @ts-expect-error Snipcart is not defined in the global scope
-        const itemCount = Snipcart.store.getState().cart.items.count;
-        cartCounts.forEach((cartCount) => {
-          cartCount.textContent = itemCount > 0 ? itemCount : '0';
-        });
-      }
-
-      // Mise à jour initiale
-      updateCartCount();
-
-      // Mise à jour en temps réel lors d'ajouts/retraits du panier
-      // @ts-expect-error Snipcart is not defined in the global scope
-      Snipcart.store.subscribe(updateCartCount);
-    });
-  });
   function menuToggleFunction() {
     const overlayNav = document.querySelector('.overlay-nav');
     if (overlayNav) {
