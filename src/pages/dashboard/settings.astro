@@ -1,12 +1,12 @@
 ---
-import "@styles/dashboard.css";
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { getSession } from "auth-astro/server";
-import { Auth, SignOut } from "auth-astro/components";
+import '@styles/dashboard.css';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getSession } from 'auth-astro/server';
+import { Auth, SignOut } from 'auth-astro/components';
 const session = await getSession(Astro.request);
 
 if (!session || !session.user) {
-  return Astro.redirect("/login");
+  return Astro.redirect('/login');
 }
 ---
 
@@ -32,12 +32,11 @@ if (!session || !session.user) {
           <li>
             <a href="/dashboard/settings" class="active">My Account Settings</a>
           </li>
-            <a class="logout">
-              <Auth>
-                <SignOut>Logout</SignOut>
-              </Auth>
-            </a>
-          
+          <a class="logout">
+            <Auth>
+              <SignOut>Logout</SignOut>
+            </Auth>
+          </a>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
@@ -73,7 +72,7 @@ if (!session || !session.user) {
                     name="fistName"
                     class="inputs"
                     id="fistName"
-                    value={session.user.name}
+                    value={session.user.firstName}
                     required
                   />
                   <p2>Last Name</p2>
@@ -82,7 +81,7 @@ if (!session || !session.user) {
                     name="lastName"
                     class="inputs"
                     id="lastName"
-                    value={session.user.name}
+                    value={session.user.lastName}
                     required
                   />
                   <p2>Phone</p2>
@@ -91,7 +90,7 @@ if (!session || !session.user) {
                     name="phone"
                     class="inputs"
                     id="phone"
-                    value={session.user.name}
+                    value={session.user.phone}
                     required
                   />
                   <p2>Address</p2>
@@ -100,7 +99,7 @@ if (!session || !session.user) {
                     name="address"
                     class="inputs"
                     id="address"
-                    value={session.user.name}
+                    value={session.user.address}
                     required
                   />
                   <p2>City</p2>
@@ -109,7 +108,7 @@ if (!session || !session.user) {
                     name="city"
                     class="inputs"
                     id="city"
-                    value={session.user.name}
+                    value={session.user.city}
                     required
                   />
                   <p2>State</p2>
@@ -118,7 +117,7 @@ if (!session || !session.user) {
                     name="state"
                     class="inputs"
                     id="state"
-                    value={session.user.name}
+                    value={session.user.state}
                     required
                   />
                   <p2>Zip</p2>
@@ -127,7 +126,7 @@ if (!session || !session.user) {
                     name="zip"
                     class="inputs"
                     id="zip"
-                    value={session.user.name}
+                    value={session.user.zip}
                     required
                   />
                   <p2>Country</p2>
@@ -136,7 +135,7 @@ if (!session || !session.user) {
                     name="country"
                     class="inputs"
                     id="country"
-                    value={session.user.name}
+                    value={session.user.country}
                     required
                   />
                   <p2>Email</p2>
@@ -156,10 +155,11 @@ if (!session || !session.user) {
         </div>
       </div>
       <style>
-        html, body{
+        html,
+        body {
           height: 100%;
         }
-        .logout{
+        .logout {
           text-decoration: none;
           color: white;
           font-size: 1.5rem;
@@ -181,7 +181,7 @@ if (!session || !session.user) {
 
         /* Body */
         body {
-          font-family: "Roboto", sans-serif;
+          font-family: 'Roboto', sans-serif;
           background-color: #f4f4f4;
           display: flex;
           min-height: 100vh;
@@ -389,24 +389,24 @@ if (!session || !session.user) {
       </style>
       <script>
         // JavaScript to toggle popover visibility
-        const popoverTrigger = document.getElementById("popoverTrigger");
-        const popoverContent = document.getElementById("popoverContent");
-        const closePopover = document.getElementById("closePopover");
+        const popoverTrigger = document.getElementById('popoverTrigger');
+        const popoverContent = document.getElementById('popoverContent');
+        const closePopover = document.getElementById('closePopover');
 
         if (popoverTrigger) {
-          popoverTrigger.addEventListener("click", () => {
+          popoverTrigger.addEventListener('click', () => {
             if (popoverContent) {
               popoverContent.style.display =
-                popoverContent.style.display === "none" ? "block" : "none";
+                popoverContent.style.display === 'none' ? 'block' : 'none';
               handlePopoverPosition();
             }
           });
         }
 
         if (closePopover) {
-          closePopover.addEventListener("click", () => {
+          closePopover.addEventListener('click', () => {
             if (popoverContent) {
-              popoverContent.style.display = "none";
+              popoverContent.style.display = 'none';
             }
           });
         }
@@ -419,11 +419,11 @@ if (!session || !session.user) {
           const viewportWidth = window.innerWidth;
           const viewportHeight = window.innerHeight;
 
-          let positionClass = "bottom-edge"; // Default position
+          let positionClass = 'bottom-edge'; // Default position
 
           // Check if the popover would go out of the right edge
           if (triggerRect.right + popoverRect.width > viewportWidth) {
-            positionClass = "right-edge";
+            positionClass = 'right-edge';
             popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
           } else {
             popoverContent.style.left = `${triggerRect.left}px`;
@@ -431,7 +431,7 @@ if (!session || !session.user) {
 
           // Check if the popover would go out of the bottom edge
           if (triggerRect.bottom + popoverRect.height > viewportHeight) {
-            positionClass = "top-edge";
+            positionClass = 'top-edge';
             popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
           } else {
             popoverContent.style.top = `${triggerRect.bottom}px`;

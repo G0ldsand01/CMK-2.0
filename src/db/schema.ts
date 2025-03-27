@@ -36,6 +36,16 @@ export const usersTable = pgTable('user', {
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
+
+  // Custom
+  firstName: text('firstName'),
+  lastName: text('lastName'),
+  phone: text('phone'),
+  address: text('address'),
+  city: text('city'),
+  state: text('state'),
+  zip: text('zip'),
+  country: text('country'),
 });
 
 // One to many relationship between users and accounts
