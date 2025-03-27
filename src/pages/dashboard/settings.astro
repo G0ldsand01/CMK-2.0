@@ -1,13 +1,11 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getSession } from 'auth-astro/server';
-import { Auth, SignOut } from 'auth-astro/components';
 const session = await getSession(Astro.request);
 
 if (!session || !session.user) {
   return Astro.redirect('/login');
 }
-console.log(session.user);
 ---
 
 <DashboardLayout title="Dashboard" activeId="settings">
