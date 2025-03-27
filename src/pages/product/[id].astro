@@ -1,10 +1,10 @@
 ---
-import { Image } from "astro:assets";
-import { products as productsActions } from "../../actions/products";
-import Layout from "../../layouts/Layout.astro";
-import Header from "../../components/Header.astro";
-import "../../styles/product.css";
-import { Toaster } from "sonner"; // Correct import
+import { Image } from 'astro:assets';
+import { products as productsActions } from '../../actions/products';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import '../../styles/product.css';
+import { Toaster } from 'sonner'; // Correct import
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
   id: Number(id),
@@ -17,7 +17,7 @@ const product = productActions.data;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
-<Layout title={product ? "Viewing: " + product.name : "Product"}>
+<Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
   <Header />
   {
     product ? (
@@ -25,7 +25,7 @@ const product = productActions.data;
         <div class="product">
           <div class="product-info">
             <Image
-              src={"/api/image/" + product.image + ".png"}
+              src={'/api/image/' + product.image + '.png'}
               alt={product.name}
               width={400}
               height={400}
@@ -34,7 +34,7 @@ const product = productActions.data;
             <p>{product.description}</p>
             <div class="product-rating">
               <span class="product-rating-stars">
-                {"★".repeat(Math.floor(product.rating))}{" "}
+                {'★'.repeat(Math.floor(product.rating))}{' '}
               </span>
               <span class="product-rating-count">
                 ({product.reviews} reviews)
@@ -43,7 +43,7 @@ const product = productActions.data;
             <div class="product-price">
               <span class="product-price-currency">$</span>
               <span class="product-price-amount">
-                {product.price.toFixed(2) || "0.00"}
+                {product.price.toFixed(2) || '0.00'}
               </span>
             </div>
 
@@ -52,7 +52,7 @@ const product = productActions.data;
                 class="snipcart-add-item button"
                 id="popoverTrigger"
                 data-item-id={product.id}
-                data-item-price={product.price.toFixed(2) || "0.00"}
+                data-item-price={product.price.toFixed(2) || '0.00'}
                 data-item-description={product.description}
                 data-item-image={product.image}
                 data-item-name={product.name}
@@ -70,7 +70,7 @@ const product = productActions.data;
             <button
               class="snipcart-add-item snipcart-checkout"
               data-item-id={product.id}
-              data-item-price={product.price.toFixed(2) || "0.00"}
+              data-item-price={product.price.toFixed(2) || '0.00'}
               data-item-description={product.description}
               data-item-image={product.image}
               data-item-name={product.name}
@@ -124,19 +124,19 @@ const product = productActions.data;
     background-color: rgba(0, 0, 0, 0.5);
     /* add rounded corners */
     border-radius: 10px;
-    width: max-content; 
+    width: max-content;
     z-index: 1000;
     display: none;
   }
 
   .popover-content p {
     margin: 0;
-    color : #292929;
+    color: #292929;
     font-size: 1rem;
   }
 
   .popover-content::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 100%;
     left: 50%;
@@ -153,41 +153,40 @@ const product = productActions.data;
 
   // Function to run after the DOM is fully loaded
   function initializePopover() {
-    const trigger = document.getElementById("popoverTrigger");
-    const content = document.getElementById("popoverContent");
-    
-    console.log("Trigger element:", trigger);
-    console.log("Content element:", content);
+    const trigger = document.getElementById('popoverTrigger');
+    const content = document.getElementById('popoverContent');
+
+    console.log('Trigger element:', trigger);
+    console.log('Content element:', content);
 
     if (trigger && content) {
       // Ensure popover is hidden initially
-      content.style.display = "none";
+      content.style.display = 'none';
 
-      trigger.addEventListener("click", () => {
-        console.log("Button clicked");
+      trigger.addEventListener('click', () => {
+        console.log('Button clicked');
         // Don't stop propagation as it might interfere with snipcart
-        
+
         // Clear any existing timeout
         if (hideTimeout !== null) {
           clearTimeout(hideTimeout);
         }
 
         // Show the popover
-        content.style.display = "block";
-        console.log("Popover shown, setting timeout");
-
+        content.style.display = 'block';
+        console.log('Popover shown, setting timeout');
         // Set a new timeout to hide after 5 seconds
-        hideTimeout = setTimeout(() => {
-          console.log("Timeout triggered, hiding popover");
-          content.style.display = "none";
+        hideTimeout = window.setTimeout(() => {
+          console.log('Timeout triggered, hiding popover');
+          content.style.display = 'none';
         }, 5000);
       });
     }
   }
 
   // Run when the DOM is loaded
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializePopover);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePopover);
   } else {
     initializePopover();
   }
@@ -195,4 +194,3 @@ const product = productActions.data;
   // Also run when Snipcart might be initialized
   document.addEventListener('snipcart.ready', initializePopover);
 </script>
-
