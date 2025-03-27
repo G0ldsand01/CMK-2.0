@@ -1,5 +1,4 @@
 ---
-import "@styles/dashboard.css";
 import DashboardLayout from "@/layouts/DashboardLayout.astro";
 import { getSession } from "auth-astro/server";
 import { Auth, SignOut } from "auth-astro/components";
@@ -32,360 +31,424 @@ if (!session || !session.user) {
           <li>
             <a href="/dashboard/settings" class="active">My Account Settings</a>
           </li>
-            <a class="logout">
-              <Auth>
-                <SignOut>Logout</SignOut>
-              </Auth>
-            </a>
-          
+          <li><a>
+            <Auth>
+              <SignOut class="logout-text">Logout</SignOut>
+            </Auth>
+          </a></li>
         </ul>
-        <a class="return-to-home" href="/">Return to Home</a>
       </nav>
+      <div>
+        
+      </div>
+      <a class="return-to-home" href="/">Return to Home</a>
     </div>
 
     <div class="content">
       <div class="head">
         <div class="welcome-message">
-          <h1>Welcome Back, {session.user.name}</h1>
-          <p>Here's your dashboard</p>
+          <h1>Settings</h1>
+            <p>Manage your account settings</p>
         </div>
       </div>
       <div class="settings">
         <div class="settings-list">
           <div class="settings-list-header">
-            <h2>Settings</h2>
-            <p2>Manage your account settings</p2>
+            
             <div class="settings-list-body">
-              <form action="/update-settings" method="POST">
-                <div class="settings-list-body-item">
-                  <p2>Display Name</p2>
-                  <input
-                    type="text"
-                    name="displayName"
-                    class="inputs"
-                    id="displayName"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>First Name</p2>
-                  <input
-                    type="text"
-                    name="fistName"
-                    class="inputs"
-                    id="fistName"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Last Name</p2>
-                  <input
-                    type="text"
-                    name="lastName"
-                    class="inputs"
-                    id="lastName"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Phone</p2>
-                  <input
-                    type="tel"
-                    name="phone"
-                    class="inputs"
-                    id="phone"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Address</p2>
-                  <input
-                    type="text"
-                    name="address"
-                    class="inputs"
-                    id="address"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>City</p2>
-                  <input
-                    type="text"
-                    name="city"
-                    class="inputs"
-                    id="city"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>State</p2>
-                  <input
-                    type="text"
-                    name="state"
-                    class="inputs"
-                    id="state"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Zip</p2>
-                  <input
-                    type="text"
-                    name="zip"
-                    class="inputs"
-                    id="zip"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Country</p2>
-                  <input
-                    type="text"
-                    name="country"
-                    class="inputs"
-                    id="country"
-                    value={session.user.name}
-                    required
-                  />
-                  <p2>Email</p2>
-                  <input
-                    type="email"
-                    name="email"
-                    class="inputs"
-                    id="email"
-                    value={session.user.email}
-                    required
-                  />
-                  <button type="submit">Save</button>
+              <form>
+                <div class="form-group full-width">
+                  <label for="displayName">Display Name</label>
+                  <input type="text" id="displayName" class="inputs">
                 </div>
+              
+                <div class="form-group">
+                  <div class="input-container">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" class="inputs">
+                  </div>
+                  <div class="input-container">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" class="inputs">
+                  </div>
+                  <div class="input-container">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" class="inputs">
+                  </div>
+                </div>
+              
+                <div class="form-group full-width">
+                  <label for="address">Address</label>
+                  <input type="text" id="address" class="inputs">
+                </div>
+              
+                <div class="form-group">
+                  <div class="input-container">
+                    <label for="city">City</label>
+                    <input type="text" id="city" class="inputs">
+                  </div>
+                  <div class="input-container">
+                    <label for="state">State</label>
+                    <input type="text" id="state" class="inputs">
+                  </div>
+                </div>
+              
+                <div class="form-group">
+                  <div class="input-container">
+                    <label for="zip">Zip</label>
+                    <input type="text" id="zip" class="inputs">
+                  </div>
+                  <div class="input-container">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" class="inputs">
+                  </div>
+                </div>
+              
+                <div class="form-group full-width">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="inputs">
+                </div>
+              
+                <button type="submit">Save</button>
               </form>
+              
             </div>
           </div>
         </div>
       </div>
       <style>
-        html, body{
-          height: 100%;
-        }
-        .logout{
-          text-decoration: none;
-          color: white;
-          font-size: 1.5rem;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          background-color: transparent;
-        }
-        a {
-          text-decoration: none;
-          color: white;
-          background-color: transparent;
-        }
-        /* General Reset */
         * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
+  
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+        /* General Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      /* Body */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #0f0f0f;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      
+      /* Main Layout */
+      .main-layout {
+        display: flex;
+        height: 100vh;
+      }
+      
+      .chip-container {
+        display: none;
+      }
+      
+      /* Sidebar Styling */
+      .sidebar {
+        margin-top: 5rem;
+        width: 250px;
+        background-color: #121212;
+        padding: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        height: 93.5%;
+      }
+      
+      .sidebar nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      
+      .sidebar nav ul li {
+        padding: 15px 20px;
+      }
+      
+      .sidebar nav ul li a {
+        color: #ecf0f1;
+        text-decoration: none;
+        font-size: 18px;
+        display: block;
+        padding: 1rem;
+        border-radius: 25px;
+        transition: all 0.3s ease-in-out;
+      }
+      
+      .sidebar nav ul li a:hover,
+      .sidebar nav ul li a.active {
+        color: #121212;
+        background-color: rgb(39, 174, 96);
+      }
+      
+      /* Content Section */
+      .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Header Styling */
+      .head {
+        margin-top: 10rem;
+        width: 50%;
+        background-color: hsla(0, 0%, 20%, 0.274);
+        padding: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 2rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .welcome-message h1 {
+        color: #27ae60;
+        font-size: 28px;
+      }
+      
+      .welcome-message p {
+        color: #000000;
+        font-size: 16px;
+      }
+      
+      /* Return to Home Button */
+      .return-to-home {
+        color: #ecf0f1;
+        font-size: 16px;
+        text-decoration: none;
+        display: block;
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        padding: 10px;
+        background-color: #27ae60;
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+      }
+      
+      .return-to-home:hover {
+        background-color: #20c464;
+      }
+      
+      /* Menu Section */
+      .menu {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5rem;
+        width: 50%;
+        flex-wrap: wrap;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #121212;
+        color: #fff;
+        margin: auto;
+      }
+      form {
+        margin-top: 3rem;
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    max-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-        /* Body */
-        body {
-          font-family: "Roboto", sans-serif;
-          background-color: #f4f4f4;
-          display: flex;
-          min-height: 100vh;
-          flex-direction: column;
-        }
+  .form-group label {
+    flex: 1 1 100%;
+  }
 
-        /* Main Layout */
-        .main-layout {
-          display: flex;
-          height: 100vh;
-        }
+  .form-group .input-container {
+    flex: 1;
+    min-width: 150px;
+  }
 
-        /* Sidebar Styling */
+  .full-width {
+    flex: 1 1 100%;
+  }
+
+  @media (max-width: 600px) {
+    .form-group {
+      flex-direction: column;
+    }
+  }
+  .settings-list-body-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .names, .adresse {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .full-width {
+    grid-column: span 2;
+  }
+
+@media (max-width: 768px) {
+  .content {
+    padding: 20px;
+    text-align: center;
+  }
+
+  .head {
+    width: 100%;
+    padding: 20px;
+    border-radius: 1rem;
+  }
+
+  form {
+    max-width: 100%; /* Full width on mobile */
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+  @media (max-width: 768px) {
+    .names, .adresse {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  label {
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .inputs {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #27ae60;
+    border-radius: 8px;
+    background-color: #121212;
+    color: #ecf0f1;
+    outline: none;
+    transition: border 0.3s ease-in-out;
+  }
+
+  .inputs:focus {
+    border-color: #20c464;
+    box-shadow: 0 0 8px rgba(39, 174, 96, 0.7);
+  }
+
+  button[type="submit"] {
+    margin-top: 1.5rem;
+    background-color: #27ae60;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    width: 100%;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #20c464;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
+  
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
         .sidebar {
-          margin-top: 5rem;
-          width: 250px;
-          background-color: #121212;
-          padding: 20px;
-          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-          height: 150vh;
-        }
-
-        .sidebar nav ul {
-          list-style-type: none;
-          padding: 0;
-        }
-
-        .sidebar nav ul li {
-          padding: 15px 20px;
-        }
-
-        .sidebar nav ul li a {
-          color: #ecf0f1;
-          text-decoration: none;
-          font-size: 18px;
-          display: block;
-          padding: 1rem;
-          border-radius: 25px;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .sidebar nav ul li a:hover,
-        .sidebar nav ul li a.active {
-          color: #121212;
-          background-color: rgb(39, 174, 96);
-        }
-
-        /* Content Section */
-        .content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          padding: 20px;
-        }
-
-        /* Header Styling */
-        .head {
-          margin-top: 5em;
-          width: 100%;
-          background-color: #fff;
-          padding: 20px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .welcome-message {
-          flex: 1;
-        }
-
-        .welcome-message h1 {
-          color: #2c3e50;
-          font-size: 24px;
-          margin-bottom: 5px;
-        }
-
-        .welcome-message p {
-          color: #7f8c8d;
-          font-size: 16px;
-        }
-
-        /* Settings Section */
-        .settings {
-          background-color: #fff;
-          padding: 20px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          border-radius: 8px;
-          margin-top: 30px;
-        }
-
-        .settings h2 {
-          color: #2c3e50;
-          font-size: 26px;
-          margin-bottom: 15px;
-        }
-
-        .settings p2 {
-          color: #7f8c8d;
-          font-size: 16px;
-          margin-bottom: 20px;
-        }
-
-        .settings-list-body {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-
-        .settings-list-body-item .labels {
-          font-size: 14px;
-          color: #2c3e50;
-          margin-bottom: 5px;
-          display: block;
-        }
-
-        .settings-list-body-item .inputs {
-          width: 100%;
-          padding: 12px;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          font-size: 16px;
-          margin-bottom: 15px;
-          transition: border-color 0.3s ease;
-        }
-
-        .settings-list-body-item input:focus {
-          border-color: rgb(39, 174, 96);
-        }
-
-        /* Button Styling */
-        button {
-          background-color: rgb(39, 174, 96);
-          color: #fff;
-          padding: 12px 20px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          transition: background-color 0.3s ease;
-          width: 100%;
-          margin-top: 20px;
-        }
-
-        button:hover {
-          background-color: #1abc9c;
-        }
-        .chip-container {
           display: none;
         }
-        .sidebar .return-to-home a {
-          position: relative;
-          bottom: 2rem;
-
-          margin-top: 1rem;
+      .head {
+        width: 100%;
+        padding: 20px;
+        border-radius: 1rem;
+        margin-top: 2rem;
+      }
+        .chip-container {
+          margin-top: 6rem;
           display: flex;
+          gap: 10px;
+          padding: 10px;
           justify-content: center;
-          align-items: center;
-          gap: 1rem;
+          flex-wrap: wrap;
         }
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .sidebar {
-            display: none;
-          }
-
-          .chip-container {
-            margin-top: 6rem;
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-          }
-
-          .chip {
-            background-color: rgb(39, 174, 96);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-size: 16px;
-            transition: all 0.3s ease-in-out;
-            flex: 1 1 40%;
-            text-align: center;
-          }
-
-          .chip:hover {
-            background-color: #1abc9c;
-          }
+      
+        .chip {
+          background-color: rgb(39, 174, 96);
+          color: #fff;
+          padding: 8px 16px;
+          border-radius: 25px;
+          text-decoration: none;
+          font-size: 16px;
+          transition: all 0.3s ease-in-out;
+          flex: 1 1 40%;
+          text-align: center;
         }
-
-        @media (max-width: 480px) {
-          .chip {
-            flex: 1 1 100%;
-          }
-          .nav-to-order,
-          .my-whishlist {
-            flex: 1 1 100%;
-          }
-          .settings-list-body {
-            grid-template-columns: 1fr;
-          }
+      
+        .chip:hover {
+          background-color: #1abc9c;
         }
+      }
+      
+      @media (max-width: 480px) {
+        .chip {
+          flex: 1 1 100%;
+        }
+      
+        .nav-to-order,
+        .my-whishlist {
+          flex: 1 1 100%;
+        }
+      }
       </style>
       <script>
         // JavaScript to toggle popover visibility

@@ -21,7 +21,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 1rem;
     line-height: 1.5;
-    color: #E7DCDC;
+    color: #27ae60;
     background-color: #121212;
 }
 
@@ -158,7 +158,7 @@ font-style: normal;
 }
 .view-all-button{
     padding: 0.75rem 1.5rem;
-    background-color: #E7DCDC;
+    background-color: #27ae60;
     color: #292929;
     border: none;
     border-radius: 0.5rem;
@@ -169,8 +169,8 @@ font-style: normal;
 }
 .view-all-button:hover {
     background-color: #292929;
-    color: #E7DCDC;
-    border: solid 2px #E7DCDC;
+    color: #27ae60;
+    border: solid 2px #27ae60;
 }
 .view-all-button button a{
     text-decoration: none;
@@ -178,7 +178,7 @@ font-style: normal;
 }
 .view-all-button button:hover{
     text-decoration: none;
-    color: #E7DCDC;
+    color: #27ae60;
 }
 @media screen and (max-width: 768px) {
     #home {
