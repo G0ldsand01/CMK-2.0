@@ -1,13 +1,19 @@
 ---
-import Layout from "./Layout.astro";
+import Layout from './Layout.astro';
+import { getSession } from 'auth-astro/server';
 interface Props {
-	title: string;
+  title: string;
 }
 
-const { title } = Astro.props
+const { title } = Astro.props;
+const session = await getSession(Astro.request);
+
+if (!session) {
+  return Astro.redirect('/login');
+}
 ---
 
 <Layout title={title} navbar={false}>
-    <!--- Sidebar --->
-	<slot />
+  <!--- Sidebar --->
+  <slot />
 </Layout>
