@@ -1,15 +1,15 @@
 ---
-import '@styles/login.css';
-import { SignIn } from 'auth-astro/components';
-import Discord from '@assets/discord.svg';
-import Github from '@assets/githubicon.svg';
-import { Image } from 'astro:assets';
-import { getSession } from 'auth-astro/server';
+import "@styles/login.css";
+import { SignIn } from "auth-astro/components";
+import Discord from "https://raw.githubusercontent.com/G0ldsand01/CMK-2.0/refs/heads/master/src/assets/discord.svg";
+import Github from "https://raw.githubusercontent.com/G0ldsand01/CMK-2.0/refs/heads/master/src/assets/githubicon.svghttps://raw.githubusercontent.com/G0ldsand01/CMK-2.0/refs/heads/master/src/assets/githubicon.svg";
+import { Image } from "astro:assets";
+import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
 
 if (session) {
-  return Astro.redirect('/dashboard');
+  return Astro.redirect("/dashboard");
 }
 ---
 
@@ -25,14 +25,14 @@ if (session) {
 
   <div>
     <SignIn provider="github">
-      {' '}
+      {" "}
       <Image src={Github} alt="Github" width={128} height={128} class="icon" />
       Login with Github
     </SignIn>
     <SignIn provider="discord">
       <Image
         src={Discord}
-        alt={'Discord'}
+        alt={"Discord"}
         width={64}
         height={64}
         class="icon"
@@ -48,10 +48,10 @@ if (session) {
       <button type="submit">Signin with Email</button>
     </form>
   </div>
-  <p> <a href="/"> Back to Home</a></p>
+  <p><a href="/"> Back to Home</a></p>
 </div>
 
 <script type="module">
-  import { signIn } from 'auth-astro/components';
-  document.querySelector('#login').onclick = () => signIn('github');
+  import { signIn } from "auth-astro/components";
+  document.querySelector("#login").onclick = () => signIn("github");
 </script>
