@@ -98,7 +98,10 @@ export const user = {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
-          throw new ActionError({ code: 'UNAUTHORIZED' });
+          throw new ActionError({
+            code: 'UNAUTHORIZED',
+            message: 'User must be logged in.',
+          });
         }
 
         const contextUserId = session.user.id;
@@ -108,7 +111,10 @@ export const user = {
             attemptedUserId: input.userId,
             ip: context.request.headers.get('x-forwarded-for'),
           });
-          throw new ActionError({ code: 'UNAUTHORIZED' });
+          throw new ActionError({
+            code: 'UNAUTHORIZED',
+            message: 'Invalid user.',
+          });
         }
 
         const {
