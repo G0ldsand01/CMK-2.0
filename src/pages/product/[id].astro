@@ -12,11 +12,6 @@ const productActions = await Astro.callAction(productsActions.getProductById, {
 const product = productActions.data;
 ---
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
-
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
   <Header />
   {

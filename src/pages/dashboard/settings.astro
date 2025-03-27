@@ -5,7 +5,7 @@ import { Auth, SignOut } from "auth-astro/components";
 const session = await getSession(Astro.request);
 
 if (!session || !session.user) {
-  return Astro.redirect("/login");
+  return Astro.redirect('/login');
 }
 ---
 
@@ -452,24 +452,24 @@ html, body {
       </style>
       <script>
         // JavaScript to toggle popover visibility
-        const popoverTrigger = document.getElementById("popoverTrigger");
-        const popoverContent = document.getElementById("popoverContent");
-        const closePopover = document.getElementById("closePopover");
+        const popoverTrigger = document.getElementById('popoverTrigger');
+        const popoverContent = document.getElementById('popoverContent');
+        const closePopover = document.getElementById('closePopover');
 
         if (popoverTrigger) {
-          popoverTrigger.addEventListener("click", () => {
+          popoverTrigger.addEventListener('click', () => {
             if (popoverContent) {
               popoverContent.style.display =
-                popoverContent.style.display === "none" ? "block" : "none";
+                popoverContent.style.display === 'none' ? 'block' : 'none';
               handlePopoverPosition();
             }
           });
         }
 
         if (closePopover) {
-          closePopover.addEventListener("click", () => {
+          closePopover.addEventListener('click', () => {
             if (popoverContent) {
-              popoverContent.style.display = "none";
+              popoverContent.style.display = 'none';
             }
           });
         }
@@ -482,11 +482,11 @@ html, body {
           const viewportWidth = window.innerWidth;
           const viewportHeight = window.innerHeight;
 
-          let positionClass = "bottom-edge"; // Default position
+          let positionClass = 'bottom-edge'; // Default position
 
           // Check if the popover would go out of the right edge
           if (triggerRect.right + popoverRect.width > viewportWidth) {
-            positionClass = "right-edge";
+            positionClass = 'right-edge';
             popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
           } else {
             popoverContent.style.left = `${triggerRect.left}px`;
@@ -494,7 +494,7 @@ html, body {
 
           // Check if the popover would go out of the bottom edge
           if (triggerRect.bottom + popoverRect.height > viewportHeight) {
-            positionClass = "top-edge";
+            positionClass = 'top-edge';
             popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
           } else {
             popoverContent.style.top = `${triggerRect.bottom}px`;

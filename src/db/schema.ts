@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   numeric,
   pgTable,
@@ -10,16 +11,23 @@ import {
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
 
-export const productsTable = pgTable('products', {
-  id: integer().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  price: numeric().notNull(),
-  description: text().notNull(),
-  rating: numeric().notNull(),
-  reviews: numeric().notNull(),
-  image: varchar({ length: 255 }).notNull(),
-});
+// Base CMK
 
+export const productsTable = pgTable(
+  'products',
+  {
+    id: integer().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    price: numeric().notNull(),
+    description: text().notNull(),
+    rating: numeric().notNull(),
+    reviews: numeric().notNull(),
+    image: varchar({ length: 255 }).notNull(),
+  },
+  (table) => [index('product_name_idx').on(table.name)]
+);
+
+// Unique user (multiple accounts)
 export const usersTable = pgTable('user', {
   id: text('id')
     .primaryKey()
@@ -28,8 +36,19 @@ export const usersTable = pgTable('user', {
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
+
+  // Custom
+  firstName: text('firstName'),
+  lastName: text('lastName'),
+  phone: text('phone'),
+  address: text('address'),
+  city: text('city'),
+  state: text('state'),
+  zip: text('zip'),
+  country: text('country'),
 });
 
+// One to many relationship between users and accounts
 export const accountsTable = pgTable(
   'account',
   {

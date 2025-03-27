@@ -8,19 +8,8 @@ const session = await getSession(Astro.request);
 if (!session) {
   return Astro.redirect('/login');
 }
-
-// const ordersSnapshot = await db
-//   .collection('orders')
-//   .where('userId', '==', user.uid)
-//   .get();
-
-// const orders = ordersSnapshot.docs.map((doc) => doc.data());
-// const allOrders = [...orders, ...stripeOrders];
-// const chartData = allOrders.map((order) => ({
-//   date: order.orderDate,
-//   total: parseFloat(order.total),
-// }));
 ---
+
 <Header />
 <DashboardLayout title="Dashboard">
   <div class="chip-container">
@@ -42,11 +31,13 @@ if (!session) {
           <li><a href="/dashboard/orders" class="active"> My Orders</a></li>
           <li><a href="/dashboard/wishlist">My Wishlist</a></li>
           <li><a href="/dashboard/settings">My Account Settings</a></li>
-          <li><a>
-          <Auth>
-            <SignOut> Logout </SignOut>
-          </Auth>
-        </a></li>
+          <li>
+            <a>
+              <Auth>
+                <SignOut> Logout </SignOut>
+              </Auth>
+            </a>
+          </li>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
@@ -473,3 +464,273 @@ html, body {
     </script>
   </div>
 </DashboardLayout>
+
+<style>
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Body */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  /* Main Layout */
+  .main-layout {
+    display: flex;
+    height: 100vh;
+  }
+  .chip-container {
+    display: none;
+  }
+  /* Sidebar Styling */
+  .sidebar {
+    margin-top: 5rem;
+    width: 250px;
+    background-color: #121212;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .sidebar nav ul li {
+    padding: 15px 20px;
+  }
+
+  .sidebar nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .sidebar nav ul li a:hover,
+  .sidebar nav ul li a.active {
+    color: #121212;
+    background-color: rgb(39, 174, 96);
+  }
+
+  /* Content Section */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header Styling */
+  .head {
+    margin-top: 5em;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .welcome-message {
+    flex: 1;
+  }
+
+  .welcome-message h1 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .welcome-message p {
+    color: #7f8c8d;
+    font-size: 16px;
+  }
+
+  /* Return to Home Button */
+  .return-to-home {
+    color: #ecf0f1;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    background-color: rgb(39, 174, 96);
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .return-to-home:hover {
+    background-color: #1abc9c;
+  }
+
+  /* Menu Section */
+  .menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5rem;
+    width: 50%;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #121212;
+    color: #fff;
+    margin: auto;
+  }
+
+  .nav-to-order,
+  .my-whislist {
+    flex: 1 1 45%;
+    text-align: center;
+    border: #121212 2px solid;
+    border-radius: 16px;
+    margin: 10px;
+    padding: 10px;
+  }
+  .nav-to-order h2,
+  .my-whislist h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .nav-to-order a,
+  .my-whislist a {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    border: #2c3e50 2px solid;
+    width: 10rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #1abc7e83;
+  }
+
+  .nav-to-order a:hover,
+  .my-whislist a:hover {
+    background-color: #1abc9c;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .chip-container {
+      margin-top: 6rem;
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background-color: rgb(39, 174, 96);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s ease-in-out;
+      flex: 1 1 40%;
+      text-align: center;
+    }
+
+    .chip:hover {
+      background-color: #1abc9c;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .chip {
+      flex: 1 1 100%;
+    }
+    .nav-to-order,
+    .my-whislist {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+<script>
+  // JavaScript to toggle popover visibility
+  const popoverTrigger = document.getElementById('popoverTrigger');
+  const popoverContent = document.getElementById('popoverContent');
+  const closePopover = document.getElementById('closePopover');
+
+  if (popoverTrigger) {
+    popoverTrigger.addEventListener('click', () => {
+      if (popoverContent) {
+        popoverContent.style.display =
+          popoverContent.style.display === 'none' ? 'block' : 'none';
+        handlePopoverPosition();
+      }
+    });
+  }
+
+  if (closePopover) {
+    closePopover.addEventListener('click', () => {
+      if (popoverContent) {
+        popoverContent.style.display = 'none';
+      }
+    });
+  }
+
+  const handlePopoverPosition = () => {
+    if (!popoverTrigger || !popoverContent) return;
+
+    const triggerRect = popoverTrigger.getBoundingClientRect();
+    const popoverRect = popoverContent.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let positionClass = 'bottom-edge'; // Default position
+
+    // Check if the popover would go out of the right edge
+    if (triggerRect.right + popoverRect.width > viewportWidth) {
+      positionClass = 'right-edge';
+      popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
+    } else {
+      popoverContent.style.left = `${triggerRect.left}px`;
+    }
+
+    // Check if the popover would go out of the bottom edge
+    if (triggerRect.bottom + popoverRect.height > viewportHeight) {
+      positionClass = 'top-edge';
+      popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
+    } else {
+      popoverContent.style.top = `${triggerRect.bottom}px`;
+    }
+
+    popoverContent.classList.add(positionClass);
+  };
+</script>

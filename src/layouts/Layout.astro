@@ -32,18 +32,6 @@ const { title, navbar } = Astro.props;
   </body>
 </html>
 <script>
-  declare global {
-    interface Window {
-      SnipcartSettings: {
-        publicApiKey: string;
-        loadStrategy: string;
-        version: string;
-        addProductBehavior: string;
-        modalStyle: string;
-      };
-    }
-  }
-
   window.SnipcartSettings = {
     publicApiKey: import.meta.env.PUBLIC_SNIPCART_API_KEY,
     loadStrategy: 'on-user-interaction',
