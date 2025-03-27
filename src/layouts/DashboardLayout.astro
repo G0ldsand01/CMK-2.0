@@ -1,19 +1,213 @@
 ---
-import Layout from './Layout.astro';
-import { getSession } from 'auth-astro/server';
+import Layout from "./Layout.astro";
+import { getSession } from "auth-astro/server";
+import { Auth, SignOut } from "auth-astro/components";
 interface Props {
   title: string;
+  activeId: string;
 }
 
-const { title } = Astro.props;
+const { title, activeId } = Astro.props;
 const session = await getSession(Astro.request);
 
 if (!session) {
-  return Astro.redirect('/login');
+  return Astro.redirect("/login");
 }
 ---
 
 <Layout title={title} navbar={true}>
   <!--- Sidebar --->
-  <slot />
+  <div class="chip-container">
+    <a href="/dashboard" class="chip">Dashboard</a>
+    <a href="/dashboard/orders" class="chip">My Orders</a>
+    <a href="/dashboard/wishlist" class="chip">My Wishlist</a>
+    <a href="/dashboard/settings" class="chip">My Account Settings</a>
+    <a class="chip">
+      <Auth>
+        <SignOut> Logout </SignOut>
+      </Auth>
+    </a>
+  </div>
+  <div class="main-layout modern-design">
+    <div class="sidebar">
+      <nav>
+        <ul>
+          <li>
+            <a
+              href="/dashboard"
+              class={activeId === "dashboard" ? "active" : ""}>Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="/dashboard/orders"
+              class={activeId === "orders" ? "active" : ""}
+            >
+              My Orders</a>
+          </li>
+          <li>
+            <a
+              href="/dashboard/wishlist"
+              class={activeId === "wishlist" ? "active" : ""}>My Wishlist</a>
+          </li>
+          <li>
+            <a
+              href="/dashboard/settings"
+              class={activeId === "settings" ? "active" : ""}
+              >My Account Settings</a>
+          </li>
+          <li>
+            <a>
+              <Auth>
+                <SignOut> Logout </SignOut>
+              </Auth>
+            </a>
+          </li>
+        </ul>
+        <a class="return-to-home" href="/">Return to Home</a>
+      </nav>
+    </div>
+    <slot />
+  </div>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow-y: auto; /* Ensures vertical scrolling is enabled */
+    }
+
+    /* Body */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .container {
+      min-height: 100vh; /* Ensures the container takes up full viewport height */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      height: 100vh;
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chip-container {
+      display: none;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      margin-top: 5rem;
+      width: 250px;
+      background-color: #121212;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      height: 93.5%;
+    }
+
+    .sidebar nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .sidebar nav ul li {
+      padding: 15px 20px;
+    }
+
+    .sidebar nav ul li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-size: 18px;
+      display: block;
+      padding: 1rem;
+      border-radius: 25px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .sidebar nav ul li a:hover,
+    .sidebar nav ul li a.active {
+      color: #121212;
+      background-color: rgb(39, 174, 96);
+    }
+
+    /* Content Section */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Return to Home Button */
+    .return-to-home {
+      color: #ecf0f1;
+      font-size: 16px;
+      text-decoration: none;
+      display: block;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px;
+      background-color: #27ae60;
+      border-radius: 5px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .return-to-home:hover {
+      background-color: #20c464;
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .chip-container {
+        margin-top: 6rem;
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        background-color: rgb(39, 174, 96);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+        flex: 1 1 40%;
+        text-align: center;
+      }
+
+      .chip:hover {
+        background-color: #1abc9c;
+      }
+    }
+    @media (max-width: 480px) {
+      .chip {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
 </Layout>
