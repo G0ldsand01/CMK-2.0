@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   numeric,
   pgTable,
@@ -10,16 +11,23 @@ import {
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
 
-export const productsTable = pgTable('products', {
-  id: integer().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  price: numeric().notNull(),
-  description: text().notNull(),
-  rating: numeric().notNull(),
-  reviews: numeric().notNull(),
-  image: varchar({ length: 255 }).notNull(),
-});
+// Base CMK
 
+export const productsTable = pgTable(
+  'products',
+  {
+    id: integer().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    price: numeric().notNull(),
+    description: text().notNull(),
+    rating: numeric().notNull(),
+    reviews: numeric().notNull(),
+    image: varchar({ length: 255 }).notNull(),
+  },
+  (table) => [index('product_name_idx').on(table.name)]
+);
+
+// Unique user (multiple accounts)
 export const usersTable = pgTable('user', {
   id: text('id')
     .primaryKey()
@@ -30,6 +38,7 @@ export const usersTable = pgTable('user', {
   image: text('image'),
 });
 
+// One to many relationship between users and accounts
 export const accountsTable = pgTable(
   'account',
   {
