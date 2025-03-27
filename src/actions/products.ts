@@ -10,7 +10,6 @@ export const products = {
       const products = await db.query.productsTable.findMany({
         limit: 8,
       });
-      console.log(products);
       return products;
     },
   }),

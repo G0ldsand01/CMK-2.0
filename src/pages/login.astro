@@ -1,10 +1,16 @@
 ---
-import "@styles/login.css";
-import { SignIn, SignOut, Auth, signIn, signOut } from "auth-astro/components";
-import type { Session } from "@auth/core/types";
-import Discord from "@assets/discord.svg";
-import Github from "@assets/githubicon.svg";
-import { Image } from "astro:assets";
+import '@styles/login.css';
+import { SignIn } from 'auth-astro/components';
+import Discord from '@assets/discord.svg';
+import Github from '@assets/githubicon.svg';
+import { Image } from 'astro:assets';
+import { getSession } from 'auth-astro/server';
+
+const session = await getSession(Astro.request);
+
+if (session) {
+  return Astro.redirect('/dashboard');
+}
 ---
 
 <head>
@@ -16,54 +22,35 @@ import { Image } from "astro:assets";
 
 <div class="container">
   <h1>Welcome Back</h1>
-  <Auth>
-    {
-      (session: Session) =>
-        session ? (
-          <>
-            <SignOut>Logout</SignOut>
-            <p>Logged in as {session.user?.name}</p>
-          </>
-        ) : (
-          <>
-            <div>
-              <SignIn provider="github">
-                {" "}
-                <Image
-                  src={Github}
-                  alt={"Github"}
-                  width={64}
-                  height={64}
-                  class="icon"
-                />
-                Login with Github
-              </SignIn>
-              <SignIn provider="discord">
-                <Image
-                  src={Discord}
-                  alt={"Discord"}
-                  width={64}
-                  height={64}
-                  class="icon"
-                />
-                Login with Discord
-              </SignIn>
-            </div>
-            <div class="login-with-email">
-              <form>
-                <h2>or</h2>
-                <h2>Use your email</h2>
-                <input type="text" name="email" placeholder="Email" />
-                <button type="submit">Signin with Email</button>
-              </form>
-            </div>
-          </>
-        )
-    }
-  </Auth>
+
+  <div>
+    <SignIn provider="github">
+      {' '}
+      <Image src={Github} alt={'Github'} width={64} height={64} class="icon" />
+      Login with Github
+    </SignIn>
+    <SignIn provider="discord">
+      <Image
+        src={Discord}
+        alt={'Discord'}
+        width={64}
+        height={64}
+        class="icon"
+      />
+      Login with Discord
+    </SignIn>
+  </div>
+  <div class="login-with-email">
+    <form>
+      <h2>or</h2>
+      <h2>Use your email</h2>
+      <input type="text" name="email" placeholder="Email" />
+      <button type="submit">Signin with Email</button>
+    </form>
+  </div>
 </div>
 
 <script type="module">
-  import { signIn } from "auth-astro/components";
-  document.querySelector("#login").onclick = () => signIn("github");
+  import { signIn } from 'auth-astro/components';
+  document.querySelector('#login').onclick = () => signIn('github');
 </script>

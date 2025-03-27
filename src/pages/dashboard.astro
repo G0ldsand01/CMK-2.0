@@ -1,36 +1,17 @@
 ---
-import { app } from "../firebase/server.js";
-import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
-import "../styles/dashboard.css";
-// import {  Popover,  PopoverContent,  PopoverTrigger,} from "@components/ui/popover";
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { Heart, ShoppingBag } from "lucide-react";
-// import Chart from "../components/Chart.astro";
-import { getStripeOrders } from "../lib/getStripeOrders.js";
-import Layout from "../layouts/Layout.astro";
-const stripeOrders = await getStripeOrders();
+import '../styles/dashboard.css';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { Heart, ShoppingBag } from 'lucide-react';
+import Layout from '../layouts/Layout.astro';
+import { getSession } from 'auth-astro/server';
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+const session = await getSession(Astro.request);
 
-if (!Astro.cookies.has("__session")) {
-  return Astro.redirect("/login");
-}
-const sessionCookie = Astro.cookies.get("__session")!.value;
-let user;
-
-try {
-  const decodedCookie = await auth.verifySessionCookie(sessionCookie);
-  user = await auth.getUser(decodedCookie.uid);
-} catch (error) {
-  return Astro.redirect("/login");
-}
-
-if (!user) {
-  return Astro.redirect("/login");
+if (!session) {
+  return Astro.redirect('/login');
 }
 ---
+
 <Layout title="Products" navbar={true}>
   <DashboardLayout title="Dashboard">
     <div class="chip-container">
@@ -57,7 +38,7 @@ if (!user) {
       <div class="content">
         <div class="head">
           <div class="welcome-message">
-            <h1>Welcome Back, {user.displayName}</h1>
+            <h1>Welcome Back, {session?.user?.name}</h1>
             <p2>Here's your dashboard</p2>
           </div>
         </div>
@@ -312,24 +293,24 @@ if (!user) {
 </style>
 <script>
   // JavaScript to toggle popover visibility
-  const popoverTrigger = document.getElementById("popoverTrigger");
-  const popoverContent = document.getElementById("popoverContent");
-  const closePopover = document.getElementById("closePopover");
+  const popoverTrigger = document.getElementById('popoverTrigger');
+  const popoverContent = document.getElementById('popoverContent');
+  const closePopover = document.getElementById('closePopover');
 
   if (popoverTrigger) {
-    popoverTrigger.addEventListener("click", () => {
+    popoverTrigger.addEventListener('click', () => {
       if (popoverContent) {
         popoverContent.style.display =
-          popoverContent.style.display === "none" ? "block" : "none";
+          popoverContent.style.display === 'none' ? 'block' : 'none';
         handlePopoverPosition();
       }
     });
   }
 
   if (closePopover) {
-    closePopover.addEventListener("click", () => {
+    closePopover.addEventListener('click', () => {
       if (popoverContent) {
-        popoverContent.style.display = "none";
+        popoverContent.style.display = 'none';
       }
     });
   }
@@ -342,11 +323,11 @@ if (!user) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let positionClass = "bottom-edge"; // Default position
+    let positionClass = 'bottom-edge'; // Default position
 
     // Check if the popover would go out of the right edge
     if (triggerRect.right + popoverRect.width > viewportWidth) {
-      positionClass = "right-edge";
+      positionClass = 'right-edge';
       popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
     } else {
       popoverContent.style.left = `${triggerRect.left}px`;
@@ -354,7 +335,7 @@ if (!user) {
 
     // Check if the popover would go out of the bottom edge
     if (triggerRect.bottom + popoverRect.height > viewportHeight) {
-      positionClass = "top-edge";
+      positionClass = 'top-edge';
       popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
     } else {
       popoverContent.style.top = `${triggerRect.bottom}px`;
