@@ -1,13 +1,13 @@
 ---
-import '@styles/dashboard.css';
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { Heart, ShoppingBag } from 'lucide-react';
-import { getSession } from 'auth-astro/server';
-
+import "@styles/dashboard.css";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import { Heart, ShoppingBag } from "lucide-react";
+import { getSession } from "auth-astro/server";
+import { Auth, SignOut } from 'auth-astro/components';
 const session = await getSession(Astro.request);
 
 if (!session) {
-  return Astro.redirect('/login');
+  return Astro.redirect("/login");
 }
 ---
 
@@ -17,7 +17,11 @@ if (!session) {
     <a href="/dashboard/orders" class="chip">My Orders</a>
     <a href="/dashboard/wishlist" class="chip">My Wishlist</a>
     <a href="/dashboard/settings" class="chip">My Account Settings</a>
-    <a href="/logout" class="chip">Logout</a>
+    <a class="chip"> 
+      <Auth>
+        <SignOut> Logout </SignOut>
+      </Auth>
+    </a>
   </div>
   <div class="main-layout modern-design">
     <div class="sidebar">
@@ -27,7 +31,12 @@ if (!session) {
           <li><a href="/dashboard/orders"> My Orders</a></li>
           <li><a href="/dashboard/wishlist">My Wishlist</a></li>
           <li><a href="/dashboard/settings">My Account Settings</a></li>
-          <li><a href="/logout">Logout</a></li>
+          <li><a> 
+            <Auth>
+              <SignOut> Logout </SignOut>
+            </Auth>
+          </a>
+          </li>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
@@ -47,7 +56,7 @@ if (!session) {
           </div>
           <h2>Orders</h2>
           <p2> Check the history of all your orders & their status </p2>
-          <a href="/orders">My Orders</a>
+          <a href="/dashboard/orders">My Orders</a>
         </div>
         <div class="my-whishlist">
           <div class="icon">
@@ -55,7 +64,7 @@ if (!session) {
           </div>
           <h2>My Wishlist</h2>
           <p2> Add products to your wishlist </p2>
-          <a href="/wishlist">My Wishlist</a>
+          <a href="/dashboard/wishlist">My Wishlist</a>
         </div>
       </div>
     </div>
@@ -291,24 +300,24 @@ if (!session) {
 </style>
 <script>
   // JavaScript to toggle popover visibility
-  const popoverTrigger = document.getElementById('popoverTrigger');
-  const popoverContent = document.getElementById('popoverContent');
-  const closePopover = document.getElementById('closePopover');
+  const popoverTrigger = document.getElementById("popoverTrigger");
+  const popoverContent = document.getElementById("popoverContent");
+  const closePopover = document.getElementById("closePopover");
 
   if (popoverTrigger) {
-    popoverTrigger.addEventListener('click', () => {
+    popoverTrigger.addEventListener("click", () => {
       if (popoverContent) {
         popoverContent.style.display =
-          popoverContent.style.display === 'none' ? 'block' : 'none';
+          popoverContent.style.display === "none" ? "block" : "none";
         handlePopoverPosition();
       }
     });
   }
 
   if (closePopover) {
-    closePopover.addEventListener('click', () => {
+    closePopover.addEventListener("click", () => {
       if (popoverContent) {
-        popoverContent.style.display = 'none';
+        popoverContent.style.display = "none";
       }
     });
   }
@@ -321,11 +330,11 @@ if (!session) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let positionClass = 'bottom-edge'; // Default position
+    let positionClass = "bottom-edge"; // Default position
 
     // Check if the popover would go out of the right edge
     if (triggerRect.right + popoverRect.width > viewportWidth) {
-      positionClass = 'right-edge';
+      positionClass = "right-edge";
       popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
     } else {
       popoverContent.style.left = `${triggerRect.left}px`;
@@ -333,7 +342,7 @@ if (!session) {
 
     // Check if the popover would go out of the bottom edge
     if (triggerRect.bottom + popoverRect.height > viewportHeight) {
-      positionClass = 'top-edge';
+      positionClass = "top-edge";
       popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
     } else {
       popoverContent.style.top = `${triggerRect.bottom}px`;

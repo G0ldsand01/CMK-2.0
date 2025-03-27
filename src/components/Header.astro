@@ -127,9 +127,9 @@ const session = await getSession(Astro.request)
       <li><a href="/products" data-astro-prefetch>Products</a></li>
       <li><a href="/about" data-astro-prefetch>About Us</a></li>
       <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
-      <Auth style="display: flex; align-items: center; gap: 1rem; z-index: 1000;">
+      <Auth>
         {session ? (
-          <div id="profile-section">
+          <div id="profile-section-nav">
             <img
               id="profile-picture"
               src={session?.user?.image || '<circle-user />'}
@@ -368,7 +368,11 @@ const session = await getSession(Astro.request)
     align-items: center;
     gap: 1rem;
   }
-  
+  #profile-section-nav img{
+    /* center image in the middle of the li */
+    margin: 0 auto;
+    display: block;
+  }
   @media (max-width: 980px) {
     #menu-toggle {
       display: block;
@@ -385,6 +389,9 @@ const session = await getSession(Astro.request)
     #auth-buttons {
       display: none !important;
     }
+    #profile-section {
+      margin-right: 2rem;
+    } 
   }
   @keyframes fadeIn {
     from {

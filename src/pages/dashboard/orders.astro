@@ -1,8 +1,9 @@
 ---
 import '@styles/dashboard.css';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import Header from '@/components/Header.astro';
 import { getSession } from 'auth-astro/server';
-
+import { Auth, SignOut } from 'auth-astro/components';
 const session = await getSession(Astro.request);
 
 if (!session) {
@@ -21,24 +22,32 @@ if (!session) {
 //   total: parseFloat(order.total),
 // }));
 ---
-
+<Header />
 <DashboardLayout title="Dashboard">
   <div class="chip-container">
     <a href="/dashboard" class="chip active">Dashboard</a>
-    <a href="/orders" class="chip">My Orders</a>
-    <a href="/wishlist" class="chip">My Wishlist</a>
-    <a href="/settings" class="chip">My Account Settings</a>
-    <a href="/logout" class="chip">Logout</a>
+    <a href="/dashboard/orders" class="chip">My Orders</a>
+    <a href="/dashboard/wishlist" class="chip">My Wishlist</a>
+    <a href="/dashboard/settings" class="chip">My Account Settings</a>
+    <a class="chip">
+      <Auth>
+        <SignOut> Logout </SignOut>
+      </Auth>
+    </a>
   </div>
   <div class="main-layout modern-design">
     <div class="sidebar">
       <nav>
         <ul>
           <li><a href="/dashboard">Dashboard</a></li>
-          <li><a href="orders" class="active"> My Orders</a></li>
-          <li><a href="/wishlist">My Wishlist</a></li>
-          <li><a href="/settings">My Account Settings</a></li>
-          <li><a href="/logout">Logout</a></li>
+          <li><a href="/dashboard/orders" class="active"> My Orders</a></li>
+          <li><a href="/dashboard/wishlist">My Wishlist</a></li>
+          <li><a href="/dashboard/settings">My Account Settings</a></li>
+          <li><a>
+          <Auth>
+            <SignOut> Logout </SignOut>
+          </Auth>
+        </a></li>
         </ul>
         <a class="return-to-home" href="/">Return to Home</a>
       </nav>
