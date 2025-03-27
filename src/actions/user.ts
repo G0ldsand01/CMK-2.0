@@ -13,8 +13,8 @@ const sanitizeZip = (zip: string) => zip.replace(/[^\d-]/g, '');
 
 export const user = {
   setUserDetails: defineAction({
+    accept: 'form',
     input: z.object({
-      userId: z.string().min(1),
       displayName: z
         .string()
         .min(2, 'Display name must be at least 2 characters')
@@ -90,6 +90,7 @@ export const user = {
         }),
     }),
     handler: async (input, context) => {
+      console.log('setUserDetails', input);
       let session;
       try {
         session = await getSession(context.request);
@@ -104,18 +105,7 @@ export const user = {
           });
         }
 
-        const contextUserId = session.user.id;
-
-        if (contextUserId !== input.userId) {
-          logSecurityEvent('UNAUTHORIZED_ACCESS', contextUserId, {
-            attemptedUserId: input.userId,
-            ip: context.request.headers.get('x-forwarded-for'),
-          });
-          throw new ActionError({
-            code: 'UNAUTHORIZED',
-            message: 'Invalid user.',
-          });
-        }
+        const userId = session.user.id;
 
         const {
           displayName,
@@ -130,8 +120,7 @@ export const user = {
           email,
         } = input;
 
-        // Log successful update
-        logSecurityEvent('USER_DETAILS_UPDATE', contextUserId, {
+        logSecurityEvent('USER_DETAILS_UPDATE', userId, {
           fields: [
             'displayName',
             'firstName',
@@ -160,8 +149,14 @@ export const user = {
             country,
             email,
           })
-          .where(eq(usersTable.id, contextUserId));
+          .where(eq(usersTable.id, userId));
+
+        return {
+          success: true,
+          message: 'User details updated successfully',
+        };
       } catch (error) {
+        console.error(error);
         if (error instanceof ActionError) {
           throw error;
         }
