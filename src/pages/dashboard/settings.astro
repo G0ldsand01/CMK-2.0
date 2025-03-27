@@ -11,162 +11,161 @@ console.log(session.user);
 ---
 
 <DashboardLayout title="Dashboard" activeId="settings">
-    <div class="content">
-      <div class="head">
-        <div class="welcome-message">
-          <h1>Settings</h1>
-          <p>Manage your account settings</p>
-        </div>
+  <div class="content">
+    <div class="head">
+      <div class="welcome-message">
+        <h1>Settings</h1>
+        <p>Manage your account settings</p>
       </div>
+    </div>
 
-      <form>
-        <div class="form-group full-width">
-          <div class="form-group">
-            <div class="input-container">
-              <label for="displayName">Display Name</label>
-              <input
-                type="text"
-                id="name"
-                name="displayName"
-                class="inputs"
-                value={session.user.name}
-                minlength={2}
-                maxlength={50}
-                required
-              />
-            </div>
-            <div class="input-container">
-              <label for="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                class="inputs"
-                value={session.user.firstName}
-                minlength={2}
-                maxlength={50}
-                required
-              />
-            </div>
-            <div class="input-container">
-              <label for="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                class="inputs"
-                value={session.user.lastName}
-                minlength={2}
-                maxlength={50}
-                required
-              />
-            </div>
-            <div class="input-container">
-              <label for="phone">Phone</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                class="inputs"
-                value={session.user.phone}
-                minlength={10}
-                maxlength={20}
-                required
-              />
-            </div>
-          </div>
-
-          <div class="form-group full-width">
-            <label for="address">Address</label>
+    <form>
+      <div class="form-group full-width">
+        <div class="form-group">
+          <div class="input-container">
+            <label for="displayName">Display Name</label>
             <input
               type="text"
-              id="address"
-              name="address"
+              id="name"
+              name="displayName"
               class="inputs"
-              value={session.user.address}
-              minlength={5}
-              maxlength={200}
+              value={session.user.name}
+              minlength={2}
+              maxlength={50}
               required
             />
           </div>
-
-          <div class="form-group">
-            <div class="input-container">
-              <label for="city">City</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                class="inputs"
-                value={session.user.city}
-                minlength={2}
-                maxlength={100}
-                required
-              />
-            </div>
-            <div class="input-container">
-              <label for="state">State</label>
-              <input
-                type="text"
-                id="state"
-                name="state"
-                class="inputs"
-                value={session.user.state}
-                minlength={2}
-                maxlength={100}
-                required
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="input-container">
-              <label for="zip">Zip</label>
-              <input
-                type="text"
-                id="zip"
-                name="zip"
-                class="inputs"
-                value={session.user.zip}
-                minlength={5}
-                maxlength={10}
-                required
-              />
-            </div>
-            <div class="input-container">
-              <label for="country">Country</label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                class="inputs"
-                value={session.user.country}
-                minlength={2}
-                maxlength={100}
-                required
-              />
-            </div>
-          </div>
-
-          <div class="form-group full-width">
-            <label for="email">Email</label>
+          <div class="input-container">
+            <label for="firstName">First Name</label>
             <input
-              type="email"
-              id="email"
-              name="email"
+              type="text"
+              id="firstName"
+              name="firstName"
               class="inputs"
-              value={session.user.email}
+              value={session.user.firstName}
+              minlength={2}
+              maxlength={50}
               required
             />
           </div>
-
-          <button type="submit">Save</button>
+          <div class="input-container">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              class="inputs"
+              value={session.user.lastName}
+              minlength={2}
+              maxlength={50}
+              required
+            />
+          </div>
+          <div class="input-container">
+            <label for="phone">Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="inputs"
+              value={session.user.phone}
+              minlength={10}
+              maxlength={20}
+              required
+            />
+          </div>
         </div>
-      </form>
-    </div>
+
+        <div class="form-group full-width">
+          <label for="address">Address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            class="inputs"
+            value={session.user.address}
+            minlength={5}
+            maxlength={200}
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="input-container">
+            <label for="city">City</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              class="inputs"
+              value={session.user.city}
+              minlength={2}
+              maxlength={100}
+              required
+            />
+          </div>
+          <div class="input-container">
+            <label for="state">State</label>
+            <input
+              type="text"
+              id="state"
+              name="state"
+              class="inputs"
+              value={session.user.state}
+              minlength={2}
+              maxlength={100}
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-container">
+            <label for="zip">Zip</label>
+            <input
+              type="text"
+              id="zip"
+              name="zip"
+              class="inputs"
+              value={session.user.zip}
+              minlength={5}
+              maxlength={10}
+              required
+            />
+          </div>
+          <div class="input-container">
+            <label for="country">Country</label>
+            <input
+              type="text"
+              id="country"
+              name="country"
+              class="inputs"
+              value={session.user.country}
+              minlength={2}
+              maxlength={100}
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="inputs"
+            value={session.user.email}
+            required
+          />
+        </div>
+
+        <button type="submit">Save</button>
+      </div>
+    </form>
   </div>
- 
 </DashboardLayout>
+
 <script>
   import { actions } from 'astro:actions';
 
@@ -189,12 +188,11 @@ console.log(session.user);
     if (!error) {
       alert('User details updated successfully');
     } else {
-      console.log(error);
-      console.log(formData);
-      console.log('error');
+      alert('Error updating user details');
     }
   });
 </script>
+
 <style>
   /* Body */
   body {
