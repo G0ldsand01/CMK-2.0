@@ -34,7 +34,7 @@ const product = productActions.data;
             <p>{product.description}</p>
             <div class="product-rating">
               <span class="product-rating-stars">
-                {'★'.repeat(Math.floor(product.rating))}{' '}
+                {'★'.repeat(Math.floor(Number(product.rating)))}{' '}
               </span>
               <span class="product-rating-count">
                 ({product.reviews} reviews)
@@ -43,7 +43,7 @@ const product = productActions.data;
             <div class="product-price">
               <span class="product-price-currency">$</span>
               <span class="product-price-amount">
-                {product.price.toFixed(2) || '0.00'}
+                {Number(product.price).toFixed(2) || '0.00'}
               </span>
             </div>
 
@@ -52,7 +52,7 @@ const product = productActions.data;
                 class="snipcart-add-item button"
                 id="popoverTrigger"
                 data-item-id={product.id}
-                data-item-price={product.price.toFixed(2) || '0.00'}
+                data-item-price={Number(product.price).toFixed(2) || '0.00'}
                 data-item-description={product.description}
                 data-item-image={product.image}
                 data-item-name={product.name}
@@ -70,7 +70,7 @@ const product = productActions.data;
             <button
               class="snipcart-add-item snipcart-checkout"
               data-item-id={product.id}
-              data-item-price={product.price.toFixed(2) || '0.00'}
+              data-item-price={Number(product.price).toFixed(2) || '0.00'}
               data-item-description={product.description}
               data-item-image={product.image}
               data-item-name={product.name}
