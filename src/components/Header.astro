@@ -11,7 +11,7 @@ const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
 import { getSession } from 'auth-astro/server';
 import { Auth, SignOut } from 'auth-astro/components';
 import { CircleUser } from 'lucide-react';
-const session = await getSession(Astro.request)
+const session = await getSession(Astro.request);
 ---
 
 <head>
@@ -32,88 +32,92 @@ const session = await getSession(Astro.request)
     </ul>
   </nav>
   <!-- Auth Buttons or Profile Section -->
-  
-<Auth style="display: flex; align-items: center; gap: 1rem; z-index: 1000;">
-  {session ? (
-    <div
-      id="auth-buttons"
-      class="login"
-      style="display: flex; align-items: center; gap: 1rem;"
-    >
-    <div id="profile-section" class="profile-section">
-      <a href="/dashboard" >
-      <img
-        id="profile-picture"
-        src={session?.user?.image || '/default-profile.png'}
-        alt="Profile Picture"
-        width="40"
-        height="40"
-      />
-      </div>
-    <div class="user">
-      <h1 class="user">Welcome, {session?.user?.name}</h1>
-    
-      
-      </a>
-      <SignOut>Logout</SignOut>
-    </div>
-     <button
-        class="snipcart-checkout"
-        data-item-url="{Astro.url}"
-        style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-        onmouseover="this.style.backgroundColor='#3d3d3d';"
-        onmouseout="this.style.backgroundColor='#292929';"
-      >
-        <ShoppingBag />
-        <span
-          id="cart-count"
-          style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-          ><CartItemsCount /></span>
-      </button>
-    </div>
-  ) : (
-    <div
-      id="auth-buttons"
-      class="login"
-      style="display: flex; align-items: center; gap: 1rem;"
-    >
-      <a
-        href="/login"
-        style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
-        onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
-        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';"
-      >
-        Login
-      </a>
 
-      <a href="/register" style="text-decoration: none;">
-        <button
-          style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-          onmouseover="this.style.backgroundColor='#2ecc71';"
-          onmouseout="this.style.backgroundColor='#27ae60';"
+  <Auth style="display: flex; align-items: center; gap: 1rem; z-index: 1000;">
+    {
+      session ? (
+        <div
+          id="auth-buttons"
+          class="login"
+          style="display: flex; align-items: center; gap: 1rem;"
         >
-          Register
-        </button>
-      </a>
+          <div id="profile-section" class="profile-section">
+            <a href="/dashboard">
+              <img
+                id="profile-picture"
+                src={session?.user?.image || '/default-profile.png'}
+                alt="Profile Picture"
+                width="40"
+                height="40"
+              />
+            </a>
+            <div class="user">
+              <h1 class="user">Welcome, {session?.user?.name}</h1>
+            </div>
+            <SignOut>Logout</SignOut>
+          </div>
+          <button
+            class="snipcart-checkout"
+            data-item-url="{Astro.url}"
+            style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+            onmouseover="this.style.backgroundColor='#3d3d3d';"
+            onmouseout="this.style.backgroundColor='#292929';"
+          >
+            <ShoppingBag />
+            <span
+              id="cart-count"
+              style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
+            >
+              <CartItemsCount />
+            </span>
+          </button>
+        </div>
+      ) : (
+        <div
+          id="auth-buttons"
+          class="login"
+          style="display: flex; align-items: center; gap: 1rem;"
+        >
+          <a
+            href="/login"
+            style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
+            onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
+            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';"
+          >
+            Login
+          </a>
 
-      <button
-        class="snipcart-checkout"
-        data-item-url="{Astro.url}"
-        style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-        onmouseover="this.style.backgroundColor='#3d3d3d';"
-        onmouseout="this.style.backgroundColor='#292929';"
-      >
-        <ShoppingBag />
-        <span
-          id="cart-count"
-          style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-          ><CartItemsCount /></span>
-      </button>
-    </div>
-  )}
-</Auth>
+          <a href="/register" style="text-decoration: none;">
+            <button
+              style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+              onmouseover="this.style.backgroundColor='#2ecc71';"
+              onmouseout="this.style.backgroundColor='#27ae60';"
+            >
+              Register
+            </button>
+          </a>
+
+          <button
+            class="snipcart-checkout"
+            data-item-url="{Astro.url}"
+            style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+            onmouseover="this.style.backgroundColor='#3d3d3d';"
+            onmouseout="this.style.backgroundColor='#292929';"
+          >
+            <ShoppingBag />
+            <span
+              id="cart-count"
+              style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
+            >
+              <CartItemsCount />
+            </span>
+          </button>
+        </div>
+      )
+    }
+  </Auth>
   <!-- Profile Section - hidden by default -->
-  
+
   <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -152,57 +156,61 @@ const session = await getSession(Astro.request)
       <li><a href="/about" data-astro-prefetch>About Us</a></li>
       <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
       <Auth>
-        {session ? (
-          <div id="profile-section-nav">
-            <img
-              id="profile-picture"
-              src={session?.user?.image || '<circle-user />'}
-              alt="Profile Picture"
-              width="40"
-              height="40"
-            />
-            <SignOut>Logout</SignOut>
-          </div>
-        ) : (
-          <div
-            id="auth-buttons"
-            class="login"
-            style="display: flex; align-items: center; gap: 1rem;"
-          >
-            <a
-              href="/login"
-              style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
-              onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
-              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';"
+        {
+          session ? (
+            <div id="profile-section-nav">
+              <img
+                id="profile-picture"
+                src={session?.user?.image || '<circle-user />'}
+                alt="Profile Picture"
+                width="40"
+                height="40"
+              />
+              <SignOut>Logout</SignOut>
+            </div>
+          ) : (
+            <div
+              id="auth-buttons"
+              class="login"
+              style="display: flex; align-items: center; gap: 1rem;"
             >
-              Login
-            </a>
-      
-            <a href="/register" style="text-decoration: none;">
-              <button
-                style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-                onmouseover="this.style.backgroundColor='#2ecc71';"
-                onmouseout="this.style.backgroundColor='#27ae60';"
+              <a
+                href="/login"
+                style="text-decoration: none; color: #e7dcdc; font-size: 1rem; padding: 0.5rem 1rem; border: 2px solid #27ae60; border-radius: 5px; background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease;"
+                onmouseover="this.style.backgroundColor='#27ae60'; this.style.color='#fff';"
+                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e7dcdc';"
               >
-                Register
+                Login
+              </a>
+
+              <a href="/register" style="text-decoration: none;">
+                <button
+                  style="background-color: #27ae60; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+                  onmouseover="this.style.backgroundColor='#2ecc71';"
+                  onmouseout="this.style.backgroundColor='#27ae60';"
+                >
+                  Register
+                </button>
+              </a>
+
+              <button
+                class="snipcart-checkout"
+                data-item-url="{Astro.url}"
+                style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
+                onmouseover="this.style.backgroundColor='#3d3d3d';"
+                onmouseout="this.style.backgroundColor='#292929';"
+              >
+                <ShoppingBag />
+                <span
+                  id="cart-count"
+                  style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
+                >
+                  <CartItemsCount />
+                </span>
               </button>
-            </a>
-      
-            <button
-              class="snipcart-checkout"
-              data-item-url="{Astro.url}"
-              style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-              onmouseover="this.style.backgroundColor='#3d3d3d';"
-              onmouseout="this.style.backgroundColor='#292929';"
-            >
-              <ShoppingBag />
-              <span
-                id="cart-count"
-                style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-                ><CartItemsCount /></span>
-            </button>
-          </div>
-        )}
+            </div>
+          )
+        }
       </Auth>
       <li>
         <CartCheckout>
@@ -245,9 +253,6 @@ const session = await getSession(Astro.request)
   document
     .getElementById('menu-toggle')
     ?.addEventListener('click', menuToggleFunction);
-    import("auth-astro/client").then(({ signOut }) => {
-      document.querySelector("#logout").onclick = () => signOut();
-    });
 </script>
 
 <style>
@@ -336,7 +341,6 @@ const session = await getSession(Astro.request)
     color: #e7dcdc;
   }
 
-
   button:hover {
     background-color: #292929;
     color: #e7dcdc;
@@ -398,7 +402,7 @@ const session = await getSession(Astro.request)
     width: 64px;
     height: 64px;
   }
-  #profile-section-nav img{
+  #profile-section-nav img {
     /* center image in the middle of the li */
     margin: 0 auto;
     display: block;
@@ -407,11 +411,11 @@ const session = await getSession(Astro.request)
     border-radius: 50%;
   }
   .profile-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-direction: row; /* Move the username to the right of the profile picture */
-}
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-direction: row; /* Move the username to the right of the profile picture */
+  }
 
   @media (max-width: 980px) {
     #menu-toggle {
@@ -431,8 +435,7 @@ const session = await getSession(Astro.request)
     }
     #profile-section {
       display: none;
-    } 
-    
+    }
   }
   @keyframes fadeIn {
     from {
