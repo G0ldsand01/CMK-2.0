@@ -906,3 +906,308 @@ if (!session || !session.user) {
     };
   </script>
 </DashboardLayout>
+
+<style>
+  html,
+  body {
+    height: 100%;
+  }
+  .logout {
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background-color: transparent;
+  }
+  a {
+    text-decoration: none;
+    color: white;
+    background-color: transparent;
+  }
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Body */
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  /* Main Layout */
+  .main-layout {
+    display: flex;
+    height: 100vh;
+  }
+
+  /* Sidebar Styling */
+  .sidebar {
+    margin-top: 5rem;
+    width: 250px;
+    background-color: #121212;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 150vh;
+  }
+
+  .sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .sidebar nav ul li {
+    padding: 15px 20px;
+  }
+
+  .sidebar nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .sidebar nav ul li a:hover,
+  .sidebar nav ul li a.active {
+    color: #121212;
+    background-color: rgb(39, 174, 96);
+  }
+
+  /* Content Section */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  /* Header Styling */
+  .head {
+    margin-top: 5em;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .welcome-message {
+    flex: 1;
+  }
+
+  .welcome-message h1 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .welcome-message p {
+    color: #7f8c8d;
+    font-size: 16px;
+  }
+
+  /* Settings Section */
+  .settings {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 30px;
+  }
+
+  .settings h2 {
+    color: #2c3e50;
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .settings p2 {
+    color: #7f8c8d;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .settings-list-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .settings-list-body-item .labels {
+    font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .settings-list-body-item .inputs {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+  }
+
+  .settings-list-body-item input:focus {
+    border-color: rgb(39, 174, 96);
+  }
+
+  /* Button Styling */
+  button {
+    background-color: rgb(39, 174, 96);
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  button:hover {
+    background-color: #1abc9c;
+  }
+  .chip-container {
+    display: none;
+  }
+  .sidebar .return-to-home a {
+    position: relative;
+    bottom: 2rem;
+
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .chip-container {
+      margin-top: 6rem;
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background-color: rgb(39, 174, 96);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s ease-in-out;
+      flex: 1 1 40%;
+      text-align: center;
+    }
+
+    .chip:hover {
+      background-color: #1abc9c;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .chip {
+      flex: 1 1 100%;
+    }
+    .nav-to-order,
+    .my-whishlist {
+      flex: 1 1 100%;
+    }
+    .settings-list-body {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { actions } from 'astro:actions';
+  import { navigate } from 'astro:transitions/client';
+
+  const form = document.querySelector('form');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const { error } = await actions.user.setUserDetails(formData);
+    if (!error) {
+      alert('User details updated successfully');
+    } else {
+      alert('Error updating user details');
+    }
+  });
+</script>
+
+<script>
+  // JavaScript to toggle popover visibility
+  const popoverTrigger = document.getElementById('popoverTrigger');
+  const popoverContent = document.getElementById('popoverContent');
+  const closePopover = document.getElementById('closePopover');
+
+  if (popoverTrigger) {
+    popoverTrigger.addEventListener('click', () => {
+      if (popoverContent) {
+        popoverContent.style.display =
+          popoverContent.style.display === 'none' ? 'block' : 'none';
+        handlePopoverPosition();
+      }
+    });
+  }
+
+  if (closePopover) {
+    closePopover.addEventListener('click', () => {
+      if (popoverContent) {
+        popoverContent.style.display = 'none';
+      }
+    });
+  }
+
+  const handlePopoverPosition = () => {
+    if (!popoverTrigger || !popoverContent) return;
+
+    const triggerRect = popoverTrigger.getBoundingClientRect();
+    const popoverRect = popoverContent.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let positionClass = 'bottom-edge'; // Default position
+
+    // Check if the popover would go out of the right edge
+    if (triggerRect.right + popoverRect.width > viewportWidth) {
+      positionClass = 'right-edge';
+      popoverContent.style.left = `${triggerRect.left - popoverRect.width + triggerRect.width}px`;
+    } else {
+      popoverContent.style.left = `${triggerRect.left}px`;
+    }
+
+    // Check if the popover would go out of the bottom edge
+    if (triggerRect.bottom + popoverRect.height > viewportHeight) {
+      positionClass = 'top-edge';
+      popoverContent.style.top = `${triggerRect.top - popoverRect.height}px`;
+    } else {
+      popoverContent.style.top = `${triggerRect.bottom}px`;
+    }
+
+    popoverContent.classList.add(positionClass);
+  };
+</script>
