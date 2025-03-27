@@ -1,43 +1,16 @@
 ---
-import { app } from '../firebase/server.js';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+
 import '../styles/dashboard.css';
-// import {  Popover,  PopoverContent,  PopoverTrigger,} from "@components/ui/popover";
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-// import { CircleUser, X , Heart, ShoppingBag } from 'lucide-react';
-// import Chart from "../components/Chart.astro";
-// import OrderChart from '../components/OrderChart.jsx';
-import { getStripeOrders } from '../lib/getStripeOrders.js';
+import { Heart, ShoppingBag } from 'lucide-react';
 import Layout from '../layouts/Layout.astro';
-const stripeOrders = await getStripeOrders();
+import { getSession } from 'auth-astro/server';
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+const session = await getSession(Astro.request);
 
-if (!Astro.cookies.has('__session')) {
+if (!session) {
   return Astro.redirect('/login');
 }
-const sessionCookie = Astro.cookies.get('__session')!.value;
-let user;
-
-try {
-  const decodedCookie = await auth.verifySessionCookie(sessionCookie);
-  user = await auth.getUser(decodedCookie.uid);
-} catch (error) {
-  return Astro.redirect('/login');
-}
-
-if (!user) {
-  return Astro.redirect('/login');
-}
-
-const ordersSnapshot = await db
-  .collection('orders')
-  .where('userId', '==', user.uid)
-  .get();
-
-const whishlist = []; // Define whishlist as an empty array or fetch it from your database
 ---
 <Layout title="Products" navbar={true}>
 <DashboardLayout title="Dashboard">
