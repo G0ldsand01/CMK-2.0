@@ -31,7 +31,19 @@ export default defineConfig({
   ],
   callbacks: {
     async session({ session, user }) {
+      // name, email image
       session.user.id = user.id;
+
+      // Custom
+      session.user.firstName = user.firstName;
+      session.user.lastName = user.lastName;
+      session.user.phone = user.phone;
+      session.user.address = user.address;
+      session.user.city = user.city;
+      session.user.state = user.state;
+      session.user.zip = user.zip;
+      session.user.country = user.country;
+
       return session;
     },
   },
