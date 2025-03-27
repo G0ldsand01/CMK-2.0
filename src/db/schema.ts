@@ -27,7 +27,7 @@ export const productsTable = pgTable(
   (table) => [index('product_name_idx').on(table.name)]
 );
 
-// Unique user (multiple accounts)
+// Unique user has multiple accounts
 export const usersTable = pgTable('user', {
   id: text('id')
     .primaryKey()

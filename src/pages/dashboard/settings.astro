@@ -56,12 +56,28 @@ if (!session || !session.user) {
         <div class="form-group full-width">
           <div class="form-group">
             <div class="input-container">
+              <label for="displayName">Display Name</label>
+              <input
+                type="text"
+                id="name"
+                name="displayName"
+                class="inputs"
+                value={session.user.name}
+                minlength={2}
+                maxlength={50}
+                required
+              />
+            </div>
+            <div class="input-container">
               <label for="firstName">First Name</label>
               <input
                 type="text"
                 id="firstName"
+                name="firstName"
                 class="inputs"
                 value={session.user.firstName}
+                minlength={2}
+                maxlength={50}
                 required
               />
             </div>
@@ -70,8 +86,11 @@ if (!session || !session.user) {
               <input
                 type="text"
                 id="lastName"
+                name="lastName"
                 class="inputs"
                 value={session.user.lastName}
+                minlength={2}
+                maxlength={50}
                 required
               />
             </div>
@@ -80,8 +99,11 @@ if (!session || !session.user) {
               <input
                 type="tel"
                 id="phone"
+                name="phone"
                 class="inputs"
                 value={session.user.phone}
+                minlength={10}
+                maxlength={20}
                 required
               />
             </div>
@@ -92,8 +114,11 @@ if (!session || !session.user) {
             <input
               type="text"
               id="address"
+              name="address"
               class="inputs"
               value={session.user.address}
+              minlength={5}
+              maxlength={200}
               required
             />
           </div>
@@ -104,8 +129,11 @@ if (!session || !session.user) {
               <input
                 type="text"
                 id="city"
+                name="city"
                 class="inputs"
                 value={session.user.city}
+                minlength={2}
+                maxlength={100}
                 required
               />
             </div>
@@ -114,8 +142,11 @@ if (!session || !session.user) {
               <input
                 type="text"
                 id="state"
+                name="state"
                 class="inputs"
                 value={session.user.state}
+                minlength={2}
+                maxlength={100}
                 required
               />
             </div>
@@ -127,8 +158,11 @@ if (!session || !session.user) {
               <input
                 type="text"
                 id="zip"
+                name="zip"
                 class="inputs"
                 value={session.user.zip}
+                minlength={5}
+                maxlength={10}
                 required
               />
             </div>
@@ -137,8 +171,11 @@ if (!session || !session.user) {
               <input
                 type="text"
                 id="country"
+                name="country"
                 class="inputs"
                 value={session.user.country}
+                minlength={2}
+                maxlength={100}
                 required
               />
             </div>
@@ -149,9 +186,11 @@ if (!session || !session.user) {
             <input
               type="email"
               id="email"
+              name="email"
               class="inputs"
               value={session.user.email}
               required
+              disabled
             />
           </div>
 
@@ -794,262 +833,24 @@ if (!session || !session.user) {
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
-    const { error } = await actions.user.setUserDetails(formData);
+    const { error } = await actions.user.setUserDetails({
+      // email: formData.get('email') as string,
+      displayName: formData.get('displayName') as string,
+      address: formData.get('address') as string,
+      firstName: formData.get('firstName') as string,
+      lastName: formData.get('lastName') as string,
+      phone: formData.get('phone') as string,
+      city: formData.get('city') as string,
+      state: formData.get('state') as string,
+      zip: formData.get('zip') as string,
+      country: formData.get('country') as string,
+    });
     if (!error) {
       alert('User details updated successfully');
     } else {
-      alert('Error updating user details');
-    }
-  });
-</script>
-
-<style>
-  html,
-  body {
-    height: 100%;
-  }
-  .logout {
-    text-decoration: none;
-    color: white;
-    font-size: 1.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    background-color: transparent;
-  }
-  a {
-    text-decoration: none;
-    color: white;
-    background-color: transparent;
-  }
-  /* General Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  /* Body */
-  body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
-  /* Main Layout */
-  .main-layout {
-    display: flex;
-    height: 100vh;
-  }
-
-  /* Sidebar Styling */
-  .sidebar {
-    margin-top: 5rem;
-    width: 250px;
-    background-color: #121212;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    height: 150vh;
-  }
-
-  .sidebar nav ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  .sidebar nav ul li {
-    padding: 15px 20px;
-  }
-
-  .sidebar nav ul li a {
-    color: #ecf0f1;
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
-    padding: 1rem;
-    border-radius: 25px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .sidebar nav ul li a:hover,
-  .sidebar nav ul li a.active {
-    color: #121212;
-    background-color: rgb(39, 174, 96);
-  }
-
-  /* Content Section */
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  /* Header Styling */
-  .head {
-    margin-top: 5em;
-    width: 100%;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .welcome-message {
-    flex: 1;
-  }
-
-  .welcome-message h1 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 5px;
-  }
-
-  .welcome-message p {
-    color: #7f8c8d;
-    font-size: 16px;
-  }
-
-  /* Settings Section */
-  .settings {
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-top: 30px;
-  }
-
-  .settings h2 {
-    color: #2c3e50;
-    font-size: 26px;
-    margin-bottom: 15px;
-  }
-
-  .settings p2 {
-    color: #7f8c8d;
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-
-  .settings-list-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  .settings-list-body-item .labels {
-    font-size: 14px;
-    color: #2c3e50;
-    margin-bottom: 5px;
-    display: block;
-  }
-
-  .settings-list-body-item .inputs {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    margin-bottom: 15px;
-    transition: border-color 0.3s ease;
-  }
-
-  .settings-list-body-item input:focus {
-    border-color: rgb(39, 174, 96);
-  }
-
-  /* Button Styling */
-  button {
-    background-color: rgb(39, 174, 96);
-    color: #fff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  button:hover {
-    background-color: #1abc9c;
-  }
-  .chip-container {
-    display: none;
-  }
-  .sidebar .return-to-home a {
-    position: relative;
-    bottom: 2rem;
-
-    margin-top: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-  }
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .sidebar {
-      display: none;
-    }
-
-    .chip-container {
-      margin-top: 6rem;
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      background-color: rgb(39, 174, 96);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-size: 16px;
-      transition: all 0.3s ease-in-out;
-      flex: 1 1 40%;
-      text-align: center;
-    }
-
-    .chip:hover {
-      background-color: #1abc9c;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .chip {
-      flex: 1 1 100%;
-    }
-    .nav-to-order,
-    .my-whishlist {
-      flex: 1 1 100%;
-    }
-    .settings-list-body {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-
-<script>
-  import { actions } from 'astro:actions';
-  import { navigate } from 'astro:transitions/client';
-
-  const form = document.querySelector('form');
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const { error } = await actions.user.setUserDetails(formData);
-    if (!error) {
-      alert('User details updated successfully');
-    } else {
-      alert('Error updating user details');
+      console.log(error);
+      console.log(formData);
+      console.log('error');
     }
   });
 </script>

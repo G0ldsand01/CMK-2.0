@@ -13,7 +13,6 @@ const sanitizeZip = (zip: string) => zip.replace(/[^\d-]/g, '');
 
 export const user = {
   setUserDetails: defineAction({
-    accept: 'form',
     input: z.object({
       displayName: z
         .string()
@@ -81,21 +80,21 @@ export const user = {
         .refine((str) => !containsDangerousPattern(str), {
           message: 'Country contains invalid characters',
         }),
-      email: z
-        .string()
-        .email('Invalid email format')
-        .transform(sanitizeEmail)
-        .refine((str) => !containsDangerousPattern(str), {
-          message: 'Email contains invalid characters',
-        }),
+      //   email: z
+      //     .string()
+      //     .email('Invalid email format')
+      //     .transform(sanitizeEmail)
+      //     .refine((str) => !containsDangerousPattern(str), {
+      //       message: 'Email contains invalid characters',
+      //     }),
     }),
     handler: async (input, context) => {
       console.log('setUserDetails', input);
-      let session;
       try {
-        session = await getSession(context.request);
+        const session = await getSession(context.request);
+        console.log('session', session);
 
-        if (!session || !session.user || !session.user.id) {
+        if (!session || !session.user || !session.user.email) {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
@@ -105,7 +104,7 @@ export const user = {
           });
         }
 
-        const userId = session.user.id;
+        const existingEmail = session.user.email;
 
         const {
           displayName,
@@ -117,10 +116,9 @@ export const user = {
           state,
           zip,
           country,
-          email,
         } = input;
 
-        logSecurityEvent('USER_DETAILS_UPDATE', userId, {
+        logSecurityEvent('USER_DETAILS_UPDATE', existingEmail, {
           fields: [
             'displayName',
             'firstName',
@@ -147,9 +145,8 @@ export const user = {
             state,
             zip,
             country,
-            email,
           })
-          .where(eq(usersTable.id, userId));
+          .where(eq(usersTable.email, existingEmail));
 
         return {
           success: true,
@@ -160,7 +157,7 @@ export const user = {
         if (error instanceof ActionError) {
           throw error;
         }
-        logSecurityEvent('UNEXPECTED_ERROR', session?.user?.id || 'unknown', {
+        logSecurityEvent('UNEXPECTED_ERROR', 'unknown', {
           error: error instanceof Error ? error.message : 'Unknown error',
           ip: context?.request?.headers?.get('x-forwarded-for'),
         });
