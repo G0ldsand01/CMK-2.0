@@ -7,6 +7,7 @@ const session = await getSession(Astro.request);
 if (!session || !session.user) {
   return Astro.redirect('/login');
 }
+console.log(session.user);
 ---
 
 <DashboardLayout title="Dashboard" activeId="settings">
@@ -190,7 +191,6 @@ if (!session || !session.user) {
               class="inputs"
               value={session.user.email}
               required
-              disabled
             />
           </div>
 
@@ -834,7 +834,7 @@ if (!session || !session.user) {
     event.preventDefault();
     const formData = new FormData(form);
     const { error } = await actions.user.setUserDetails({
-      // email: formData.get('email') as string,
+      email: formData.get('email') as string,
       displayName: formData.get('displayName') as string,
       address: formData.get('address') as string,
       firstName: formData.get('firstName') as string,

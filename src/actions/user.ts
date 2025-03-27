@@ -80,13 +80,13 @@ export const user = {
         .refine((str) => !containsDangerousPattern(str), {
           message: 'Country contains invalid characters',
         }),
-      //   email: z
-      //     .string()
-      //     .email('Invalid email format')
-      //     .transform(sanitizeEmail)
-      //     .refine((str) => !containsDangerousPattern(str), {
-      //       message: 'Email contains invalid characters',
-      //     }),
+      email: z
+        .string()
+        .email('Invalid email format')
+        .transform(sanitizeEmail)
+        .refine((str) => !containsDangerousPattern(str), {
+          message: 'Email contains invalid characters',
+        }),
     }),
     handler: async (input, context) => {
       console.log('setUserDetails', input);
@@ -94,7 +94,7 @@ export const user = {
         const session = await getSession(context.request);
         console.log('session', session);
 
-        if (!session || !session.user || !session.user.email) {
+        if (!session || !session.user || !session.user.id) {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
@@ -104,7 +104,7 @@ export const user = {
           });
         }
 
-        const existingEmail = session.user.email;
+        const existingId = session.user.id;
 
         const {
           displayName,
@@ -116,9 +116,10 @@ export const user = {
           state,
           zip,
           country,
+          email,
         } = input;
 
-        logSecurityEvent('USER_DETAILS_UPDATE', existingEmail, {
+        logSecurityEvent('USER_DETAILS_UPDATE', existingId, {
           fields: [
             'displayName',
             'firstName',
@@ -145,8 +146,9 @@ export const user = {
             state,
             zip,
             country,
+            email,
           })
-          .where(eq(usersTable.email, existingEmail));
+          .where(eq(usersTable.id, existingId));
 
         return {
           success: true,
