@@ -1,57 +1,49 @@
 ---
 import '@styles/login.css';
 import { SignIn } from 'auth-astro/components';
-import Discord from '../../src/assets/discord.svg';
-import Github from '../../src/assets/githubicon.svg';
+import Layout from '@layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getSession } from 'auth-astro/server';
 
 const session = await getSession(Astro.request);
-
 if (session) {
   return Astro.redirect('/dashboard');
 }
 ---
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="../public/favicon.svg" type="image/x-icon" />
-  <title>Sign in | CMK</title>
-</head>
-
-<div class="container">
-  <h1>Welcome Back</h1>
-
-  <div>
-    <SignIn provider="github">
-      {' '}
-      <Image src={Github} alt="Github" width={128} height={128} class="icon" />
-      Login with Github
-    </SignIn>
-    <SignIn provider="discord">
-      <Image
-        src={Discord}
-        alt={'Discord'}
-        width={64}
-        height={64}
-        class="icon"
-      />
-      Login with Discord
-    </SignIn>
+<Layout title="Login" navbar={false}>
+  <div class="container">
+    <h1>Welcome Back</h1>
+    <div>
+      <SignIn provider="github">
+        <Image
+          src={'/api/image/github.svg'}
+          alt="Github"
+          width={128}
+          height={128}
+          class="icon"
+        />
+        Login with Github
+      </SignIn>
+      <SignIn provider="discord">
+        <Image
+          src={'/api/image/discord.svg'}
+          alt={'Discord'}
+          width={64}
+          height={64}
+          class="icon"
+        />
+        Login with Discord
+      </SignIn>
+    </div>
+    <div class="login-with-email">
+      <form>
+        <h2>or</h2>
+        <h2>Use your email</h2>
+        <input type="text" name="email" placeholder="Email" />
+        <button type="submit">Signin with Email</button>
+      </form>
+    </div>
+    <p> <a href="/"> Back to Home</a></p>
   </div>
-  <div class="login-with-email">
-    <form>
-      <h2>or</h2>
-      <h2>Use your email</h2>
-      <input type="text" name="email" placeholder="Email" />
-      <button type="submit">Signin with Email</button>
-    </form>
-  </div>
-  <p> <a href="/"> Back to Home</a></p>
-</div>
-
-<script type="module">
-  import { signIn } from 'auth-astro/components';
-  document.querySelector('#login').onclick = () => signIn('github');
-</script>
+</Layout>

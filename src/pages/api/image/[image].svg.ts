@@ -9,13 +9,13 @@ export const GET: APIRoute = async ({ params }) => {
     'src',
     'assets',
     'cdn',
-    'images',
-    `${name}.png`
+    'icons',
+    `${name}.svg`
   );
   const image = await readFile(imagePath);
   return new Response(image, {
     headers: {
-      'Content-Type': 'image/png',
+      'Content-Type': 'image/svg+xml',
     },
   });
 };
