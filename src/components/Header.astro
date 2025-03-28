@@ -35,6 +35,7 @@ const session = await getSession(Astro.request)
   
 <Auth>
   {session ? (
+    
     <div
       id="auth-buttons"
       class="login"
@@ -50,11 +51,10 @@ const session = await getSession(Astro.request)
         height="40"
       />
       
-    <div class="user">
-      <h1 class="user">Welcome, {session?.user?.name}</h1>
-    </div>
       
-      </a>
+      
+      <h1 class="user">Welcome, {session?.user?.name}</h1>
+    </a>
       <SignOut>Logout</SignOut>
     </div>
      <button
@@ -401,7 +401,12 @@ const session = await getSession(Astro.request)
   gap: 1rem;
   flex-direction: column; /* Move the username to the right of the profile picture */
 }
-
+.profile-section a{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-direction: row; /* Move the username to the right of the profile picture */
+}
   @media (max-width: 980px) {
     #menu-toggle {
       display: block;
