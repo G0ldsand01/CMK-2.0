@@ -32,10 +32,10 @@ const session = await getSession(Astro.request)
     </ul>
   </nav>
   <!-- Auth Buttons or Profile Section -->
-  
+
 <Auth>
   {session ? (
-    
+
     <div
       id="auth-buttons"
       class="login"
@@ -50,9 +50,9 @@ const session = await getSession(Astro.request)
         width="40"
         height="40"
       />
-      
-      
-      
+
+
+
       <h1 class="user">Welcome, {session?.user?.name}</h1>
     </a>
       <SignOut>Logout</SignOut>
@@ -113,7 +113,7 @@ const session = await getSession(Astro.request)
   )}
 </Auth>
   <!-- Profile Section - hidden by default -->
-  
+
   <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -166,22 +166,11 @@ const session = await getSession(Astro.request)
           </div>
         ) : (
             <li>
-              <a
-              href="/login"
-              
-              
-            >
-              Login
-            </a>
+              <a href="/login">Login</a>
             </li>
             <li>
-              <a href="/register" style="text-decoration: none;">
-                Register
-            </a>
+              <a href="/register" style="text-decoration: none;">Register</a>
             </li>
-      
-            
-          </div>
         )}
       </Auth>
       <li>
@@ -428,8 +417,8 @@ const session = await getSession(Astro.request)
     }
     #profile-section {
       display: none;
-    } 
-    
+    }
+
   }
   @keyframes fadeIn {
     from {

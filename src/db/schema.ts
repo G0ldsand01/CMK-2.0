@@ -5,6 +5,7 @@ import {
   numeric,
   pgTable,
   primaryKey,
+  serial,
   text,
   timestamp,
   varchar,
@@ -46,6 +47,16 @@ export const usersTable = pgTable('user', {
   state: text('state'),
   zip: text('zip'),
   country: text('country'),
+});
+
+export const wishlistTable = pgTable('wishlist', {
+  id: serial('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  productId: integer('productId')
+    .notNull()
+    .references(() => productsTable.id, { onDelete: 'cascade' }),
 });
 
 // One to many relationship between users and accounts

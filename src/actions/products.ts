@@ -1,8 +1,9 @@
 import db from '@/lib/db';
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { productsTable } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { productsTable, wishlistTable } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { getSession } from 'auth-astro/server';
 
 export const products = {
   getBestProducts: defineAction({
@@ -24,7 +25,19 @@ export const products = {
 
       const product = products.find((doc) => doc.id === input.id);
 
-      return product;
+      const session = await getSession(ctx.request);
+      if (session && session.user && session.user.id) {
+        const userId = session.user.id;
+        const wishlist = await db.query.wishlistTable.findMany({
+          where: and(
+            eq(wishlistTable.userId, userId),
+            eq(wishlistTable.productId, input.id)
+          ),
+        });
+        return { product, isInWishlist: wishlist.length > 0 };
+      }
+
+      return { product, isInWishlist: false };
     },
   }),
 };

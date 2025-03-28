@@ -4,13 +4,18 @@ import { products as productsActions } from '../../actions/products';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import '../../styles/product.css';
-import { Toaster } from 'sonner'; // Correct import
-import {Heart} from 'lucide-react';
+import { Heart } from 'lucide-react';
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
   id: Number(id),
 });
-const product = productActions.data;
+const data = productActions.data;
+
+if (!data) {
+  return Astro.redirect('/');
+}
+
+const { product, isInWishlist } = data;
 ---
 
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
@@ -19,11 +24,16 @@ const product = productActions.data;
     product ? (
       <div class="product-details">
         <div class="product">
-          <div class="add-to-wishlist-button" id="add-to-wishlist-button">
-              <Heart />
-            </div>
+          <div
+            class={`add-to-wishlist-button ${
+              isInWishlist ? 'add-to-wishlist-button-active' : ''
+            }`}
+            id="add-to-wishlist-button"
+            product-id={id}
+          >
+            <Heart />
+          </div>
           <div class="product-info">
-            
             <Image
               src={'/api/image/' + product.image + '.png'}
               alt={product.name}
@@ -68,7 +78,7 @@ const product = productActions.data;
               </div>
             </div>
             <button
-            id="buy-now-button"
+              id="buy-now-button"
               class="snipcart-add-item snipcart-checkout"
               data-item-id={product.id}
               data-item-price={Number(product.price).toFixed(2) || '0.00'}
@@ -81,7 +91,6 @@ const product = productActions.data;
             </button>
           </div>
         </div>
-        <Toaster />
       </div>
     ) : (
       <div class="product-details">
@@ -95,57 +104,25 @@ const product = productActions.data;
 <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
 
 <script>
-  // Client-side JavaScript for the popover functionality
-  let hideTimeout: number | null = null;
-
-  // Function to run after the DOM is fully loaded
-  function initializePopover() {
-    const trigger = document.getElementById('popoverTrigger');
-    const content = document.getElementById('popoverContent');
-
-    console.log('Trigger element:', trigger);
-    console.log('Content element:', content);
-
-    if (trigger && content) {
-      // Ensure popover is hidden initially
-      content.style.display = 'none';
-
-      trigger.addEventListener('click', () => {
-        console.log('Button clicked');
-        // Don't stop propagation as it might interfere with snipcart
-
-        // Clear any existing timeout
-        if (hideTimeout !== null) {
-          clearTimeout(hideTimeout);
-        }
-
-        // Show the popover
-        content.style.display = 'block';
-        console.log('Popover shown, setting timeout');
-        // Set a new timeout to hide after 5 seconds
-        hideTimeout = window.setTimeout(() => {
-          console.log('Timeout triggered, hiding popover');
-          content.style.display = 'none';
-        }, 1000);
-      });
-    }
-  }
-
-  // Run when the DOM is loaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializePopover);
-  } else {
-    initializePopover();
-  }
-
-  // Also run when Snipcart might be initialized
-  document.addEventListener('snipcart.ready', initializePopover);
-</script>
-<script>
+  import { actions } from 'astro:actions';
   const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
   if (addToWishlistButton) {
-    addToWishlistButton.addEventListener('click', () => {
-      console.log('Add to wishlist button clicked');
+    addToWishlistButton.addEventListener('click', async () => {
+      const productId = addToWishlistButton.getAttribute('product-id');
+      if (!productId) {
+        console.error('Product ID is not set');
+        return;
+      }
+      const { error, data } = await actions.user.addRemoveProductToWishlist({
+        productId: productId,
+      });
+      if (!error) {
+        if (data.inWishlist) {
+          addToWishlistButton.classList.add('add-to-wishlist-button-active');
+        } else {
+          addToWishlistButton.classList.remove('add-to-wishlist-button-active');
+        }
+      }
     });
   }
 </script>

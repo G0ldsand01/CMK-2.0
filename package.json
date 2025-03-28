@@ -8,6 +8,11 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "devDependencies": {
+    "@types/pg": "^8.11.11",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4"
+  },
   "dependencies": {
     "@astrojs/react": "^4.2.1",
     "@astrojs/vercel": "^8.1.2",
@@ -45,10 +50,5 @@
       "protobufjs",
       "sharp"
     ]
-  },
-  "devDependencies": {
-    "@types/pg": "^8.11.11",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4"
   }
 }

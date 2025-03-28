@@ -1,12 +1,12 @@
 ---
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { Heart, ShoppingBag } from "lucide-react";
-import { getSession } from "auth-astro/server";
-import { Auth, SignOut } from "auth-astro/components";
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { Heart, ShoppingBag } from 'lucide-react';
+import { getSession } from 'auth-astro/server';
+import { Auth, SignOut } from 'auth-astro/components';
 const session = await getSession(Astro.request);
 
 if (!session) {
-  return Astro.redirect("/login");
+  return Astro.redirect('/login');
 }
 ---
 
@@ -32,7 +32,7 @@ if (!session) {
           <Heart />
         </div>
         <h2>My Wishlist</h2>
-        <p>Add products to your wishlist</p>
+        <p>View & manage products in your wishlist</p>
         <a href="/dashboard/wishlist">My Wishlist</a>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { getSession } from 'auth-astro/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { containsDangerousPattern, logSecurityEvent } from './index';
 import db from '@/lib/db';
-import { usersTable } from '@/db/schema';
+import { productsTable, usersTable, wishlistTable } from '@/db/schema';
 
 const sanitizeString = (str: string) => str.trim().replace(/[<>]/g, '');
 const sanitizeEmail = (email: string) => email.toLowerCase().trim();
@@ -89,7 +89,6 @@ export const user = {
         }),
     }),
     handler: async (input, context) => {
-      console.log('setUserDetails', input);
       try {
         const session = await getSession(context.request);
         console.log('session', session);
@@ -153,6 +152,138 @@ export const user = {
         return {
           success: true,
           message: 'User details updated successfully',
+        };
+      } catch (error) {
+        console.error(error);
+        if (error instanceof ActionError) {
+          throw error;
+        }
+        logSecurityEvent('UNEXPECTED_ERROR', 'unknown', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          ip: context?.request?.headers?.get('x-forwarded-for'),
+        });
+        throw new ActionError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred',
+        });
+      }
+    },
+  }),
+  getWishlist: defineAction({
+    handler: async (_input, context) => {
+      try {
+        const session = await getSession(context.request);
+
+        if (!session || !session.user || !session.user.id) {
+          logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+            ip: context.request.headers.get('x-forwarded-for'),
+          });
+          throw new ActionError({
+            code: 'UNAUTHORIZED',
+            message: 'User must be logged in.',
+          });
+        }
+
+        const userId = session.user.id;
+
+        const wishlist = await db
+          .select()
+          .from(wishlistTable)
+          .where(eq(wishlistTable.userId, userId))
+          .innerJoin(
+            productsTable,
+            eq(wishlistTable.productId, productsTable.id)
+          );
+
+        return {
+          success: true,
+          wishlist: wishlist,
+        };
+      } catch (error) {
+        console.error(error);
+        if (error instanceof ActionError) {
+          throw error;
+        }
+        logSecurityEvent('UNEXPECTED_ERROR', 'unknown', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          ip: context?.request?.headers?.get('x-forwarded-for'),
+        });
+        throw new ActionError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred',
+        });
+      }
+    },
+  }),
+  addRemoveProductToWishlist: defineAction({
+    input: z.object({
+      productId: z.string(),
+    }),
+    handler: async (input, context) => {
+      try {
+        const session = await getSession(context.request);
+
+        if (!session || !session.user || !session.user.id) {
+          logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+            ip: context.request.headers.get('x-forwarded-for'),
+          });
+          throw new ActionError({
+            code: 'UNAUTHORIZED',
+            message: 'User must be logged in.',
+          });
+        }
+
+        const userId = session.user.id;
+        const { productId } = input;
+
+        const existingWishlist = await db
+          .select()
+          .from(wishlistTable)
+          .where(eq(wishlistTable.userId, userId));
+
+        if (
+          existingWishlist.some(
+            (wish: { id: number; userId: string; productId: number }) =>
+              wish.productId === Number(productId)
+          )
+        ) {
+          await db
+            .delete(wishlistTable)
+            .where(
+              and(
+                eq(wishlistTable.userId, userId),
+                eq(wishlistTable.productId, Number(productId))
+              )
+            );
+
+          return {
+            success: true,
+            message: 'Product removed from wishlist successfully',
+            inWishlist: false,
+            wishlist: existingWishlist.filter(
+              (wish) => wish.productId !== Number(productId)
+            ),
+          };
+        }
+
+        await db
+          .insert(wishlistTable)
+          .values({
+            userId,
+            productId: Number(productId),
+          })
+          .onConflictDoNothing();
+
+        const newWishlist = [
+          ...existingWishlist.map((wish) => wish.productId),
+          productId,
+        ];
+
+        return {
+          success: true,
+          message: 'Product added to wishlist successfully',
+          inWishlist: true,
+          wishlist: newWishlist,
         };
       } catch (error) {
         console.error(error);

@@ -1,45 +1,57 @@
 ---
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { getSession } from "auth-astro/server";
-import { Auth, SignOut } from "auth-astro/components";
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getSession } from 'auth-astro/server';
+import { actions } from 'astro:actions';
 const session = await getSession(Astro.request);
 
 if (!session || !session.user) {
-  return Astro.redirect("/login");
+  return Astro.redirect('/login');
 }
+
+const action = await Astro.callAction(actions.user.getWishlist, {});
+const data = action.data;
+
+if (!data) {
+  return Astro.redirect('/dashboard/');
+}
+
+const { wishlist } = data;
 ---
 
 <DashboardLayout title="Dashboard" activeId="wishlist">
-      <div class="content">
-        <div class="head">
-          <div class="welcome-message">
-            <h1>{session.user.name}'s Wishlist</h1>
-            <p>Save your favorite products</p>
-          </div>
-          <div class="whishlist">
-            <div class="whishlist-list">
-              <div class="whishlist-list-header">                
-                <div class="whishlist-list-body">
-                  <!-- {whishlist.map((product: { name: string; price: number; quantity: number }) => (
-            <div class="whishlist-list-body-item">
-              <div class="whishlist-list-body-item-header">
-                <h3>{product.name}</h3>
-                <p2>Price: ${product.price}</p2>
-              </div>
-              <div class="whishlist-list-body-item-body">
-                <p2>Quantity: {product.quantity}</p2>
-                <p2>Total: ${product.price * product.quantity}</p2>
-              </div>
-            </div>
-          ))} -->
-                </div>
-              </div>
+  <div class="content">
+    <div class="head">
+      <div class="welcome-message">
+        <h1>{session.user.name}'s Wishlist</h1>
+        <p>Save your favorite products</p>
+      </div>
+      <div class="whishlist">
+        <div class="whishlist-list">
+          <div class="whishlist-list-header">
+            <div class="whishlist-list-body">
+              {
+                wishlist.map((product) => (
+                  <div class="whishlist-list-body-item">
+                    <div class="whishlist-list-body-item-header">
+                      <h3 class="text-white">{product.products.name}</h3>
+                      <p2 class="text-white">
+                        Price: ${product.products.price}
+                      </p2>
+                    </div>
+                    <div class="whishlist-list-body-item-body">
+                      <p2 class="text-white">${product.products.price}</p2>
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           </div>
         </div>
       </div>
-
+    </div>
+  </div>
 </DashboardLayout>
+
 <style>
   /* Content Section */
   .content {
@@ -56,11 +68,16 @@ if (!session || !session.user) {
     padding: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .welcome-message {
+    text-align: center;
+    margin-bottom: 2rem;
   }
 
   .welcome-message h1 {
@@ -72,6 +89,25 @@ if (!session || !session.user) {
     color: #000000;
     font-size: 16px;
   }
+
+  .whishlist {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .whishlist-list-body-item {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .whishlist-list-body-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   /* Responsive Design */
   @media (max-width: 768px) {
     .content {
@@ -83,13 +119,7 @@ if (!session || !session.user) {
       width: 100%;
       padding: 20px;
       border-radius: 1rem;
-    }
-    .head {
-      width: 100%;
-      padding: 20px;
-      border-radius: 1rem;
       margin-top: 2rem;
     }
-    
   }
 </style>
