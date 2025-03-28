@@ -1,8 +1,4 @@
 interface ImportMetaEnv {
-  readonly STRIPE_SECRET_KEY: string;
-
-  readonly ASTRO_DB_REMOTE_URL: string;
-  readonly ASTRO_DB_APP_TOKEN: string;
   readonly DATABASE_URL: string;
 }
 

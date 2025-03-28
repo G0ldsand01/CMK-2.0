@@ -1,5 +1,5 @@
 ---
-import '../styles/login.css';
+import '@styles/login.css';
 ---
 
 <head>
@@ -10,7 +10,7 @@ import '../styles/login.css';
   <h1>Register</h1>
   <form action="/api/auth/register" method="POST">
     <p>Already have an account? <a href="/login">Login</a></p>
-    <label type="text" name="name">Username</label>
+    <label for="username">Username</label>
     <input
       type="text"
       name="name"
@@ -41,20 +41,3 @@ import '../styles/login.css';
     <button type="submit">Login</button>
   </form>
 </div>
-
-<script>
-  // verify passwords match
-  const password = document.getElementById('password')!;
-  const confirmPassword = document.getElementById('confirmPassword')!;
-
-  password.addEventListener('input', () => {
-    // @ts-expect-error
-    if (password.value !== confirmPassword.value) {
-      // @ts-expect-error
-      confirmPassword.setCustomValidity('Passwords do not match');
-    } else {
-      // @ts-expect-error
-      confirmPassword.setCustomValidity('');
-    }
-  });
-</script>
