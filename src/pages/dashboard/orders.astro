@@ -7,6 +7,40 @@ const session = await getSession(Astro.request);
 if (!session) {
   return Astro.redirect("/login");
 }
+
+// Clé API Snipcart (Met-la dans une variable d'environnement pour la sécurité)
+const API_KEY = import.meta.env.SNIPCART_SECRET_KEY;
+const userEmail = session.user.email;
+
+// Define orders with a default value (empty array)
+let orders: Order[] = [];
+
+// Récupération des commandes depuis Snipcart pour l'email de l'utilisateur
+const response = await fetch(`https://app.snipcart.com/api/orders?email=${encodeURIComponent(userEmail)}`, {
+  headers: {
+    Authorization: `Basic ${btoa(API_KEY)}`,
+    "Content-Type": "application/json",
+  },
+});
+
+// Define the type for an order, including the email
+interface Order {
+  orderId: string;
+  orderDate: string;
+  total: number;
+  status: string;
+  email: string; // Add the email property
+}
+
+try {
+  const data = await response.json();
+  console.log(`Snipcart API Response for ${userEmail}:`, data); // Log the parsed JSON
+  orders = data.items;
+} catch (error) {
+  console.error(`Error parsing Snipcart API response for ${userEmail}:`, error);
+  // Handle the error, maybe display a message to the user
+  // orders remains an empty array in this case
+}
 ---
 
 <DashboardLayout title="Dashboard" activeId="orders">
@@ -14,28 +48,31 @@ if (!session) {
     <div class="head">
       <div class="welcome-message">
         <h1>{session?.user?.name}'s Orders'</h1>
+        <p>Check the history of all your orders associated with: {session.user.email}</p>
       </div>
     </div>
     <div class="orders">
       <div class="orders-list">
         <div class="orders-list-header">
           <h2>Orders</h2>
-          <p2>Check the history of all your orders & their status</p2>
+          <p>Showing orders for {session.user.email}</p>
         </div>
-        <!-- {
-              orders.map((order) => (
-                <div class="orders-list-body-item">
-                  <div class="orders-list-body-item-header">
-                    <h3>Order #{order.orderId}</h3>
-                    <p2>Order Date: {order.orderDate}</p2>
-                  </div>
-                  <div class="orders-list-body-item-body">
-                    <p2>Order Total: ${order.total}</p2>
-                    <p2>Order Status: {order.status}</p2>
-                  </div>
-                </div>
-              ))
-            } -->
+        {orders.map((order) => (
+          <div class="orders-list-body-item">
+            <div class="orders-list-body-item-header">
+              <h3>Order #{order.orderId}</h3>
+              <p>Order Date: {order.orderDate}</p>
+            </div>
+            <div class="orders-list-body-item-body">
+              <p>Order Total: ${order.total}</p>
+              <p>Order Status: {order.status}</p>
+              <p>Email: {order.email}</p>
+            </div>
+          </div>
+        ))}
+        {orders.length === 0 && (
+          <p>No orders found for this email address.</p>
+        )}
       </div>
     </div>
   </div>
@@ -70,6 +107,3 @@ if (!session) {
       font-size: 16px;
     }
 </style>
-
-
-
