@@ -59,7 +59,7 @@ const session = await getSession(Astro.request)
     </div>
      <button
         class="snipcart-checkout"
-        data-item-url="{Astro.url}"
+        data-item-url={Astro.url}
         style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
         onmouseover="this.style.backgroundColor='#3d3d3d';"
         onmouseout="this.style.backgroundColor='#292929';"
@@ -165,7 +165,7 @@ const session = await getSession(Astro.request)
             </a>
             <div class="user_info_logout">
               <a href="/dashboard" >
-              <h1 class="user">Welcome, {session?.user?.name}</h1>
+              <h1 class="user"  >Welcome, {session?.user?.name}</h1>
               </a>
               <SignOut>Logout</SignOut>
             </div>
@@ -217,9 +217,7 @@ const session = await getSession(Astro.request)
     }
   }
 
-  document
-    .getElementById('menu-toggle')
-    ?.addEventListener('click', menuToggleFunction);
+  document.getElementById('menu-toggle')?.addEventListener('click', menuToggleFunction);
     import("auth-astro/client").then(({ signOut }) => {
       const logoutButton = document.querySelector("#logout") as HTMLButtonElement;
       if (logoutButton) {
