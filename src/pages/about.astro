@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import '../styles/about.css';
 ---
 
 <Layout title="About Us" navbar={true}>
@@ -75,7 +74,7 @@ import '../styles/about.css';
   html, body {
     height: 100%;
     margin: 0;
-    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-y: scroll; /* Enables vertical scrolling */
   }
 
   .container {
