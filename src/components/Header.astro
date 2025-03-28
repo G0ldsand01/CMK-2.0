@@ -50,12 +50,12 @@ const session = await getSession(Astro.request)
         width="40"
         height="40"
       />
-
-
-
-      <h1 class="user">Welcome, {session?.user?.name}</h1>
-    </a>
-      <SignOut>Logout</SignOut>
+      <div class="user">
+        <a href="/dashboard" >
+        <h1 class="user">Welcome, {session?.user?.name}</h1>
+        </a>
+        <SignOut>Logout</SignOut>
+      </div>
     </div>
      <button
         class="snipcart-checkout"
@@ -162,9 +162,13 @@ const session = await getSession(Astro.request)
               width="40"
               height="40"
             />
-            <h1 class="user">Welcome, {session?.user?.name}</h1>
             </a>
-            <SignOut>Logout</SignOut>
+            <div class="user_info_logout">
+              <a href="/dashboard" >
+              <h1 class="user">Welcome, {session?.user?.name}</h1>
+              </a>
+              <SignOut>Logout</SignOut>
+            </div>
           </div>
         ) : (
             <li>
