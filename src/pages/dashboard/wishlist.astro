@@ -2,6 +2,7 @@
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getSession } from 'auth-astro/server';
 import { actions } from 'astro:actions';
+import Image from 'astro/components/Image.astro';
 const session = await getSession(Astro.request);
 
 if (!session || !session.user) {
@@ -18,110 +19,169 @@ if (!data) {
 const { wishlist } = data;
 ---
 
-<DashboardLayout title="Dashboard" activeId="wishlist">
-  <div class="content">
+<DashboardLayout title="Wishlist" activeId="wishlist">
+<div class="content">
     <div class="head">
       <div class="welcome-message">
         <h1>{session.user.name}'s Wishlist</h1>
         <p>Save your favorite products</p>
       </div>
-      <div class="whishlist">
-        <div class="whishlist-list">
-          <div class="whishlist-list-header">
-            <div class="whishlist-list-body">
-              {
-                wishlist.map((product) => (
-                  <a href={`/product/${product.products.id}`}>
-                  <div class="whishlist-list-body-item">
-                    <div class="whishlist-list-body-item-header">
-                      <h3 class="text-white">{product.products.name}</h3>
-                      <p2 class="text-white">
-                        Price: ${product.products.price}
-                      </p2>
+    </div>
+    <div class="wishlist">
+      <div class="wishlist-list">
+        <div class="wishlist-list-body">
+            {
+              Array.isArray(wishlist) && wishlist.map((product) => (
+                <a href={`/product/${product.products.id}`}>
+                  <div class="wishlist-list-body-item">
+                    <Image
+                      src={'/api/image/' + product.products.image + '.png'}
+                      alt={product.products.name}
+                      width={100}
+                      height={100}
+                    />
+                    <div class="wishlist-list-body-item-details">
+                      <h3>{product.products.name}</h3>
+                      <p>{product.products.description || 'No description available'}</p>
                     </div>
-                    <div class="whishlist-list-body-item-body">
-                      <p2 class="text-white">${product.products.price}</p2>
+                    <div class="wishlist-list-body-item-price">
+                      ${product.products.price}
                     </div>
                   </div>
-                  </a>
-                ))
-              }
-            </div>
-          </div>
+                </a>
+              ))
+            }
         </div>
       </div>
-    </div>
   </div>
+</div>
 </DashboardLayout>
-
 <style>
-  /* Content Section */
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+  /* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #0f0f0f;
+  color: #333;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-  /* Header Styling */
-  .head {
-    margin-top: 10rem;
-    width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
-    padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .welcome-message {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .welcome-message h1 {
-    color: #27ae60;
-    font-size: 28px;
-  }
-
-  .welcome-message p {
-    color: #000000;
-    font-size: 16px;
-  }
-
-  .whishlist {
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .whishlist-list-body-item {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-  }
-
-  .whishlist-list-body-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .content {
-      padding: 20px;
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;  
+}
+.head {
+      margin-top: 5rem;
+      width: 50%;
+      background-color: hsla(0, 0%, 20%, 0.274);
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border-radius: 2rem;
+      margin-left: auto;
+      margin-right: auto;
       text-align: center;
     }
 
-    .head {
-      width: 100%;
-      padding: 20px;
-      border-radius: 1rem;
-      margin-top: 2rem;
+    .welcome-message h1 {
+      color: #27ae60;
+      font-size: 28px;
     }
+
+    .welcome-message p {
+      color: #666;
+      font-size: 16px;
+    }
+
+/* Wishlist Section */
+.wishlist {
+  margin-top: 3rem;
+  width: 50%;
+  background-color: hsla(0, 0%, 20%, 0.274);
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wishlist-list-body-item {
+  background-color: rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.wishlist-list-body-item:hover {
+  background-color: #202121;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-list-body-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 15%;
+  object-fit: cover;
+}
+
+.wishlist-list-body-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #f4f2f2;
+}
+
+.wishlist-list-body-item-price {
+  font-weight: bold;
+  color: #f4f2f2;
+}
+/* add margin at the end of the wishlist */
+.wishlist {
+  margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .head, .wishlist {
+    width: 70%;
   }
+}
+
+@media (max-width: 768px) {
+  .head, .wishlist {
+    width: 100%;
+    padding: 20px;
+    border-radius: 1rem;
+    margin-top: 2rem;
+  }
+
+  .wishlist-list-body-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .wishlist-list-body-item img {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-message h1 {
+    font-size: 22px;
+  }
+
+  .welcome-message p {
+    font-size: 14px;
+  }
+}
 </style>

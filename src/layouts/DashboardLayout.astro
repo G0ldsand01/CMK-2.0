@@ -43,18 +43,21 @@ if (!session) {
               href="/dashboard/orders"
               class={activeId === "orders" ? "active" : ""}
             >
-              My Orders</a>
+              My Orders</a
+            >
           </li>
           <li>
             <a
               href="/dashboard/wishlist"
-              class={activeId === "wishlist" ? "active" : ""}>My Wishlist</a>
+              class={activeId === "wishlist" ? "active" : ""}>My Wishlist</a
+            >
           </li>
           <li>
             <a
               href="/dashboard/settings"
               class={activeId === "settings" ? "active" : ""}
-              >My Account Settings</a>
+              >My Account Settings</a
+            >
           </li>
           <li>
             <a>
@@ -103,12 +106,13 @@ if (!session) {
     /* Main Layout */
     .main-layout {
       display: flex;
-      height: 100vh;
+      min-height: 100vh;
     }
     .content {
       flex: 1;
       display: flex;
       flex-direction: column;
+      align-items: stretch;
     }
     .chip-container {
       display: none;
@@ -116,12 +120,13 @@ if (!session) {
 
     /* Sidebar Styling */
     .sidebar {
-      margin-top: 5rem;
       width: 250px;
       background-color: #121212;
       padding: 20px;
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-      height: 93.5%;
+      height: auto;
+      flex-shrink: 0; /* Prevents the sidebar from shrinking */
+      /* Ensures the sidebar adjusts to the full page height */
     }
 
     .sidebar nav ul {
@@ -174,6 +179,7 @@ if (!session) {
     .return-to-home:hover {
       background-color: #20c464;
     }
+    
     /* Responsive Design */
     @media (max-width: 768px) {
       .sidebar {
