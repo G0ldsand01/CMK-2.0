@@ -31,6 +31,7 @@ const { wishlist } = data;
             <div class="whishlist-list-body">
               {
                 wishlist.map((product) => (
+                  <a href={`/product/${product.products.id}`}>
                   <div class="whishlist-list-body-item">
                     <div class="whishlist-list-body-item-header">
                       <h3 class="text-white">{product.products.name}</h3>
@@ -42,6 +43,7 @@ const { wishlist } = data;
                       <p2 class="text-white">${product.products.price}</p2>
                     </div>
                   </div>
+                  </a>
                 ))
               }
             </div>
