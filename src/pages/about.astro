@@ -63,3 +63,34 @@ import '../styles/about.css';
     </div>
 </Layout>
 
+<style>
+  * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+   }
+   html,
+   body {
+     height: 100%;
+     margin: 0;
+     overflow-y: auto; /* Ensures vertical scrolling is enabled */
+   }
+
+   /* Body */
+   body {
+     font-family: Arial, sans-serif;
+     background-color: #0f0f0f;
+     display: flex;
+     min-height: 100vh;
+     flex-direction: column;
+   }
+
+   .container {
+     min-height: 100vh; /* Ensures the container takes up full viewport height */
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     padding: 20px;
+   }
+</style>
