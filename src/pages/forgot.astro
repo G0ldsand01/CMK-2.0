@@ -23,36 +23,3 @@ import '@styles/login.css';
   </form>
   <p><a href="login.html">Back to Login</a></p>
 </div>
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-  import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
-
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: 'AIzaSyAiVI9XV3_XEP0uULr4JmTGZ5pjJ1y2N_A',
-    authDomain: 'cmkinc.firebaseapp.com',
-    projectId: 'cmkinc',
-    storageBucket: 'cmkinc.firebasestorage.app',
-    messagingSenderId: '75608099110',
-    appId: '1:75608099110:web:11cec5fa31b26433cc19e7',
-    measurementId: 'G-RWDHKH1X3K',
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  document
-    .getElementById('reset-form')
-    .addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('reset-email').value;
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        alert('Password reset link sent!');
-        window.location.href = '/login'; // Redirect to login page
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
-    });
-</script>
