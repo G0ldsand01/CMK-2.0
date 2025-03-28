@@ -274,8 +274,11 @@ const session = await getSession(Astro.request)
   }
 
   nav ul {
+    /* center the list items in the middle of the screen */
     display: flex;
-    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
   }
 
   nav ul li {
