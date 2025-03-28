@@ -51,6 +51,14 @@ const { wishlist } = data;
                 </a>
               ))
             }
+            {
+              wishlist.length === 0 && (
+                <div class="wishlist-list-body-item">
+                  
+                  <h2>No items in your wishlist</h2>
+                </div>
+              )
+            }
         </div>
       </div>
   </div>
@@ -107,7 +115,11 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
+.wishlist-list-body-item h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f4f2f2;
+}
 .wishlist-list-body-item {
   background-color: rgba(0, 0, 0, 0.18);
   padding: 1rem;
