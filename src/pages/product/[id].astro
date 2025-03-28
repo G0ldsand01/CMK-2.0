@@ -64,7 +64,7 @@ const { product, isInWishlist } = data;
                 data-item-id={product.id}
                 data-item-price={Number(product.price).toFixed(2) || '0.00'}
                 data-item-description={product.description}
-                data-item-image={product.image}
+                data-item-image={product.image || '@assets/mouse.png'}
                 data-item-name={product.name}
                 data-item-url={Astro.url}
               >
