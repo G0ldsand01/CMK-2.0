@@ -164,16 +164,16 @@ img {
 }
 
 .add-to-wishlist-button:hover svg {
-  fill: #ae2727; /* Change heart color to red on hover */
+  fill: #ff0000; /* Change heart color to red on hover */
 }
 
 .add-to-wishlist-button-active svg {
-  fill: #eaff00 !important;
+  fill: #ff0000cc !important;
 }
 
 .add-to-wishlist-button-active {
   background-color: #fcfcfc;
-  color: #eaff00 !important;
+  color: #ff0d00cc !important;
   border: solid 2px #ffffff;
 }
 
