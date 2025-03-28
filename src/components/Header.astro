@@ -45,7 +45,7 @@ const session = await getSession(Astro.request)
       <a href="/dashboard" >
       <img
         id="profile-picture"
-        src={session?.user?.image || '/default-profile.png'}
+        src={session?.user?.image || '@assets/cdn/circle-user.svg'}
         alt="Profile Picture"
         width="40"
         height="40"
@@ -154,6 +154,7 @@ const session = await getSession(Astro.request)
       <Auth>
         {session ? (
           <div id="profile-section-nav">
+            <a href="/dashboard" >
             <img
               id="profile-picture"
               src={session?.user?.image || '<circle-user />'}
@@ -162,6 +163,7 @@ const session = await getSession(Astro.request)
               height="40"
             />
             <h1 class="user">Welcome, {session?.user?.name}</h1>
+            </a>
             <SignOut>Logout</SignOut>
           </div>
         ) : (
