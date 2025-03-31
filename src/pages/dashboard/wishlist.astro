@@ -20,7 +20,7 @@ const { wishlist } = data;
 ---
 
 <DashboardLayout title="Wishlist" activeId="wishlist">
-<div class="content">
+  <div class="content">
     <div class="head">
       <div class="welcome-message">
         <h1>{session.user.name}'s Wishlist</h1>
@@ -30,40 +30,77 @@ const { wishlist } = data;
     <div class="wishlist">
       <div class="wishlist-list">
         <div class="wishlist-list-body">
-            {
-              Array.isArray(wishlist) && wishlist.map((product) => (
+          {
+            Array.isArray(wishlist) && wishlist.map((product) => (
+              <div class="wishlist-list-body-item">
                 <a href={`/product/${product.products.id}`}>
-                  <div class="wishlist-list-body-item">
-                    <Image
-                      src={'/api/image/' + product.products.image + '.png'}
-                      alt={product.products.name}
-                      width={100}
-                      height={100}
-                    />
-                    <div class="wishlist-list-body-item-details">
-                      <h3>{product.products.name}</h3>
-                      <p>{product.products.description || 'No description available'}</p>
-                    </div>
-                    <div class="wishlist-list-body-item-price">
-                      ${product.products.price}
-                    </div>
+                  <Image
+                    src={'/api/image/' + product.products.image + '.png'}
+                    alt={product.products.name}
+                    width={100}
+                    height={100}
+                  />
+                  <div class="wishlist-list-body-item-details">
+                    <h3>{product.products.name}</h3>
+                    <p>{product.products.description || 'No description available'}</p>
+                  </div>
+                  <div class="wishlist-list-body-item-price">
+                    ${product.products.price}
                   </div>
                 </a>
-              ))
-            }
-            {
-              wishlist.length === 0 && (
-                <div class="wishlist-list-body-item">
-                  
-                  <h2>No items in your wishlist</h2>
-                </div>
-              )
-            }
+                <button
+                  class="remove-from-wishlist-button"
+                  product-id={product.products.id}
+                >
+                  Remove
+                </button>
+              </div>
+            ))
+          }
+          {
+            wishlist.length === 0 && (
+              <div class="wishlist-list-body-item">
+                <h2>No items in your wishlist</h2>
+              </div>
+            )
+          }
         </div>
       </div>
+    </div>
   </div>
-</div>
 </DashboardLayout>
+<script>
+  import { actions } from 'astro:actions';
+
+  const removeFromWishlistButtons = document.querySelectorAll('.remove-from-wishlist-button');
+
+  removeFromWishlistButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+      const productId = button.getAttribute('product-id');
+      if (!productId) {
+        console.error('Product ID is not set');
+        return;
+      }
+      const { error, data } = await actions.user.addRemoveProductToWishlist({
+        productId: productId,
+      });
+      if (!error) {
+        // Optionally, update the UI after removing the item
+        // For example, you could remove the item from the DOM
+        const itemToRemove = button.parentElement;
+        if (itemToRemove) {
+          itemToRemove.remove();
+          window.location.reload();
+        }
+        // Or you could refresh the wishlist
+        // window.location.reload();
+      } else {
+        console.error('Failed to remove item from wishlist:', error);
+        // Optionally, display an error message to the user
+      }
+    });
+  });
+</script>
 <style>
   /* Global Styles */
 body {
@@ -80,29 +117,29 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;  
+  padding: 20px;
 }
 .head {
-      margin-top: 5rem;
-      width: 50%;
-      background-color: hsla(0, 0%, 20%, 0.274);
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      border-radius: 2rem;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-    }
+    margin-top: 5rem;
+    width: 50%;
+    background-color: hsla(0, 0%, 20%, 0.274);
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
 
-    .welcome-message h1 {
-      color: #27ae60;
-      font-size: 28px;
-    }
+  .welcome-message h1 {
+    color: #27ae60;
+    font-size: 28px;
+  }
 
-    .welcome-message p {
-      color: #666;
-      font-size: 16px;
-    }
+  .welcome-message p {
+    color: #666;
+    font-size: 16px;
+  }
 
 /* Wishlist Section */
 .wishlist {
@@ -129,12 +166,22 @@ body {
   align-items: center;
   gap: 1rem;
   transition: transform 0.3s ease, background-color 0.3s ease;
+  justify-content: space-between; /* Added to space out items */
 }
 
 .wishlist-list-body-item:hover {
   background-color: #202121;
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-list-body-item a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit; /* Inherit color from parent */
+  flex-grow: 1; /* Allow the link part to take up more space */
 }
 
 .wishlist-list-body-item img {
@@ -155,10 +202,25 @@ body {
 .wishlist-list-body-item-price {
   font-weight: bold;
   color: #f4f2f2;
+  margin-left: auto; /* Push price to the right */
 }
 /* add margin at the end of the wishlist */
 .wishlist {
   margin-bottom: 2rem;
+}
+
+.remove-from-wishlist-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-from-wishlist-button:hover {
+  background-color: #c0392b;
 }
 
 /* Responsive Design */
@@ -184,6 +246,14 @@ body {
 
   .wishlist-list-body-item img {
     margin: 0 auto;
+  }
+
+  .wishlist-list-body-item a {
+    flex-direction: column;
+  }
+
+  .wishlist-list-body-item-price {
+    margin-left: 0;
   }
 }
 
