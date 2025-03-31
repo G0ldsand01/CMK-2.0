@@ -40,4 +40,64 @@ export const products = {
       return { product, isInWishlist: false };
     },
   }),
+  getProductsByCategory: defineAction({
+    input: z.object({
+      category: z.string(),
+    }),
+    handler: async (input) => {
+      const products = await db.query.productsTable.findMany({
+        where: eq(productsTable.category, input.category),
+      });
+      return products;
+    },
+  }),
+  getProductsBySearch: defineAction({
+    input: z.object({
+      search: z.string(),
+    }),
+    handler: async (input) => {
+      const products = await db.query.productsTable.findMany({
+        where: eq(productsTable.name, input.search),
+      });
+      return products;
+    },
+  }),
+  
+  getHighestId: defineAction({
+    handler: async () => {
+      const [highestId] = await db.query.productsTable.findMany({
+        select: { id: true },
+      });
+
+      return highestId?.id || 0;
+    },
+  }),
+  addProduct: defineAction({ // Renamed from addProducts to addProduct
+    input: z.object({
+      name: z.string(),
+      price: z.number(),
+      description: z.string(),
+      image: z.string(),
+      category: z.string(),
+      stock: z.number(),
+      id: z.number(),
+    }),
+    handler: async (input) => {
+      const newProduct = {
+        name: input.name,
+        price: input.price.toString(),
+        description: input.description,
+        image: input.image,
+        category: input.category,
+        stock: input.stock,
+        id: input.id,
+        rating: "0", // Default value for rating
+        reviews: "0", // Default value for reviews
+      };
+
+      await db.insert(productsTable).values(newProduct);
+
+      return newProduct;
+    },
+  }),
 };

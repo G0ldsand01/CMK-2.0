@@ -1,13 +1,15 @@
 import { products } from './products';
 import { user } from './user';
-
+export const actions = {
+  products,
+};
 export const server = {
   products,
   user,
 };
 
 export const logSecurityEvent = (
-  event: string,
+  event: 'LOGIN' | 'LOGOUT' | 'DATA_ACCESS' | 'ERROR',
   userId: string,
   details: Record<string, any>
 ) => {
