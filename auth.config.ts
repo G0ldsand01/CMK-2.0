@@ -33,6 +33,7 @@ export default defineConfig({
     async session({ session, user }) {
       // name, email image
       session.user.id = user.id;
+      session.user.role = user.role;
 
       // Custom
       session.user.firstName = user.firstName;

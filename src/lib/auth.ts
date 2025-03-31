@@ -1,5 +1,7 @@
 // import type { Session as BaseSession } from '@auth/core/types';
 
+import type { UserRole } from '@/db/schema';
+
 // export interface User {
 //     id: string
 //     name?: string | null
@@ -14,6 +16,8 @@ type BaseUser = {
 };
 
 export type CMKUser = BaseUser & {
+  role: UserRole;
+
   firstName: string | null;
   lastName: string | null;
   phone: string | null;

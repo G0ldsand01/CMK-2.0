@@ -1,10 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { getSession } from 'auth-astro/server';
-import { and, eq } from 'drizzle-orm';
 import { containsDangerousPattern, logSecurityEvent } from './index';
-import db from '@/lib/db';
-import { productsTable, usersTable, wishlistTable } from '@/db/schema';
+import { getUser } from '@/lib/user';
 
 const sanitizeString = (str: string) => str.trim().replace(/[<>]/g, '');
 const sanitizeEmail = (email: string) => email.toLowerCase().trim();
@@ -90,10 +87,9 @@ export const user = {
     }),
     handler: async (input, context) => {
       try {
-        const session = await getSession(context.request);
-        console.log('session', session);
+        const user = await getUser(context.request);
 
-        if (!session || !session.user || !session.user.id) {
+        if (!user) {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
@@ -103,7 +99,7 @@ export const user = {
           });
         }
 
-        const existingId = session.user.id;
+        const existingId = user.getId();
 
         const {
           displayName,
@@ -133,21 +129,19 @@ export const user = {
           ],
         });
 
-        await db
-          .update(usersTable)
-          .set({
-            name: displayName,
-            firstName,
-            lastName,
-            phone,
-            address,
-            city,
-            state,
-            zip,
-            country,
-            email,
-          })
-          .where(eq(usersTable.id, existingId));
+        await user.setDetails({
+          name: displayName,
+          firstName,
+          lastName,
+          phone,
+          address,
+          city,
+          state,
+          zip,
+          country,
+          email,
+          role: user.getRole(),
+        });
 
         return {
           success: true,
@@ -172,9 +166,9 @@ export const user = {
   getWishlist: defineAction({
     handler: async (_input, context) => {
       try {
-        const session = await getSession(context.request);
+        const user = await getUser(context.request);
 
-        if (!session || !session.user || !session.user.id) {
+        if (!user) {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
@@ -184,16 +178,7 @@ export const user = {
           });
         }
 
-        const userId = session.user.id;
-
-        const wishlist = await db
-          .select()
-          .from(wishlistTable)
-          .where(eq(wishlistTable.userId, userId))
-          .innerJoin(
-            productsTable,
-            eq(wishlistTable.productId, productsTable.id)
-          );
+        const wishlist = await user.getWishlist();
 
         return {
           success: true,
@@ -215,15 +200,15 @@ export const user = {
       }
     },
   }),
-  addRemoveProductToWishlist: defineAction({
+  toggleProductFromWishlist: defineAction({
     input: z.object({
       productId: z.string(),
     }),
     handler: async (input, context) => {
       try {
-        const session = await getSession(context.request);
+        const user = await getUser(context.request);
 
-        if (!session || !session.user || !session.user.id) {
+        if (!user) {
           logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
             ip: context.request.headers.get('x-forwarded-for'),
           });
@@ -233,50 +218,35 @@ export const user = {
           });
         }
 
-        const userId = session.user.id;
         const { productId } = input;
 
-        const existingWishlist = await db
-          .select()
-          .from(wishlistTable)
-          .where(eq(wishlistTable.userId, userId));
+        const existingWishlist = await user.getWishlist();
 
         if (
           existingWishlist.some(
-            (wish: { id: number; userId: string; productId: number }) =>
-              wish.productId === Number(productId)
+            (wish: {
+              products: { id: number };
+              wishlist: { productId: number };
+            }) => wish.products.id === Number(productId)
           )
         ) {
-          await db
-            .delete(wishlistTable)
-            .where(
-              and(
-                eq(wishlistTable.userId, userId),
-                eq(wishlistTable.productId, Number(productId))
-              )
-            );
+          await user.removeFromWishlist(Number(productId));
 
           return {
             success: true,
             message: 'Product removed from wishlist successfully',
             inWishlist: false,
             wishlist: existingWishlist.filter(
-              (wish) => wish.productId !== Number(productId)
+              (wish) => wish.products.id !== Number(productId)
             ),
           };
         }
 
-        await db
-          .insert(wishlistTable)
-          .values({
-            userId,
-            productId: Number(productId),
-          })
-          .onConflictDoNothing();
+        await user.addToWishlist(Number(productId));
 
         const newWishlist = [
-          ...existingWishlist.map((wish) => wish.productId),
-          productId,
+          ...existingWishlist.map((wish) => wish.products.id),
+          Number(productId),
         ];
 
         return {

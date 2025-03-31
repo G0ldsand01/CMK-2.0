@@ -28,6 +28,8 @@ export const productsTable = pgTable(
   (table) => [index('product_name_idx').on(table.name)]
 );
 
+export type UserRole = 'user' | 'admin';
+
 // Unique user has multiple accounts
 export const usersTable = pgTable('user', {
   id: text('id')
@@ -38,7 +40,9 @@ export const usersTable = pgTable('user', {
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
 
-  // Custom
+  role: text('role').$type<UserRole>().notNull().default('user'),
+
+  // Custom user info
   firstName: text('firstName'),
   lastName: text('lastName'),
   phone: text('phone'),

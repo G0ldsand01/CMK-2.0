@@ -1,10 +1,10 @@
 ---
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { getSession } from "auth-astro/server";
-const session = await getSession(Astro.request);
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getUser } from '@/lib/user';
+const user = await getUser(Astro.request);
 
-if (!session || !session.user) {
-  return Astro.redirect("/login");
+if (!user || !user.isAdmin()) {
+  return Astro.redirect('/dashboard');
 }
 ---
 
@@ -47,26 +47,30 @@ if (!session || !session.user) {
 </DashboardLayout>
 
 <script>
-  import { actions } from "astro:actions";
+  import { actions } from 'astro:actions';
 
-  const form = document.querySelector("form");
-  form?.addEventListener("submit", async (event) => {
+  const form = document.querySelector('form');
+  form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const highestId = await actions.products.getHighestId();
-    const { error } = await actions.products.addProduct({ // Updated from addProducts to addProduct
-        name: formData.get("name") as string,
-        price: Number(formData.get("price")),
-        description: formData.get("description") as string,
-        image: formData.get("image") as string,
-        category: formData.get("category") as string,
-        stock: formData.get("stock") ? Number(formData.get("stock")) : 0,
-        id: formData.get("id") ? Number(formData.get("id")) : highestId + 1,
+    const { error } = await actions.products.addProduct({
+      name: formData.get('name') as string,
+      price: Number(formData.get('price')),
+      description: formData.get('description') as string,
+      image: formData.get('image') as string,
+      category: formData.get('category') as string,
+      stock: formData.get('stock') ? Number(formData.get('stock')) : 0,
+      id: formData.get('id')
+        ? Number(formData.get('id'))
+        : highestId.data
+          ? highestId.data + 1
+          : 1,
     });
     if (!error) {
-      alert("Product added successfully");
+      alert('Product added successfully');
     } else {
-      alert("Error adding product");
+      alert('Error adding product');
     }
     form.reset();
   });
@@ -186,7 +190,7 @@ if (!session || !session.user) {
     box-shadow: 0 0 8px rgba(39, 174, 96, 0.7);
   }
 
-  button[type="submit"] {
+  button[type='submit'] {
     margin-top: 1.5rem;
     background-color: #27ae60;
     color: #fff;
@@ -198,7 +202,7 @@ if (!session || !session.user) {
     width: 100%;
   }
 
-  button[type="submit"]:hover {
+  button[type='submit']:hover {
     background-color: #20c464;
   }
   * {

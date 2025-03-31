@@ -113,7 +113,7 @@ const { product, isInWishlist } = data;
         console.error('Product ID is not set');
         return;
       }
-      const { error, data } = await actions.user.addRemoveProductToWishlist({
+      const { error, data } = await actions.user.toggleProductFromWishlist({
         productId: productId,
       });
       if (!error) {

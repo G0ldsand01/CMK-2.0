@@ -1,11 +1,10 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { Heart, ShoppingBag } from 'lucide-react';
-import { getSession } from 'auth-astro/server';
-import { Auth, SignOut } from 'auth-astro/components';
-const session = await getSession(Astro.request);
+import { getUser } from '@/lib/user';
+const user = await getUser(Astro.request);
 
-if (!session) {
+if (!user) {
   return Astro.redirect('/login');
 }
 ---
@@ -14,7 +13,7 @@ if (!session) {
   <div class="content">
     <div class="head">
       <div class="welcome-message">
-        <h1>Welcome Back, {session?.user?.name}</h1>
+        <h1>Welcome Back, {user.getDisplayName()}</h1>
         <p>Here's your dashboard</p>
       </div>
     </div>
@@ -47,26 +46,26 @@ if (!session) {
     margin-top: 2rem;
   }
   .head {
-      margin-top: 5rem;
-      width: 50%;
-      background-color: hsla(0, 0%, 20%, 0.274);
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      border-radius: 2rem;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-    }
+    margin-top: 5rem;
+    width: 50%;
+    background-color: hsla(0, 0%, 20%, 0.274);
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
 
-    .welcome-message h1 {
-      color: #27ae60;
-      font-size: 28px;
-    }
+  .welcome-message h1 {
+    color: #27ae60;
+    font-size: 28px;
+  }
 
-    .welcome-message p {
-      color: #666;
-      font-size: 16px;
-    }
+  .welcome-message p {
+    color: #666;
+    font-size: 16px;
+  }
   /* Menu Section */
   .menu {
     display: flex;

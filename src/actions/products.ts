@@ -1,9 +1,11 @@
 import db from '@/lib/db';
-import { defineAction } from 'astro:actions';
+import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { productsTable, wishlistTable } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { getSession } from 'auth-astro/server';
+import { getUser } from '@/lib/user';
+import { logSecurityEvent } from '.';
 
 export const products = {
   getBestProducts: defineAction({
@@ -40,17 +42,17 @@ export const products = {
       return { product, isInWishlist: false };
     },
   }),
-  getProductsByCategory: defineAction({
-    input: z.object({
-      category: z.string(),
-    }),
-    handler: async (input) => {
-      const products = await db.query.productsTable.findMany({
-        where: eq(productsTable.category, input.category),
-      });
-      return products;
-    },
-  }),
+  // getProductsByCategory: defineAction({
+  //   input: z.object({
+  //     category: z.string(),
+  //   }),
+  //   handler: async (input) => {
+  //     const products = await db.query.productsTable.findMany({
+  //       where: eq(productsTable.category, input.category),
+  //     });
+  //     return products;
+  //   },
+  // }),
   getProductsBySearch: defineAction({
     input: z.object({
       search: z.string(),
@@ -62,17 +64,18 @@ export const products = {
       return products;
     },
   }),
-  
+
   getHighestId: defineAction({
     handler: async () => {
       const [highestId] = await db.query.productsTable.findMany({
-        select: { id: true },
+        orderBy: desc(productsTable.id),
       });
 
       return highestId?.id || 0;
     },
   }),
-  addProduct: defineAction({ // Renamed from addProducts to addProduct
+  addProduct: defineAction({
+    // Renamed from addProducts to addProduct
     input: z.object({
       name: z.string(),
       price: z.number(),
@@ -82,7 +85,29 @@ export const products = {
       stock: z.number(),
       id: z.number(),
     }),
-    handler: async (input) => {
+    handler: async (input, context) => {
+      const user = await getUser(context.request);
+
+      if (!user) {
+        logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+          ip: context.request.headers.get('x-forwarded-for'),
+        });
+        throw new ActionError({
+          code: 'UNAUTHORIZED',
+          message: 'User must be logged in.',
+        });
+      }
+
+      if (!user.isAdmin()) {
+        logSecurityEvent('UNAUTHORIZED_ACCESS', user.getId(), {
+          ip: context.request.headers.get('x-forwarded-for'),
+        });
+        throw new ActionError({
+          code: 'UNAUTHORIZED',
+          message: 'User must be an admin.',
+        });
+      }
+
       const newProduct = {
         name: input.name,
         price: input.price.toString(),
@@ -91,8 +116,8 @@ export const products = {
         category: input.category,
         stock: input.stock,
         id: input.id,
-        rating: "0", // Default value for rating
-        reviews: "0", // Default value for reviews
+        rating: '0', // Default value for rating
+        reviews: '0', // Default value for reviews
       };
 
       await db.insert(productsTable).values(newProduct);
