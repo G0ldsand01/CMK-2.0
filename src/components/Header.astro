@@ -14,10 +14,6 @@ import { CircleUser } from 'lucide-react';
 const session = await getSession(Astro.request)
 ---
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
 <header>
   <div class="logo">
     <CircuitBoard />
@@ -35,7 +31,6 @@ const session = await getSession(Astro.request)
 
 <Auth>
   {session ? (
-
     <div
       id="auth-buttons"
       class="login"
@@ -70,6 +65,7 @@ const session = await getSession(Astro.request)
           style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
           ><CartItemsCount /></span>
       </button>
+    </div>
     </div>
   ) : (
     <div
@@ -112,8 +108,6 @@ const session = await getSession(Astro.request)
     </div>
   )}
 </Auth>
-  <!-- Profile Section - hidden by default -->
-
   <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +145,6 @@ const session = await getSession(Astro.request)
       <li><a href="/products" data-astro-prefetch>Products</a></li>
       <li><a href="/about" data-astro-prefetch>About Us</a></li>
       <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
-      <Auth>
         {session ? (
           <div id="profile-section-nav">
             <a href="/dashboard" >
@@ -178,7 +171,6 @@ const session = await getSession(Astro.request)
               <a href="/register" style="text-decoration: none;">Register</a>
             </li>
         )}
-      </Auth>
       <li>
         <CartCheckout>
           <button

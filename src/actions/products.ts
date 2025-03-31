@@ -3,9 +3,8 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { productsTable, wishlistTable } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { getSession } from 'auth-astro/server';
 import { getUser } from '@/lib/user';
-import { logSecurityEvent } from '.';
+import { logSecurityEvent } from './index';
 
 export const products = {
   getBestProducts: defineAction({
@@ -27,12 +26,11 @@ export const products = {
 
       const product = products.find((doc) => doc.id === input.id);
 
-      const session = await getSession(ctx.request);
-      if (session && session.user && session.user.id) {
-        const userId = session.user.id;
+      const user = await getUser(ctx.request);
+      if (user && user.getId()) {
         const wishlist = await db.query.wishlistTable.findMany({
           where: and(
-            eq(wishlistTable.userId, userId),
+            eq(wishlistTable.userId, user.getId()),
             eq(wishlistTable.productId, input.id)
           ),
         });
@@ -75,7 +73,6 @@ export const products = {
     },
   }),
   addProduct: defineAction({
-    // Renamed from addProducts to addProduct
     input: z.object({
       name: z.string(),
       price: z.number(),
