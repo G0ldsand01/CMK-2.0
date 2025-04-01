@@ -1,7 +1,7 @@
 import db from '@/lib/db';
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { productsTable, wishlistTable } from '@/db/schema';
+import { productsTable, wishlistTable, reviewsTable } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
@@ -122,4 +122,46 @@ export const products = {
       return newProduct;
     },
   }),
+  // addReview: defineAction({
+  //   input: z.object({
+  //     productId: z.number(),
+  //     rating: z.number(),
+  //   }),
+  //   handler: async (input, context) => {
+  //     const user = await getUser(context.request);
+
+  //     if (!user) {
+  //       logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+  //         ip: context.request.headers.get('x-forwarded-for'),
+  //       });
+  //       throw new ActionError({
+  //         code: 'UNAUTHORIZED',
+  //         message: 'User must be logged in.',
+  //       });
+  //     }
+
+  //     const [product] = await db.query.productsTable.findMany({
+  //       where: eq(productsTable.id, input.productId),
+  //       limit: 1,
+  //     });
+
+  //     if (!product) {
+  //       throw new ActionError({
+  //         code: 'NOT_FOUND',
+  //         message: 'Product not found',
+  //       });
+  //     }
+
+  //     const newReview = {
+  //       user: user.getId(),
+  //       productId: input.productId,
+  //       rating: input.rating,
+  //       comment: '',
+  //     };
+
+  //     await db.insert(reviewsTable).values(newReview);
+
+  //     return newReview;
+  //   },
+  // }),
 };

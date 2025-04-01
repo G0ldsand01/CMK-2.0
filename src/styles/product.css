@@ -146,7 +146,7 @@ img {
   align-items: center;
   position: absolute; /* Position the button absolutely */
   right: 20px; /* Place it 20px from the right edge */
-  top: 5%; /* Place it 50% from the top edge */
+  top: 10%; /* Place it 50% from the top edge */
   transform: translateY(-50%); /* Adjust for perfect vertical centering */
 }
 

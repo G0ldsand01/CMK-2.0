@@ -15,7 +15,8 @@ if (!data) {
   return Astro.redirect('/');
 }
 
-const { product, isInWishlist } = data;
+
+const { product, isInWishlist, reviews } = data;
 ---
 
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
@@ -56,7 +57,25 @@ const { product, isInWishlist } = data;
                 {Number(product.price).toFixed(2) || '0.00'}
               </span>
             </div>
-
+            {/* <div class="reviews-section">
+          <h3>Customer Reviews</h3>
+          <ul>
+            {reviews && Array.isArray(reviews) && reviews.length > 0 ? (
+              reviews.map((review) => (
+              <li>
+                 ({review.rating}★)
+              </li>
+              ))
+            ) : (
+              <li>No reviews yet</li>
+            )}
+          </ul>
+          <h4>Add a Review</h4>
+          <form id="review-form">
+            <input type="number" id="review-rating" min="1" max="5" placeholder="Rating (1-5)" required />
+            <button type="submit" class="button">Submit Review</button>
+          </form>
+        </div> */}
             <div class="tooltip-container">
               <button
                 class="snipcart-add-item button add-to-cart-button"
@@ -125,4 +144,21 @@ const { product, isInWishlist } = data;
       }
     });
   }
+  
+  // document.getElementById('review-form')!.addEventListener('submit', async (event) => {
+  //   event.preventDefault();;
+  //   const rating = (document.getElementById('review-rating') as HTMLInputElement)!.value;
+  //   const productId = { id: Number(id) };
+    
+  //   const { error } = await actions.products.addReview({
+  //     productId,
+  //     rating: Number(rating)
+  //   });
+    
+  //   if (!error) {
+  //     location.reload();
+  //   } else {
+  //     console.error('Failed to add review');
+  //   }
+  // });
 </script>

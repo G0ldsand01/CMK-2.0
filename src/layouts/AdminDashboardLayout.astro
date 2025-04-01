@@ -1,0 +1,17 @@
+---
+import Layout from "./Layout.astro";
+import { getSession } from "auth-astro/server";
+import { Auth, SignOut } from "auth-astro/components";
+interface Props {
+  title: string;
+  activeId: string;
+}
+
+const { title, activeId } = Astro.props;
+const session = await getSession(Astro.request);
+
+if (!session) {
+  return Astro.redirect("/login");
+}
+---
+<h1>Admin Dashboard</h1>

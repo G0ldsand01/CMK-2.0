@@ -83,6 +83,14 @@ import Header from "../components/Header.astro";
     margin: 0;
     overflow-y: auto; /* Ensures vertical scrolling is enabled */
   }
+  .main-layout {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
 
   /* Body */
   body {

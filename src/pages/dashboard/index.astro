@@ -7,6 +7,9 @@ const user = await getUser(Astro.request);
 if (!user) {
   return Astro.redirect('/login');
 }
+if (user.isAdmin()) {
+  return Astro.redirect('/admindashboard');
+}
 ---
 
 <DashboardLayout title="Dashboard" activeId="dashboard">
