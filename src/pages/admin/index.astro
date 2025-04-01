@@ -1,0 +1,18 @@
+---
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getUser } from '@/lib/user';
+const user = await getUser(Astro.request);
+
+if (!user || !user.isAdmin()) {
+  return Astro.redirect('/dashboard');
+}
+---
+
+<AdminDashboardLayout title="Admin Dashboard" activeId="dashboard">
+  <h1>Admin Dashboard</h1>
+  <p>Welcome to the admin dashboard, {user.getDisplayName()}!</p>
+  <p>Here you can manage users, products, and orders.</p>
+    <p>Use the sidebar to navigate through the admin panel.</p>
+
+    <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+</AdminDashboardLayout>

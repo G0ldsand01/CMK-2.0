@@ -8,6 +8,7 @@ import {
   serial,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
@@ -26,6 +27,28 @@ export const productsTable = pgTable(
     image: varchar({ length: 255 }).notNull(),
   },
   (table) => [index('product_name_idx').on(table.name)]
+);
+
+export const reviewsTable = pgTable(
+  'reviews',
+  {
+    id: serial('id').primaryKey(),
+    productId: integer('productId')
+      .notNull()
+      .references(() => productsTable.id, { onDelete: 'cascade' }),
+    userId: text('userId')
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' })
+      .unique(),
+    rating: integer('rating').notNull(),
+    // review: text('review').notNull(),
+    createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('product_id_idx').on(table.productId),
+    // Ensure one review per user per product
+    uniqueIndex('user_product_unique_idx').on(table.userId, table.productId),
+  ]
 );
 
 export type UserRole = 'user' | 'admin';
