@@ -420,18 +420,18 @@ nav ul li a:hover {
   const closeMenu = document.querySelector('#close-menu');
   const overlayNav = document.querySelector('.overlay-nav');
 
-  menuIcon.addEventListener('click', () => {
-    overlayNav.classList.add('active');
+  menuIcon!.addEventListener('click', () => {
+    overlayNav!.classList.add('active');
   });
 
-  closeMenu.addEventListener('click', () => {
-    overlayNav.classList.remove('active');
+  closeMenu!.addEventListener('click', () => {
+    overlayNav!.classList.remove('active');
   });
 
   // Fermer si on clique en dehors du menu
-  overlayNav.addEventListener('click', (event) => {
+  overlayNav!.addEventListener('click', (event) => {
     if (event.target === overlayNav) {
-      overlayNav.classList.remove('active');
+      overlayNav!.classList.remove('active');
     }
   });
 });
