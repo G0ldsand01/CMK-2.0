@@ -1,5 +1,5 @@
 ---
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
 const user = await getUser(Astro.request);
 
@@ -8,7 +8,13 @@ if (!user || !user.isAdmin()) {
 }
 ---
 
-<DashboardLayout title="Add New Products" activeId="newproducts">
+<AdminDashboardLayout
+  title="Add New Products"
+  breadcrumb={{
+    '/': 'Home',
+    '/products': 'Manage Products',
+  }}
+>
   <div class="content">
     <div class="head">
       <div class="welcome-message">
@@ -21,16 +27,17 @@ if (!user || !user.isAdmin()) {
       <form>
         <label for="name">Product Name:</label>
         <input type="text" name="name" id="name" class="inputs" required />
-        
+
         <label for="price">Price:</label>
         <input type="number" name="price" id="price" class="inputs" required />
-        
+
         <label for="description">Description:</label>
-        <textarea name="description" id="description" class="inputs" required></textarea>
-        
+        <textarea name="description" id="description" class="inputs" required
+        ></textarea>
+
         <label for="image">Image URL:</label>
         <input type="text" name="image" id="image" class="inputs" required />
-        
+
         <label for="category">Category:</label>
         <select name="category" id="category" class="inputs" required>
           <option value="electronics">Electronics</option>
@@ -45,27 +52,28 @@ if (!user || !user.isAdmin()) {
       </form>
     </div>
   </div>
-</DashboardLayout>
+</AdminDashboardLayout>
 
 <script>
   import { actions } from 'astro:actions';
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form");
-    form?.addEventListener("submit", async (event) => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    form?.addEventListener('submit', async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
       const { error } = await actions.products.addProduct({
-        name: formData.get("name"),
-        price: Number(formData.get("price")),
-        description: formData.get("description"),
-        image: formData.get("image"),
-        category: formData.get("category"),
+        name: (formData.get('name') as string) || '',
+        price: Number(formData.get('price')) || 0,
+        description: (formData.get('description') as string) || '',
+        image: (formData.get('image') as string) || '',
+        category: (formData.get('category') as string) || '',
+        stock: 0,
       });
       if (!error) {
-        alert("Product added successfully");
+        alert('Product added successfully');
       } else {
-        alert("Error adding product");
+        alert('Error adding product');
       }
       form.reset();
     });
@@ -109,7 +117,7 @@ if (!user || !user.isAdmin()) {
   }
   .welcome-message p {
     color: #666;
-    font-size: 16px;  
+    font-size: 16px;
     margin-bottom: 10px;
   }
   /* Form Section */
@@ -128,8 +136,10 @@ if (!user || !user.isAdmin()) {
     flex-direction: column;
     gap: 1rem;
   }
-  
-   input, select, textarea {
+
+  input,
+  select,
+  textarea {
     width: 100%;
     padding: 12px;
     border: 2px solid #27ae60;
@@ -138,8 +148,10 @@ if (!user || !user.isAdmin()) {
     color: #ecf0f1;
     outline: none;
     transition: border 0.3s ease-in-out;
-  } 
-  input:focus, select:focus,textarea:focus {
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
     border-color: #20c464;
     box-shadow: 0 0 8px rgba(39, 174, 96, 0.7);
   }
