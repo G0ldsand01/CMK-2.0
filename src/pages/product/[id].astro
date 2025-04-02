@@ -45,10 +45,10 @@ const { product, isInWishlist } = data;
             <p>{product.description}</p>
             <div class="product-rating">
               <span class="product-rating-stars">
-                {'★'.repeat(Math.floor(Number(product.rating)))}{' '}
+                {/* {'★'.repeat(Math.floor(Number(product.rating || 0)))}{' '} */}
               </span>
               <span class="product-rating-count">
-                ({product.reviews} reviews)
+                {/* ({product.reviews || 0} reviews) */}
               </span>
             </div>
             <div class="product-price">
