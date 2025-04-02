@@ -10,24 +10,12 @@ import {
   SidebarTrigger,
   SidebarInset,
   SidebarProvider,
-  useSidebar,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
 } from '@/components/ui/sidebar';
-import {
-  LayoutDashboardIcon,
-  ListIcon,
-  BarChartIcon,
-  FolderIcon,
-  UsersIcon,
-  SettingsIcon,
-  BellIcon,
-  HomeIcon,
-  ShoppingCartIcon,
-} from 'lucide-react';
-import { UserMenu } from '@/components/UserMenu'; // Ensure the path is correct
-import type User from '@/lib/models/user';
+import { UsersIcon, HomeIcon, ShoppingCartIcon } from 'lucide-react';
+import { UserMenu } from '@/components/UserMenu';
 import { ModeToggle } from './ModeToggle';
 
 const data = {
