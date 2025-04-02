@@ -18,7 +18,7 @@ import type { AdapterAccount } from '@auth/core/adapters';
 export const productsTable = pgTable(
   'products',
   {
-    id: integer().primaryKey(),
+    id: serial('id').primaryKey(),
     name: varchar({ length: 255 }).notNull(),
     price: numeric().notNull(),
     description: text().notNull(),

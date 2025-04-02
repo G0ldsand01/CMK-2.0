@@ -80,7 +80,6 @@ export const products = {
       image: z.string(),
       category: z.string(),
       stock: z.number(),
-      id: z.number(),
     }),
     handler: async (input, context) => {
       const user = await getUser(context.request);
@@ -112,7 +111,6 @@ export const products = {
         image: input.image,
         category: input.category,
         stock: input.stock,
-        id: input.id,
         rating: '0', // Default value for rating
         reviews: '0', // Default value for reviews
       };
