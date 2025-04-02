@@ -18,7 +18,6 @@ if (!user) {
   return Astro.redirect('/login');
 }
 import { getSession } from 'auth-astro/server';
-import { Auth, SignOut } from 'auth-astro/components';
 import { CircleUser, ShoppingBag } from 'lucide-react';
 const session = await getSession(Astro.request)
 ---
@@ -107,7 +106,7 @@ const session = await getSession(Astro.request)
         </ul>
       </nav>
   </header>
-  
+
   <div class="main-layout modern-design">
     <div class="sidebar">
       <nav>
@@ -164,7 +163,7 @@ const session = await getSession(Astro.request)
           </li>
           <li><a href="/" >Return to Home</a></li>
         </ul>
-        
+
       </nav>
     </div>
     <slot />

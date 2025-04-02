@@ -88,13 +88,22 @@ const data = {
   ],
 };
 
+export type userData = {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  role: string;
+};
+
 export function AppSidebar({
+  userData,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { user: User }) {
+}: React.ComponentProps<typeof Sidebar> & { userData: userData }) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <UserMenu user={props.user} />
+        <UserMenu userData={userData} />
       </SidebarHeader>
       <SidebarContent>
         {data.navMain.map((item) => (
@@ -120,12 +129,12 @@ export function AppSidebar({
 }
 
 export function AdminSidebar({
-  user,
   children,
-}: React.PropsWithChildren<{ user: User }>) {
+  userData,
+}: React.PropsWithChildren<{ userData: userData }>) {
   return (
     <SidebarProvider>
-      <AppSidebar user={user} />
+      <AppSidebar userData={userData} />
       <SidebarInset>
         <SidebarTrigger />
         <SidebarContent>{children}</SidebarContent>

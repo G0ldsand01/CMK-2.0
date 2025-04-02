@@ -12,9 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import type User from '@/lib/models/user';
+import type { userData } from './AdminSidebar';
 
-export function UserMenu({ user }: { user: User }) {
+export function UserMenu({ userData }: { userData: userData }) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -26,16 +26,16 @@ export function UserMenu({ user }: { user: User }) {
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <img
-                  src={user.getImage()}
-                  alt={user.getDisplayName()}
+                  src={userData.image}
+                  alt={userData.name}
                   width={32}
                   height={32}
                   className="rounded-lg"
                 />
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
-                <span className="font-semibold">{user.getDisplayName()}</span>
-                <span className="">{user.getEmail()}</span>
+                <span className="font-semibold">{userData.name}</span>
+                <span className="">{userData.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
