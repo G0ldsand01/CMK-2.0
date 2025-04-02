@@ -11,6 +11,9 @@ import {
   SidebarInset,
   SidebarProvider,
   useSidebar,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboardIcon,
@@ -21,9 +24,9 @@ import {
   SettingsIcon,
   BellIcon,
   HomeIcon,
-  MenuIcon,
 } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu'; // Ensure the path is correct
+import type User from '@/lib/models/user';
 
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
@@ -31,120 +34,95 @@ const data = {
     {
       title: 'Dashboard',
       url: '#',
-      icon: LayoutDashboardIcon,
+      items: [
+        {
+          title: 'Home',
+          url: '#',
+        },
+      ],
     },
     {
-      title: 'Orders',
+      title: 'Users',
       url: '#',
-      icon: ListIcon,
+      items: [
+        {
+          title: 'Manage Users',
+          url: '#',
+        },
+        {
+          title: 'Manage Roles',
+          url: '#',
+        },
+      ],
     },
     {
-      title: 'Projects',
+      title: 'Products',
       url: '#',
-      icon: FolderIcon,
-    },
-  ],
-  navTeams: [
-    {
-      title: 'Team',
-      url: '#',
-      icon: UsersIcon,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: FolderIcon,
-    },
-  ],
-  navSettings: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: SettingsIcon,
-    },
-    {
-      title: 'Notifications',
-      url: '#',
-      icon: BellIcon,
-    },
-    {
-      title: 'Back to User Dashboard',
-      url: '/dashboard',
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: 'Back to Home',
-      url: '/',
-      icon: HomeIcon,
+      items: [
+        {
+          title: 'Manage Products',
+          url: '#',
+        },
+        {
+          title: 'Manage Categories',
+          url: '#',
+        },
+        {
+          title: 'Manage Orders',
+          url: '#',
+        },
+        {
+          title: 'Manage Coupons',
+          url: '#',
+        },
+        {
+          title: 'Manage Reviews',
+          url: '#',
+        },
+        {
+          title: 'Manage Settings',
+          url: '#',
+        },
+      ],
     },
   ],
 };
 
-function AppSidebar({ user }: { user: { name: string }}) {
-  const { collapsed, toggle } = useSidebar();
-  
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { user: User }) {
   return (
-    <Sidebar>
+    <Sidebar {...props}>
       <SidebarHeader>
-        <button onClick={toggle} className="p-2 focus:outline-none">
-          <MenuIcon size={24} />
-        </button>
-        <a href="/" className="flex items-center gap-2 p-4">
-          <img src="{logo}" alt="Logo" width={32} height={32} />
-          <span className="font-bold text-lg">CMK</span>
-        </a>
+        <UserMenu user={props.user} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {data.navMain.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url} className="flex items-center gap-2">
-                  <item.icon size={18} />
-                  {item.title}
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarMenuItem key="teams" className="text-muted-foreground">
-            Teams
-          </SidebarMenuItem>
-          {data.navTeams.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url} className="flex items-center gap-2">
-                  <item.icon size={18} />
-                  {item.title}
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-      <SidebarMenu>
-        <SidebarMenuItem key="settings" className="text-muted-foreground">
-          Settings
-        </SidebarMenuItem>
-        {data.navSettings.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild>
-              <a href={item.url} className="flex items-center gap-2">
-                <item.icon size={18} />
-                {item.title}
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+        {data.navMain.map((item) => (
+          <SidebarGroup key={item.title}>
+            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {item.items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={true}>
+                      <a href={item.url}>{item.title}</a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         ))}
-      </SidebarMenu>
-      <UserMenu user={user} />
+      </SidebarContent>
       <SidebarRail />
     </Sidebar>
   );
 }
 
-export function AdminSidebar({ user, children }: React.PropsWithChildren<{ user: { name: string } }>) {
+export function AdminSidebar({
+  user,
+  children,
+}: React.PropsWithChildren<{ user: User }>) {
   return (
     <SidebarProvider>
       <AppSidebar user={user} />

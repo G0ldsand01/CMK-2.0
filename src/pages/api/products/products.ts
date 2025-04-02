@@ -12,15 +12,14 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
   }
 
   if (product.length < 1) {
-    const seeding = [
+    const seeding: (typeof productsTable.$inferInsert)[] = [
       {
         id: 1,
         name: 'Mouse',
         price: '100',
         image: 'mouse',
         description: 'A high-quality mouse',
-        rating: '4.5',
-        reviews: '150',
+        category: 'mouse',
       },
       {
         id: 2,
@@ -28,8 +27,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '50',
         image: 'keyboard',
         description: 'A high-quality keyboard',
-        rating: '4.5',
-        reviews: '150',
+        category: 'keyboard',
       },
       {
         id: 3,
@@ -37,8 +35,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '300',
         image: 'headset',
         description: 'A high-quality headset',
-        rating: '4.5',
-        reviews: '150',
+        category: 'headset',
       },
       {
         id: 4,
@@ -46,8 +43,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '100',
         image: 'mouse',
         description: 'A high-quality mouse',
-        rating: '4.5',
-        reviews: '150',
+        category: 'mouse',
       },
       {
         id: 5,
@@ -55,8 +51,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '50',
         image: 'keyboard',
         description: 'A high-quality keyboard',
-        rating: '4.5',
-        reviews: '150',
+        category: 'keyboard',
       },
       {
         id: 6,
@@ -64,8 +59,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '300',
         image: 'headset',
         description: 'A high-quality headset',
-        rating: '4.5',
-        reviews: '150',
+        category: 'headset',
       },
       {
         id: 7,
@@ -73,8 +67,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '100',
         image: 'mouse',
         description: 'A high-quality mouse',
-        rating: '4.5',
-        reviews: '150',
+        category: 'mouse',
       },
       {
         id: 8,
@@ -82,8 +75,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '50',
         image: 'keyboard',
         description: 'A high-quality keyboard',
-        rating: '4.5',
-        reviews: '150',
+        category: 'keyboard',
       },
       {
         id: 9,
@@ -91,8 +83,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         price: '300',
         image: 'headset',
         description: 'A high-quality headset',
-        rating: '4.5',
-        reviews: '150',
+        category: 'headset',
       },
     ];
 

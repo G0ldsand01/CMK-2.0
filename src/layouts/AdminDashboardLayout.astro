@@ -11,27 +11,28 @@ interface Props {
 const { title } = Astro.props;
 const user = await getUser(Astro.request);
 
-if (!user) {
+if (!user || !user.isAdmin()) {
   return Astro.redirect('/login');
 }
 ---
 
 <Layout title={title} navbar={false}>
-  <AdminSidebar user={user} activeId={Astro.props.activeId}>
+  <AdminSidebar user={user} client:only="react">
     <div class="content">
       <h1>Admin Dashboard</h1>
     </div>
   </AdminSidebar>
 </Layout>
 
-<style>
+<!-- <style>
   .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     margin-top: 2rem;
   }
-  html, body {
+  html,
+  body {
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
     background-color: #0f0f0f;
@@ -42,4 +43,4 @@ if (!user) {
     padding: 0;
     box-sizing: border-box;
   }
-</style>
+</style> -->
