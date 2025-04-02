@@ -1,197 +1,92 @@
+// src/components/AdminSidebar.tsx
 import * as React from 'react';
-
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
+  SidebarMenuButton,
+  SidebarHeader,
   SidebarRail,
   SidebarTrigger,
+  SidebarInset,
+  SidebarProvider,
 } from '@/components/ui/sidebar';
-import type User from '@/lib/models/user';
-import { UserMenu } from './UserMenu';
+import { LayoutDashboardIcon, ListIcon, BarChartIcon, FolderIcon, UsersIcon, SettingsIcon, BellIcon, HomeIcon } from 'lucide-react';
+import { UserMenu } from '@/components/UserMenu'; // Ensure the path is correct
 
-// This is sample data.
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
-      title: 'Getting Started',
+      title: 'Dashboard',
       url: '#',
-      items: [
-        {
-          title: 'Installation',
-          url: '#',
-        },
-        {
-          title: 'Project Structure',
-          url: '#',
-        },
-      ],
+      icon: LayoutDashboardIcon,
     },
     {
-      title: 'Building Your Application',
+      title: 'Lifecycle',
       url: '#',
-      items: [
-        {
-          title: 'Routing',
-          url: '#',
-        },
-        {
-          title: 'Data Fetching',
-          url: '#',
-          isActive: true,
-        },
-        {
-          title: 'Rendering',
-          url: '#',
-        },
-        {
-          title: 'Caching',
-          url: '#',
-        },
-        {
-          title: 'Styling',
-          url: '#',
-        },
-        {
-          title: 'Optimizing',
-          url: '#',
-        },
-        {
-          title: 'Configuring',
-          url: '#',
-        },
-        {
-          title: 'Testing',
-          url: '#',
-        },
-        {
-          title: 'Authentication',
-          url: '#',
-        },
-        {
-          title: 'Deploying',
-          url: '#',
-        },
-        {
-          title: 'Upgrading',
-          url: '#',
-        },
-        {
-          title: 'Examples',
-          url: '#',
-        },
-      ],
+      icon: ListIcon,
     },
     {
-      title: 'API Reference',
+      title: 'Analytics',
       url: '#',
-      items: [
-        {
-          title: 'Components',
-          url: '#',
-        },
-        {
-          title: 'File Conventions',
-          url: '#',
-        },
-        {
-          title: 'Functions',
-          url: '#',
-        },
-        {
-          title: 'next.config.js Options',
-          url: '#',
-        },
-        {
-          title: 'CLI',
-          url: '#',
-        },
-        {
-          title: 'Edge Runtime',
-          url: '#',
-        },
-      ],
+      icon: BarChartIcon,
     },
     {
-      title: 'Architecture',
+      title: 'Projects',
       url: '#',
-      items: [
-        {
-          title: 'Accessibility',
-          url: '#',
-        },
-        {
-          title: 'Fast Refresh',
-          url: '#',
-        },
-        {
-          title: 'Next.js Compiler',
-          url: '#',
-        },
-        {
-          title: 'Supported Browsers',
-          url: '#',
-        },
-        {
-          title: 'Turbopack',
-          url: '#',
-        },
-      ],
+      icon: FolderIcon,
+    },
+    {
+      title: 'Team',
+      url: '#',
+      icon: UsersIcon,
+    },
+    {
+      title: 'Settings',
+      url: '#',
+      icon: SettingsIcon,
+    },
+    {
+      title: 'Notifications',
+      url: '#',
+      icon: BellIcon,
+    },
+    { 
+      title: 'Back to Home',
+      url: '/',
+      icon: HomeIcon,
     },
   ],
 };
 
-function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar> & { user: User }) {
-  const user = props.user;
+function AppSidebar({ user }: { user: { name: string }}) {
   return (
-    <Sidebar {...props}>
+    <Sidebar>
       <SidebarHeader>
-        <UserMenu user={user} />
-        {/* <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
-        <SearchForm /> */}
+        <UserMenu user={user}  />
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <SidebarMenu>
+          {data.navMain.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                <a href={item.url} className="flex items-center gap-2">
+                  <item.icon size={18} />
+                  {item.title}
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
   );
 }
 
-export function AdminSidebar({
-  user,
-  children,
-}: React.PropsWithChildren<{ user: User }>) {
+export function AdminSidebar({ user, children }: React.PropsWithChildren<{ user: { name: string } }>) {
   return (
     <SidebarProvider>
       <AppSidebar user={user} />
