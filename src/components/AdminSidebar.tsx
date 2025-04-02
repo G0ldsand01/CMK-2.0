@@ -84,6 +84,24 @@ const data = {
       ],
     },
   ],
+  navUserSettings: [
+    {
+      title: 'Profile',
+      url: '#',
+    },
+    {
+      title: 'Settings',
+      url: '#',
+    },
+    {
+      title: 'Notifications',
+      url: '#',
+    },
+    {
+      title: 'Logout',
+      url: '#',
+    },
+  ],
 };
 
 export type userData = {
