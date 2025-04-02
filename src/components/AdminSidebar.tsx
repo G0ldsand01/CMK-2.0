@@ -15,7 +15,7 @@ import {
   SidebarGroupContent,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { UsersIcon, HomeIcon, ShoppingCartIcon } from 'lucide-react';
+import { UsersIcon, HomeIcon, ShoppingCartIcon, Database,  Package, Tag, List, Star, UserRoundCog } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu';
 import { ModeToggle } from './ModeToggle';
 
@@ -44,7 +44,7 @@ const data = {
         {
           title: 'Manage Roles',
           url: '#',
-          icon: UsersIcon,
+          icon: Database,
         },
       ],
     },
@@ -60,27 +60,27 @@ const data = {
         {
           title: 'Manage Categories',
           url: '#',
-          icon: ShoppingCartIcon,
+          icon: List,
         },
         {
           title: 'Manage Orders',
           url: '#',
-          icon: ShoppingCartIcon,
+          icon: Package,
         },
         {
           title: 'Manage Coupons',
           url: '#',
-          icon: ShoppingCartIcon,
+          icon: Tag,
         },
         {
           title: 'Manage Reviews',
           url: '#',
-          icon: ShoppingCartIcon,
+          icon: Star,
         },
         {
           title: 'Manage Settings',
           url: '#',
-          icon: ShoppingCartIcon,
+          icon: UserRoundCog,
         },
       ],
     },
