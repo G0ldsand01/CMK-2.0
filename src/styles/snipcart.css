@@ -3,28 +3,6 @@
   font-family: Open Sans, sans-serif;
   font-size: 16px;
 }
-html,
-body {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  max-width: 100%;
-}
-fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-legend,
-label,
-p {
-  font-family: Open Sans, sans-serif;
-  font-size: 12px;
-  color: #fff !important;
-  margin-bottom: 5px;
-  display: inline-block;
-}
 .snipcart-payment-form {
   display: flex;
   max-width: 100%;
@@ -209,7 +187,7 @@ p {
   }
 }
 #snipcart {
-  /* ----------------- 
+  /* -----------------
       Colors
   ----------------- */
   --color-default: hsl(0, 0%, 100%);
@@ -267,7 +245,7 @@ p {
   --color-badge-active: var(--color-link);
   --color-badge-disabled: var(--color-alt);
 
-  /* ----------------- 
+  /* -----------------
       Border colors
   ----------------- */
   --borderColor-default: hsla(0, 0%, 100%, 10%);
@@ -303,7 +281,7 @@ p {
   --borderColor-badge-active: transparent;
   --borderColor-badge-disabled: transparent;
 
-  /* ----------------- 
+  /* -----------------
       Background colors
   ----------------- */
   --bgColor-default: hsl(210, 10%, 11%);
@@ -356,7 +334,7 @@ p {
   --bgColor-badge-active: hsl(210, 60%, 15%);
   --bgColor-badge-disabled: hsl(210, 10%, 11%);
 
-  /* ----------------- 
+  /* -----------------
       Shadows
   ----------------- */
 
@@ -1825,7 +1803,7 @@ p {
 .snipcart-subscription-details__plan
   .snipcart-form-radio
   + .snipcart-form__label:before {
-  content: "";
+  content: '';
   margin-right: 10px;
   display: inline-block;
   border-radius: 99px;
@@ -3333,7 +3311,7 @@ p {
 .snipcart-customer-details-group {
   display: grid;
   grid-template-columns: 25px 1fr auto;
-  grid-template-areas: "icon header action" ". content .";
+  grid-template-areas: 'icon header action' '. content .';
   align-items: center;
 }
 .snipcart-customer-details-group__icon {
@@ -3801,7 +3779,7 @@ p {
   padding: 0;
 }
 .snipcart-checkbox + label:before {
-  content: "";
+  content: '';
   margin-right: 10px;
   display: inline-block;
   vertical-align: text-top;
@@ -3859,7 +3837,7 @@ p {
   );
 }
 .snipcart-checkbox:checked + label:after {
-  content: "";
+  content: '';
   position: absolute;
   left: 5px;
   top: 9px;
@@ -4203,7 +4181,7 @@ p {
   white-space: normal;
 }
 .snipcart-form-radio + label:before {
-  content: "";
+  content: '';
   margin-right: 10px;
   display: inline-block;
   border-radius: 99px;
@@ -4495,7 +4473,7 @@ p {
     align-items: start;
     gap: 32px;
     grid-template-columns: 40fr 60fr;
-    grid-template-areas: "sidebar main";
+    grid-template-areas: 'sidebar main';
   }
 }
 @media (min-width: 1100px) {
