@@ -13,6 +13,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { UsersIcon, HomeIcon, ShoppingCartIcon } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu';
@@ -119,7 +120,7 @@ export function AppSidebar({
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <UserMenu userData={userData} />
+        <div className="text-2xl font-bold text-center">CMK</div>
       </SidebarHeader>
       <SidebarContent>
         {data.navMain.map((item) => (
@@ -142,6 +143,9 @@ export function AppSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <UserMenu userData={userData} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

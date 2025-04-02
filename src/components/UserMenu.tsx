@@ -1,20 +1,37 @@
 import * as React from 'react';
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Link } from 'lucide-react';
+import {
+  BellIcon,
+  Check,
+  ChevronsUpDown,
+  CreditCardIcon,
+  GalleryVerticalEnd,
+  Link,
+  LogOutIcon,
+  MoreVerticalIcon,
+  UserCircleIcon,
+} from 'lucide-react';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import type { userData } from './AdminSidebar';
+import type { user } from '@/actions/user';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export function UserMenu({ userData }: { userData: userData }) {
+  const { isMobile } = useSidebar();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -24,40 +41,60 @@ export function UserMenu({ userData }: { userData: userData }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <img
-                  src={userData.image}
-                  alt={userData.name}
-                  width={32}
-                  height={32}
-                  className="rounded-lg"
-                />
+              <Avatar className="h-8 w-8 rounded-lg grayscale">
+                <AvatarImage src={userData.image} alt={userData.name} />
+                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{userData.name}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {userData.email}
+                </span>
               </div>
-              <div className="flex flex-col gap-0.5 leading-none">
-                <span className="font-semibold">{userData.name}</span>
-                <span className="">{userData.email}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
+              <MoreVerticalIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width]"
-            align="start"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side={isMobile ? 'bottom' : 'right'}
+            align="end"
+            sideOffset={4}
           >
-            {/* {versions.map((version) => (
-              <DropdownMenuItem
-                key={version}
-                onSelect={() => setSelectedVersion(version)}
-              >
-                v{version}{' '}
-                {version === selectedVersion && <Check className="ml-auto" />}
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={userData.image} alt={userData.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {userData.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">{userData.name}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {userData.email}
+                  </span>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <UserCircleIcon />
+                Account
               </DropdownMenuItem>
-            ))} */}
+              <DropdownMenuItem>
+                <CreditCardIcon />
+                Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BellIcon />
+                Notifications
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <a href="/dashboard">Dashboard</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <a href="/dashboard">Dashboard</a>
+              <LogOutIcon />
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
