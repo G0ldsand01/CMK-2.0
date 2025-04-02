@@ -17,7 +17,7 @@ if (!user) {
 ---
 
 <Layout title={title} navbar={false}>
-  <AdminSidebar user={user}>
+  <AdminSidebar user={user} activeId={Astro.props.activeId}>
     <div class="content">
       <h1>Admin Dashboard</h1>
     </div>
