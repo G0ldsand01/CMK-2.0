@@ -1,17 +1,17 @@
 ---
-import Layout from "./Layout.astro";
-import { getSession } from "auth-astro/server";
-import { Auth, SignOut } from "auth-astro/components";
+import Layout from './Layout.astro';
+import { getUser } from '@/lib/user';
+import { Auth, SignOut } from 'auth-astro/components';
 interface Props {
   title: string;
   activeId: string;
 }
 
 const { title, activeId } = Astro.props;
-const session = await getSession(Astro.request);
+const user = await getUser(Astro.request);
 
-if (!session) {
-  return Astro.redirect("/login");
+if (!user) {
+  return Astro.redirect('/login');
 }
 ---
 
@@ -22,6 +22,13 @@ if (!session) {
     <a href="/dashboard/wishlist" class="chip">My Wishlist</a>
     <a href="/dashboard/settings" class="chip">My Account Settings</a>
     <a href="/dashboard/newproducts" class="chip">Add New Products</a>
+    {
+      user.isAdmin() && (
+        <a href="/dashboard/admin" class="chip">
+          Admin Dashboard
+        </a>
+      )
+    }
     <a class="chip">
       <Auth>
         <SignOut> Logout </SignOut>
@@ -35,13 +42,13 @@ if (!session) {
           <li>
             <a
               href="/dashboard"
-              class={activeId === "dashboard" ? "active" : ""}>Dashboard</a
+              class={activeId === 'dashboard' ? 'active' : ''}>Dashboard</a
             >
           </li>
           <li>
             <a
               href="/dashboard/orders"
-              class={activeId === "orders" ? "active" : ""}
+              class={activeId === 'orders' ? 'active' : ''}
             >
               My Orders</a
             >
@@ -49,23 +56,32 @@ if (!session) {
           <li>
             <a
               href="/dashboard/wishlist"
-              class={activeId === "wishlist" ? "active" : ""}>My Wishlist</a
+              class={activeId === 'wishlist' ? 'active' : ''}>My Wishlist</a
             >
           </li>
           <li>
             <a
               href="/dashboard/settings"
-              class={activeId === "settings" ? "active" : ""}
+              class={activeId === 'settings' ? 'active' : ''}
               >My Account Settings</a
             >
           </li>
           <li>
             <a
               href="/dashboard/newproducts"
-              class={activeId === "newproducts" ? "active" : ""}
+              class={activeId === 'newproducts' ? 'active' : ''}
               >Add New Products</a
             >
           </li>
+          {
+            user.isAdmin() && (
+              <li>
+                <a href="/dashboard/admin" class="chip">
+                  Admin Dashboard
+                </a>
+              </li>
+            )
+          }
           <li>
             <a>
               <Auth>
