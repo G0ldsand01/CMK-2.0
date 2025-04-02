@@ -24,14 +24,14 @@ const { title, navbar } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
       rel="stylesheet"
     />
-    <!-- <SnipcartSetup /> -->
+    <SnipcartSetup />
   </head>
   <body>
     {navbar ? <Header /> : null}
     <slot />
   </body>
 </html>
-<!-- <script>
+<script>
   window.SnipcartSettings = {
     publicApiKey: import.meta.env.PUBLIC_SNIPCART_API_KEY,
     loadStrategy: 'on-user-interaction',
@@ -46,7 +46,7 @@ const { title, navbar } = Astro.props;
     script.async = true;
     document.getElementsByTagName('head')[0].appendChild(script);
   })();
-</script> -->
+</script>
 
 <script is:inline>
   const closeMenu = document.querySelector('.close-menu');

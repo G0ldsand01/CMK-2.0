@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu'; // Ensure the path is correct
 import type User from '@/lib/models/user';
+import { ModeToggle } from './ModeToggle';
 
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
@@ -136,8 +137,11 @@ export function AdminSidebar({
     <SidebarProvider>
       <AppSidebar userData={userData} />
       <SidebarInset>
-        <SidebarTrigger />
-        <SidebarContent>{children}</SidebarContent>
+        <div className="pt-1 px-2 flex justify-between items-center">
+          <SidebarTrigger />
+          <ModeToggle />
+        </div>
+        <SidebarContent className="px-2">{children}</SidebarContent>
       </SidebarInset>
     </SidebarProvider>
   );

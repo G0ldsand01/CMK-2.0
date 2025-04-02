@@ -26,19 +26,11 @@ const userData = {
 
 <Layout title={title} navbar={false}>
   <AdminSidebar userData={userData} client:load>
-    <div class="content">
-      <h1>Admin Dashboard</h1>
-    </div>
+    <slot />
   </AdminSidebar>
 </Layout>
 
 <style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-top: 2rem;
-  }
   html,
   body {
     min-height: 100vh;
