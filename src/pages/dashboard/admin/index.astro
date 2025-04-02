@@ -8,11 +8,18 @@ if (!user || !user.isAdmin()) {
 }
 ---
 
-<AdminDashboardLayout title="Admin Dashboard" activeId="dashboard">
+<AdminDashboardLayout
+  title="Admin Dashboard"
+  breadcrumb={{
+    '/': 'Home',
+  }}
+>
   <h1>Admin Dashboard</h1>
   <p>Welcome to the admin dashboard, {user.getDisplayName()}!</p>
   <p>Here you can manage users, products, and orders.</p>
-    <p>Use the sidebar to navigate through the admin panel.</p>
+  <p>Use the sidebar to navigate through the admin panel.</p>
 
-    <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+  <p>
+    If you have any questions or need assistance, feel free to reach out to us.
+  </p>
 </AdminDashboardLayout>

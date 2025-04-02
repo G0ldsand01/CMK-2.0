@@ -40,12 +40,10 @@ const { title, navbar } = Astro.props;
     modalStyle: 'side',
   };
 
-  (function () {
-    let script = document.createElement('script');
-    script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
-    script.async = true;
-    document.getElementsByTagName('head')[0].appendChild(script);
-  })();
+  const script = document.createElement('script');
+  script.src = 'https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js';
+  script.async = true;
+  document.getElementsByTagName('head')[0].appendChild(script);
 </script>
 
 <script is:inline>

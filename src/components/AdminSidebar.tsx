@@ -15,71 +15,92 @@ import {
   SidebarGroupContent,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { UsersIcon, HomeIcon, ShoppingCartIcon, Database,  Package, Tag, List, Star, UserRoundCog } from 'lucide-react';
+import {
+  UsersIcon,
+  HomeIcon,
+  ShoppingCartIcon,
+  Database,
+  Package,
+  Tag,
+  List,
+  Star,
+  UserRoundCog,
+} from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu';
 import { ModeToggle } from './ModeToggle';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from './ui/breadcrumb';
+import { Separator } from '@radix-ui/react-separator';
 
 const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '',
       items: [
         {
           title: 'Home',
-          url: '/dashboard',
+          url: '/',
           icon: HomeIcon,
         },
       ],
     },
     {
       title: 'Users',
-      url: '#',
       items: [
         {
           title: 'Manage Users',
-          url: '#',
+          url: '/users',
           icon: UsersIcon,
         },
         {
           title: 'Manage Roles',
-          url: '#',
+          url: '/roles',
           icon: Database,
         },
       ],
     },
     {
       title: 'Products',
-      url: '#',
       items: [
         {
           title: 'Manage Products',
-          url: '#',
+          url: '/products',
           icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Categories',
-          url: '#',
+          url: '/categories',
           icon: List,
         },
         {
           title: 'Manage Orders',
-          url: '#',
+          url: '/orders',
           icon: Package,
         },
         {
           title: 'Manage Coupons',
-          url: '#',
+          url: '/coupons',
           icon: Tag,
         },
         {
           title: 'Manage Reviews',
-          url: '#',
+          url: '/reviews',
           icon: Star,
         },
+      ],
+    },
+    {
+      title: 'Miscellaneous',
+      items: [
         {
           title: 'Manage Settings',
-          url: '#',
+          url: '/settings',
           icon: UserRoundCog,
         },
       ],
@@ -131,7 +152,7 @@ export function AppSidebar({
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <a href={'/dashboard/admin' + item.url}>
                         <item.icon size={16} />
                         {item.title}
                       </a>
@@ -154,15 +175,37 @@ export function AppSidebar({
 export function AdminSidebar({
   children,
   userData,
-}: React.PropsWithChildren<{ userData: userData }>) {
+  breadcrumb,
+}: React.PropsWithChildren<{
+  userData: userData;
+  breadcrumb: Record<string, string>;
+}>) {
   return (
     <SidebarProvider>
       <AppSidebar userData={userData} />
       <SidebarInset>
         <div className="pt-1 px-2 flex justify-between items-center">
           <SidebarTrigger />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/dashboard/admin">
+                  Admin Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              {Object.keys(breadcrumb).map((value, index) => (
+                <BreadcrumbItem key={index}>
+                  <BreadcrumbLink href={`/dashboard/admin${value}`}>
+                    {breadcrumb[value]}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
           <ModeToggle />
         </div>
+        <Separator className="my-2" />
         <SidebarContent className="px-2">{children}</SidebarContent>
       </SidebarInset>
     </SidebarProvider>
