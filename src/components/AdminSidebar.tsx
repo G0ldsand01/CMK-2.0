@@ -36,7 +36,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from './ui/breadcrumb';
-import { Separator } from '@radix-ui/react-separator';
+import { Separator } from '@/components/ui/separator';
 
 const data = {
   navMain: [
@@ -205,8 +205,10 @@ export function AdminSidebar({
           </Breadcrumb>
           <ModeToggle />
         </div>
-        <Separator className="my-2" />
-        <SidebarContent className="px-2">{children}</SidebarContent>
+        <SidebarContent className="px-2 pt-2">
+          <Separator className="mb-2" />
+          {children}
+        </SidebarContent>
       </SidebarInset>
     </SidebarProvider>
   );
