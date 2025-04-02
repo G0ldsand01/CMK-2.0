@@ -59,8 +59,7 @@ const session = await getSession(Astro.request)
           <li><a href="/dashboard/orders" >My Orders</a></li>
           <li><a href="/dashboard/wishlist" >My Wishlist</a></li>
           <li><a href="/dashboard/settings" >My Account Settings</a></li>
-          <li><a href="/dashboard/newproducts" >Add New Products</a></li>
-          <li> {user.isAdmin() && <a href="/dashboard/admin" >Admin Dashboard</a>}</li>
+          {user.isAdmin() && <li><a href="/dashboard/admin" >Admin Dashboard</a></li>}
             {session ? (
               <div id="profile-section-nav">
                 <a href="/dashboard" >
@@ -136,13 +135,6 @@ const session = await getSession(Astro.request)
               href="/dashboard/settings"
               class={activeId === 'settings' ? 'active' : ''}
               >My Account Settings</a
-            >
-          </li>
-          <li>
-            <a
-              href="/dashboard/newproducts"
-              class={activeId === 'newproducts' ? 'active' : ''}
-              >Add New Products</a
             >
           </li>
           {
