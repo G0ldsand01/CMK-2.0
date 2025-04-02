@@ -23,11 +23,11 @@ const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '#',
+      url: '',
       items: [
         {
           title: 'Home',
-          url: '#',
+          url: '/dashboard',
           icon: HomeIcon,
         },
       ],
