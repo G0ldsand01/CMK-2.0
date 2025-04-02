@@ -6,9 +6,6 @@ const user = await getUser(Astro.request);
 if (!user || !user.isAdmin()) {
   return Astro.redirect('/dashboard');
 }
-if (user.isAdmin()) {
-  return Astro.redirect('/admindashboard');
-}
 ---
 
 <DashboardLayout title="Add New Products" activeId="newproducts">
