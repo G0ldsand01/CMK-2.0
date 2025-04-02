@@ -17,38 +17,33 @@ if (!user || !user.isAdmin()) {
       </div>
     </div>
 
-    <form>
-      <label for="name">Product Name:</label>
-      <input type="text" name="name" id="name" class="inputs" required />
-      
-      <label for="price">Price:</label>
-      <input type="number" name="price" id="price" class="inputs" required />
-      
-      <label for="description">Description:</label>
-      <textarea name="description" id="description" class="inputs" required></textarea>
-      
-      <label for="image">Image URL:</label>
-      <input type="text" name="image" id="image" class="inputs" required />
-      
-      <label for="category">Category:</label>
-      <select name="category" id="category" class="inputs" required>
-        <option value="electronics">Electronics</option>
-        <option value="clothing">Clothing</option>
-        <option value="accessories">Accessories</option>
-        <option value="toys">Toys</option>
-        <option value="home">Home</option>
-        <option value="beauty">Beauty</option>
-        <option value="grocery">Grocery</option>
-      </select>
-      
-      <label for="stock">Stock:</label>
-      <input type="number" name="stock" id="stock" class="inputs" required />
-      
-      <label for="sku">ID:</label>
-      <input type="text" name="id" id="id" class="inputs" required />
-      
-      <button type="submit">Add Product</button>
-    </form>
+    <div class="form-container">
+      <form>
+        <label for="name">Product Name:</label>
+        <input type="text" name="name" id="name" class="inputs" required />
+        
+        <label for="price">Price:</label>
+        <input type="number" name="price" id="price" class="inputs" required />
+        
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" class="inputs" required></textarea>
+        
+        <label for="image">Image URL:</label>
+        <input type="text" name="image" id="image" class="inputs" required />
+        
+        <label for="category">Category:</label>
+        <select name="category" id="category" class="inputs" required>
+          <option value="electronics">Electronics</option>
+          <option value="clothing">Clothing</option>
+          <option value="accessories">Accessories</option>
+          <option value="toys">Toys</option>
+          <option value="home">Home</option>
+          <option value="beauty">Beauty</option>
+          <option value="grocery">Grocery</option>
+        </select>
+        <button type="submit">Add Product</button>
+      </form>
+    </div>
   </div>
 </DashboardLayout>
 
@@ -60,15 +55,12 @@ if (!user || !user.isAdmin()) {
     form?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
-      const highestId = await actions.products.getHighestId();
       const { error } = await actions.products.addProduct({
         name: formData.get("name"),
         price: Number(formData.get("price")),
         description: formData.get("description"),
         image: formData.get("image"),
         category: formData.get("category"),
-        stock: formData.get("stock") ? Number(formData.get("stock")) : 0,
-        id: formData.get("id") ? Number(formData.get("id")) : highestId.data ? highestId.data + 1 : 1,
       });
       if (!error) {
         alert("Product added successfully");
@@ -81,41 +73,63 @@ if (!user || !user.isAdmin()) {
 </script>
 
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html,
   body {
-    font-family: Arial, sans-serif;
-    background-color: #0f0f0f;
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
+  /* Content Section */
+  .content {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    margin-top: 2rem;
   }
 
   .head {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #27ae60;
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 1.5rem;
     margin-top: 5rem;
+    width: 50%;
+    background-color: hsla(0, 0%, 20%, 0.274);
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #27ae60;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
   }
-
-  form {
+  .welcome-message p {
+    color: #666;
+    font-size: 16px;  
+    margin-bottom: 10px;
+  }
+  /* Form Section */
+  .form-container {
+    margin-top: 3rem;
     background-color: #1e1e1e;
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    width: 100%;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
-
-  label {
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .inputs {
+  
+   input, select, textarea {
     width: 100%;
     padding: 12px;
     border: 2px solid #27ae60;
@@ -123,21 +137,52 @@ if (!user || !user.isAdmin()) {
     background-color: #121212;
     color: #ecf0f1;
     outline: none;
+    transition: border 0.3s ease-in-out;
+  } 
+  input:focus, select:focus,textarea:focus {
+    border-color: #20c464;
+    box-shadow: 0 0 8px rgba(39, 174, 96, 0.7);
   }
-
-  button[type="submit"] {
+  button[type='submit'] {
+    margin-top: 1.5rem;
     background-color: #27ae60;
     color: #fff;
-    padding: 12px;
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: background 0.3s ease-in-out;
     width: 100%;
   }
+  button[type='submit']:hover {
+    background-color: #20c464;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
 
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Responsive Design */
   @media (max-width: 768px) {
-    .content {
-      max-width: 100%;
+    .head,
+    .form-container {
+      width: 70%;
     }
   }
 </style>

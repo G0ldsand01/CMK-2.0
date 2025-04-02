@@ -6,6 +6,10 @@ interface Props {
   title: string;
   activeId: string;
 }
+import {
+  CartCheckout,
+  CartItemsCount,
+} from '@lloydjatkinson/astro-snipcart/astro';
 
 const { title, activeId } = Astro.props;
 const user = await getUser(Astro.request);
@@ -13,28 +17,97 @@ const user = await getUser(Astro.request);
 if (!user) {
   return Astro.redirect('/login');
 }
+import { getSession } from 'auth-astro/server';
+import { Auth, SignOut } from 'auth-astro/components';
+import { CircleUser, ShoppingBag } from 'lucide-react';
+const session = await getSession(Astro.request)
 ---
 
 <Layout title={title} navbar={false}>
-  <div class="chip-container">
-    <a href="/dashboard" class="chip">Dashboard</a>
-    <a href="/dashboard/orders" class="chip">My Orders</a>
-    <a href="/dashboard/wishlist" class="chip">My Wishlist</a>
-    <a href="/dashboard/settings" class="chip">My Account Settings</a>
-    <a href="/dashboard/newproducts" class="chip">Add New Products</a>
-    {
-      user.isAdmin() && (
-        <a href="/dashboard/admin" class="chip">
-          Admin Dashboard
-        </a>
-      )
-    }
-    <a class="chip">
-      <Auth>
-        <SignOut> Logout </SignOut>
-      </Auth>
-    </a>
-  </div>
+  <header>
+      <div class="menu-icon" id="menu-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          fill="none"
+          stroke="#E7DCDC"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 6h40M4 24h40M4 42h40"></path>
+        </svg>
+      </div>
+      <nav class="overlay-nav">
+        <button id="close-menu">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            fill="none"
+            stroke="#E7DCDC"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <ul>
+          <li><a href="/dashboard" >Dashboard</a></li>
+          <li><a href="/dashboard/orders" >My Orders</a></li>
+          <li><a href="/dashboard/wishlist" >My Wishlist</a></li>
+          <li><a href="/dashboard/settings" >My Account Settings</a></li>
+          <li><a href="/dashboard/newproducts" >Add New Products</a></li>
+          <li> {user.isAdmin() && <a href="/dashboard/admin" >Admin Dashboard</a>}</li>
+            {session ? (
+              <div id="profile-section-nav">
+                <a href="/dashboard" >
+                <img
+                  id="profile-picture"
+                  src={session?.user?.image || '<circle-user />'}
+                  alt="Profile Picture"
+                  width="40"
+                  height="40"
+                />
+                </a>
+                <div class="user_info_logout">
+                  <a href="/dashboard" >
+                  <h1 class="user"  >Welcome, {session?.user?.name}</h1>
+                  </a>
+                  <SignOut>Logout</SignOut>
+                </div>
+              </div>
+            ) : (
+                <li>
+                  <a href="/login">Login</a>
+                </li>
+                <li>
+                  <a href="/register" style="text-decoration: none;">Register</a>
+                </li>
+            )}
+          <li>
+            <CartCheckout>
+              <button
+                id="cart"
+                class="snipcart-checkout"
+                data-item-url="(astro.url)"
+              >
+                <ShoppingBag />
+                <span
+                  id="cart-count"
+                  style="position: relative; top: -30px; right: -15px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
+                  >0</span
+                >
+              </button>
+            </CartCheckout>
+          </li>
+        </ul>
+      </nav>
+  </header>
+  
   <div class="main-layout modern-design">
     <div class="sidebar">
       <nav>
@@ -76,7 +149,7 @@ if (!user) {
           {
             user.isAdmin() && (
               <li>
-                <a href="/dashboard/admin" class="chip">
+                <a href="/dashboard/admin" >
                   Admin Dashboard
                 </a>
               </li>
@@ -89,8 +162,9 @@ if (!user) {
               </Auth>
             </a>
           </li>
+          <li><a href="/" >Return to Home</a></li>
         </ul>
-        <a class="return-to-home" href="/">Return to Home</a>
+        
       </nav>
     </div>
     <slot />
@@ -98,146 +172,263 @@ if (!user) {
 </Layout>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-    overflow-y: auto; /* Ensures vertical scrolling is enabled */
-  }
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  /* Body */
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #0f0f0f;
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
+html, body {
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  background-color: #0f0f0f;
+  color: #e7dcdc;
+}
 
-  .container {
-    min-height: 100vh; /* Ensures the container takes up full viewport height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #121212;
+  padding: 20px;
+  flex-shrink: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
 
-  /* Main Layout */
-  .main-layout {
-    display: flex;
-    min-height: 100vh;
+.sidebar nav ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar nav ul li {
+  padding: 10px 0;
+}
+
+.sidebar nav ul li a {
+  color: #ecf0f1;
+  text-decoration: none;
+  font-size: 18px;
+  display: block;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.3s ease-in-out;
+}
+
+.sidebar nav ul li a:hover,
+.sidebar nav ul li a.active {
+  background-color: #27ae60;
+  color: #121212;
+}
+
+/* Main Layout */
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 5rem;
+}
+
+/* Header */
+header {
+  display: none;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: #e7dcdc;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5rem;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+header .logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+header .logo svg {
+  width: 50px;
+  height: 50px;
+}
+
+header a {
+  text-decoration: none;
+  color: #e7dcdc;
+  font-size: 16px;
+}
+
+/* Navigation */
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+nav ul li {
+  list-style: none;
+}
+
+nav ul li a {
+  font: 1.4rem 'Grandstander', sans-serif;
+  color: #e7dcdc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #27ae60;
+  text-decoration: underline;
+}
+
+/* Mobile Menu */
+#menu-icon {
+  cursor: pointer;
+  display: none;
+}
+#close-menu {
+  cursor: pointer;
+  position: absolute;
+  top: 2rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 10em;
+}
+.overlay-nav {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.overlay-nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+}
+
+.overlay-nav ul li a {
+  font-size: 2rem;
+  color: #e7dcdc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.overlay-nav ul li a:hover {
+  color: #27ae60;
+}
+
+.overlay-nav.active {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Profile Section */
+#profile-section-nav {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#profile-section-nav img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+.profile-section a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Cart Button */
+#cart {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #f7f7f7;
+  color: #000;
+  font-size: 12px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  #menu-icon {
+    display: block;
   }
-  .content {
-    flex: 1;
+  .overlay-nav.active {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
   }
-  .chip-container {
+  .sidebar {
     display: none;
   }
-
-  /* Sidebar Styling */
-  .sidebar {
-    width: 250px;
-    background-color: #121212;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    height: auto;
-    flex-shrink: 0; /* Prevents the sidebar from shrinking */
-    /* Ensures the sidebar adjusts to the full page height */
+  #auth-buttons {
+    display: none !important;
   }
 
-  .sidebar nav ul {
-    list-style-type: none;
-    padding: 0;
+  #profile-section {
+    display: none;
   }
-
-  .sidebar nav ul li {
-    padding: 15px 20px;
-  }
-
-  .sidebar nav ul li a {
-    color: #ecf0f1;
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
-    padding: 1rem;
-    border-radius: 25px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .sidebar nav ul li a:hover,
-  .sidebar nav ul li a.active {
-    color: #121212;
-    background-color: rgb(39, 174, 96);
-  }
-
-  /* Content Section */
-  .content {
-    flex: 1;
+  header {
     display: flex;
-    flex-direction: column;
   }
+}
 
-  /* Return to Home Button */
-  .return-to-home {
-    color: #ecf0f1;
-    font-size: 16px;
-    text-decoration: none;
-    display: block;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    padding: 10px;
-    background-color: #27ae60;
-    border-radius: 5px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .return-to-home:hover {
-    background-color: #20c464;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .sidebar {
-      display: none;
-    }
-    .chip-container {
-      margin-top: 6rem;
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      background-color: rgb(39, 174, 96);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-size: 16px;
-      transition: all 0.3s ease-in-out;
-      flex: 1 1 40%;
-      text-align: center;
-    }
-
-    .chip:hover {
-      background-color: #1abc9c;
-    }
-  }
-  @media (max-width: 480px) {
-    .chip {
-      flex: 1 1 100%;
-    }
-  }
 </style>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const menuIcon = document.querySelector('#menu-icon');
+  const closeMenu = document.querySelector('#close-menu');
+  const overlayNav = document.querySelector('.overlay-nav');
+
+  menuIcon.addEventListener('click', () => {
+    overlayNav.classList.add('active');
+  });
+
+  closeMenu.addEventListener('click', () => {
+    overlayNav.classList.remove('active');
+  });
+
+  // Fermer si on clique en dehors du menu
+  overlayNav.addEventListener('click', (event) => {
+    if (event.target === overlayNav) {
+      overlayNav.classList.remove('active');
+    }
+  });
+});
+
+
+</script>
