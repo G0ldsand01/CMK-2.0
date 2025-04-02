@@ -24,13 +24,13 @@ import {
   SettingsIcon,
   BellIcon,
   HomeIcon,
+  ShoppingCartIcon,
 } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu'; // Ensure the path is correct
 import type User from '@/lib/models/user';
 import { ModeToggle } from './ModeToggle';
 
 const data = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
       title: 'Dashboard',
@@ -39,6 +39,7 @@ const data = {
         {
           title: 'Home',
           url: '#',
+          icon: HomeIcon,
         },
       ],
     },
@@ -49,10 +50,12 @@ const data = {
         {
           title: 'Manage Users',
           url: '#',
+          icon: UsersIcon,
         },
         {
           title: 'Manage Roles',
           url: '#',
+          icon: UsersIcon,
         },
       ],
     },
@@ -63,26 +66,32 @@ const data = {
         {
           title: 'Manage Products',
           url: '#',
+          icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Categories',
           url: '#',
+          icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Orders',
           url: '#',
+          icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Coupons',
           url: '#',
+          icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Reviews',
           url: '#',
+          icon: ShoppingCartIcon,
         },
         {
           title: 'Manage Settings',
           url: '#',
+          icon: ShoppingCartIcon,
         },
       ],
     },
@@ -132,8 +141,11 @@ export function AppSidebar({
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={true}>
-                      <a href={item.url}>{item.title}</a>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon size={16} />
+                        {item.title}
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
