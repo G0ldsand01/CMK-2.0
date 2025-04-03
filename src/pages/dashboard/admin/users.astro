@@ -1,0 +1,58 @@
+---
+import {CircleUser, UserCircleIcon} from 'lucide-react';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+---
+<AdminDashboardLayout title="Users" breadcrumb={{'/users': 'Manage Users'}}>
+    <div class="content">
+        <div class="head">
+            <div class="welcome-message">
+                <h1>Users</h1>
+                <p>Manage Users</p>
+            </div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Username</td>
+                        <td>Email</td>
+                        <td>Role</td>
+                        <td>
+                            <a href="#"><CircleUser/></a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td>Email</td>
+                        <td>Role</td>
+                        <td>
+                            <a href="#"><CircleUser/></a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td>Email</td>
+                        <td>Role</td>
+                        <td>
+                            <a href="#"><CircleUser/></a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>    
+                </tbody>
+            </table>    
+        </div>
+    </div>
+</AdminDashboardLayout>

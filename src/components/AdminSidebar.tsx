@@ -25,6 +25,7 @@ import {
   List,
   Star,
   UserRoundCog,
+  CircuitBoard,
 } from 'lucide-react';
 import { UserMenu } from '@/components/UserMenu';
 import { ModeToggle } from './ModeToggle';
@@ -140,8 +141,13 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & { userData: userData }) {
   return (
     <Sidebar {...props}>
-      <SidebarHeader>
-        <div className="text-2xl font-bold text-center">CMK</div>
+      <SidebarHeader className="flex items-center justify-center">
+        <div className="flex items-center">
+          <a href="/" aria-label="Home" title="Home">
+          <CircuitBoard size={24} className="mr-2 m-0.5"  />
+          <div className="text-2xl font-bold">CMK</div>
+          </a>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {data.navMain.map((item) => (

@@ -1,0 +1,60 @@
+---
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+---
+
+<AdminDashboardLayout title="Reviews" breadcrumb={{
+  '/reviews': 'Manage Reviews',
+}}>
+    <div class="content">
+        <div class="head">
+            <div class="welcome-message">
+                <h1>Reviews</h1>
+                <p>Manage Reviews</p>
+            </div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Product Name</td>
+                        <td>Review Content</td>
+                        <td>4.5</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Product Name</td>
+                        <td>Review Content</td>
+                        <td>4.5</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Product Name</td>
+                        <td>Review Content</td>
+                        <td>4.5</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>    
+        </div>
+    </div>
+</AdminDashboardLayout>
