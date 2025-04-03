@@ -30,7 +30,7 @@ ul {
 	list-style: none;
 }
 
-button {
+.button {
 	position: relative;
 	display: block;
 	margin-left: auto;
@@ -180,7 +180,7 @@ img {
 	text-decoration: none;
 	color: #292929;
 }
-.view-all-button button:hover {
+.view-all-button:hover {
 	text-decoration: none;
 	color: #27ae60;
 }
