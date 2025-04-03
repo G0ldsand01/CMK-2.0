@@ -1,7 +1,9 @@
 ---
 import Layout from './Layout.astro';
+import '@/styles/global.css';
 import { getSession } from 'auth-astro/server';
 import { Auth, SignOut } from 'auth-astro/components';
+import { AdminSidebar } from '@/components/AdminSidebar';
 interface Props {
   title: string;
   activeId: string;
@@ -16,7 +18,9 @@ if (!session) {
 ---
 
 <Layout title={title} navbar={false}>
-  <div class="content">
-    <h1>Admin Dashboard</h1>
-  </div>
+  <AdminSidebar>
+    <div class="content">
+      <h1>Admin Dashboard</h1>
+    </div>
+  </AdminSidebar>
 </Layout>
