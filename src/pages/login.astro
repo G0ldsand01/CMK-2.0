@@ -14,7 +14,7 @@ if (session) {
 <Layout title="Login" navbar={false}>
   <div class="container">
     <h1>Welcome Back</h1>
-    <div>
+    <div class="login-with-social">
       <SignIn provider="github">
         <Image
           src={'/api/image/github.svg'}
@@ -34,6 +34,16 @@ if (session) {
           class="icon"
         />
         Login with Discord
+      </SignIn>
+      <SignIn provider="google">
+        <Image
+          src={'/api/image/google.svg'}
+          alt={'Google'}
+          width={64}
+          height={64}
+          class="icon"
+        />
+        Login with Google
       </SignIn>
     </div>
     <div class="login-with-email">

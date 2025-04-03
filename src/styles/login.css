@@ -127,29 +127,6 @@ textarea {
 	height: 100px;
 }
 
-button,
-.sign-in-button {
-	width: 100%;
-	padding: 0.75rem 1.5rem;
-	background-color: #e7dcdc;
-	color: #292929;
-	border: none;
-	border-radius: 0.5rem;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	transition: background-color 0.3s ease, transform 0.2s ease;
-	margin-top: 1rem;
-}
-
-button:hover,
-.sign-in-button:hover {
-	background-color: #ffffff;
-	transform: translateY(-2px);
-}
-
 .icon {
 	width: 24px;
 	height: 24px;
@@ -166,4 +143,37 @@ p a:hover {
 p {
 	margin-top: 1rem;
 	margin-bottom: 1em;
+}
+.login-with-social {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 1rem;
+	width: 100%;
+}
+.login-with-social button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	border: solid 2px #fff;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+	text-align: center;
+
+	/* Added a hover effect */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+	/* Added a hover effect */
+	transform: translateY(-2px);
+}
+
+.login-with-social button:hover {
+	/* Added a hover effect */
+	transform: translateY(-4px);
 }
