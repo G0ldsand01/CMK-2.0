@@ -1,16 +1,8 @@
 ---
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
-import {
-  CartCheckout,
-  CartItemsCount,
-} from '@lloydjatkinson/astro-snipcart/astro';
-import '@styles/snipcart.css';
-import { getSecret } from 'astro:env/server';
 
-const publicSnipcartApiKey = getSecret('PUBLIC_SNIPCART_API_KEY');
 import { getSession } from 'auth-astro/server';
 import { Auth, SignOut } from 'auth-astro/components';
-import { CircleUser } from 'lucide-react';
 const session = await getSession(Astro.request)
 ---
 
@@ -53,7 +45,7 @@ const session = await getSession(Astro.request)
       </div>
     </div>
      <button
-        class="snipcart-checkout"
+        class="checkout"
         data-item-url={Astro.url}
         style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
         onmouseover="this.style.backgroundColor='#3d3d3d';"
@@ -63,7 +55,7 @@ const session = await getSession(Astro.request)
         <span
           id="cart-count"
           style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-          ><CartItemsCount /></span>
+          ></span>
       </button>
     </div>
     </div>
@@ -93,7 +85,7 @@ const session = await getSession(Astro.request)
       </a>
 
       <button
-        class="snipcart-checkout"
+        class="checkout"
         data-item-url="{Astro.url}"
         style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
         onmouseover="this.style.backgroundColor='#3d3d3d';"
@@ -103,7 +95,7 @@ const session = await getSession(Astro.request)
         <span
           id="cart-count"
           style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-          ><CartItemsCount /></span>
+          ></span>
       </button>
     </div>
   )}
@@ -172,10 +164,10 @@ const session = await getSession(Astro.request)
             </li>
         )}
       <li>
-        <CartCheckout>
+
           <button
             id="cart"
-            class="snipcart-checkout"
+            class="checkout"
             data-item-url="(astro.url)"
           >
             <ShoppingBag />
@@ -185,23 +177,12 @@ const session = await getSession(Astro.request)
               >0</span
             >
           </button>
-        </CartCheckout>
+
       </li>
     </ul>
   </nav>
 </header>
-<main>
-  <div id="snipcart" hidden="true" style="z-index: 1000;"></div>
-</main>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.querySelector('.snipcart-add-item');
-    if (!btn) return; // Évite l'erreur si le bouton n'existe pas
-
-    const id = btn.getAttribute('data-item-id')?.toString();
-    // @ts-ignore snipcart-add-item
-    btn.addEventListener('click', () => addToCart(id));
-  });
 
   function menuToggleFunction() {
     const overlayNav = document.querySelector('.overlay-nav');
@@ -220,13 +201,6 @@ const session = await getSession(Astro.request)
 </script>
 
 <style>
-  #snipcart {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 200;
-  }
   header {
     display: flex;
     justify-content: space-between;
