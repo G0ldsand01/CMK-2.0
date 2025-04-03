@@ -86,8 +86,8 @@ export default function InternalCart({
 						{Object.values($cart).length === 0 ? (
 							<div className="flex flex-col items-center justify-center py-8">
 								<p className="text-lg text-gray-500">Your cart is empty</p>
-								<Button variant="outline" className="mt-4">
-									Continue Shopping
+								<Button variant="outline" className="mt-4" asChild>
+									<a href="/products">Continue Shopping</a>
 								</Button>
 							</div>
 						) : (
