@@ -5,7 +5,7 @@ import type { productsTable } from '@/db/schema';
 import ProductImage from './images/ProductImage.astro';
 
 interface Props {
-  product: typeof productsTable.$inferSelect;
+	product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
