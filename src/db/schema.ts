@@ -22,9 +22,8 @@ export const productsTable = pgTable(
     name: varchar({ length: 255 }).notNull(),
     price: numeric().notNull(),
     description: text().notNull(),
-    rating: numeric().notNull(),
-    reviews: numeric().notNull(),
     image: varchar({ length: 255 }).notNull(),
+    category: varchar({ length: 255 }).notNull(),
   },
   (table) => [index('product_name_idx').on(table.name)]
 );
