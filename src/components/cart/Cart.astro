@@ -1,8 +1,8 @@
 ---
+import { eq } from 'drizzle-orm';
 import { cartTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq } from 'drizzle-orm';
 import InternalCart from './InternalCart';
 
 interface Props {

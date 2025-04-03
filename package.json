@@ -10,7 +10,7 @@
 		"check": "pnpm biome check --write ."
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.0.0-beta.1",
 		"@types/pg": "^8.11.11",
 		"@types/react": "^19.0.10",
 		"@types/react-dom": "^19.0.4"

@@ -3,11 +3,12 @@ import { Image } from 'astro:assets';
 import { products as productsActions } from '../../actions/products';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/product.css';
-import ReviewSection from '@/components/ReviewSection.astro';
+import { Heart, ShoppingCart } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
+import ReviewSection from '@/components/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/user';
-import { Heart, ShoppingCart } from 'lucide-react';
+
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
 	id: Number(id),

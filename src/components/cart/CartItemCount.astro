@@ -1,8 +1,9 @@
 ---
+import { eq } from 'drizzle-orm';
 import { cartTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq } from 'drizzle-orm';
+
 const user = await getUser(Astro.request);
 if (!user) {
 	return null;

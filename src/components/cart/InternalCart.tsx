@@ -1,9 +1,9 @@
-import { setCart } from '@/lib/cart';
-import { cn } from '@/lib/utils';
-import { cartAtom } from '@/store';
 import { useStore } from '@nanostores/react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { setCart } from '@/lib/cart';
+import { cn } from '@/lib/utils';
+import { cartAtom } from '@/store';
 import { Button } from '../ui/button';
 import {
 	Sheet,

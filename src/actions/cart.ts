@@ -1,9 +1,9 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
+import { eq } from 'drizzle-orm';
 import { cartTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq } from 'drizzle-orm';
 import { logSecurityEvent } from './index';
 
 export const cart = {

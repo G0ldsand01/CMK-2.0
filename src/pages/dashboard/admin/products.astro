@@ -1,6 +1,7 @@
 ---
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
+
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {

@@ -1,5 +1,6 @@
 ---
 import { STRIPE_SECRET_KEY } from 'astro:env/server';
+import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
 	Card,
@@ -11,7 +12,6 @@ import {
 import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
-import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 
 const user = await getUser(Astro.request);
 const {
@@ -28,6 +28,7 @@ const {
 if (!user || !user.isAdmin()) {
 	return Astro.redirect('/dashboard');
 }
+
 import Stripe from 'stripe';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);

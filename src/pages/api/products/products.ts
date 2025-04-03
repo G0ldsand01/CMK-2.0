@@ -1,6 +1,6 @@
+import type { APIRoute } from 'astro';
 import { productsTable } from '@/db/schema';
 import db from '@/lib/db';
-import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ redirect, cookies }) => {
 	let product = await db.query.productsTable.findMany();

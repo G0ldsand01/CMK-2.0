@@ -1,6 +1,6 @@
 import { DATABASE_URL } from 'astro:env/server';
-import * as schema from '@/db/schema';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import * as schema from '@/db/schema';
 
 // export const schema = {
 //   ...schema,

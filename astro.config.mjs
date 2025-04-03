@@ -1,14 +1,12 @@
+// @ts-check
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
-// @ts-check
 import { defineConfig, envField } from 'astro/config';
+import compress from 'astro-compress';
+import critters from 'astro-critters';
 import auth from 'auth-astro';
 import dotenv from 'dotenv';
-
-import compress from 'astro-compress';
-
-import critters from 'astro-critters';
 
 dotenv.config();
 
