@@ -15,7 +15,7 @@ if (!user) {
 }
 ---
 
-<Layout title={title} navbar={true}>
+<Layout title={title} navbar={false}>
   <div class="chip-container">
     <a href="/dashboard" class="chip">Dashboard</a>
     <a href="/dashboard/orders" class="chip">My Orders</a>
@@ -145,7 +145,6 @@ if (!user) {
 
   /* Sidebar Styling */
   .sidebar {
-    margin-top: 5rem;
     width: 250px;
     background-color: #121212;
     padding: 20px;

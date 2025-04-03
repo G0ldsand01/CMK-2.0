@@ -6,9 +6,6 @@ const user = await getUser(Astro.request);
 if (!user) {
   return Astro.redirect('/login');
 }
-if (user.isAdmin()) {
-  return Astro.redirect('/admindashboard');
-}
 
 const API_KEY = import.meta.env.SNIPCART_ORDERS_KEY;
 const userEmail = user.getEmail();

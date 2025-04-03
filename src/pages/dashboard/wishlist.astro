@@ -8,9 +8,7 @@ const user = await getUser(Astro.request);
 if (!user) {
   return Astro.redirect('/login');
 }
-if (user.isAdmin()) {
-  return Astro.redirect('/admindashboard');
-}
+
 
 const action = await Astro.callAction(actions.user.getWishlist, {});
 const data = action.data;
