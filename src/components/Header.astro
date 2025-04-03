@@ -199,6 +199,7 @@ const session = await getSession(Astro.request)
     if (!btn) return; // Évite l'erreur si le bouton n'existe pas
 
     const id = btn.getAttribute('data-item-id')?.toString();
+    // @ts-ignore snipcart-add-item
     btn.addEventListener('click', () => addToCart(id));
   });
 
