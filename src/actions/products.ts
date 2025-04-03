@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { productsTable, reviewsTable, wishlistTable } from '@/db/schema';
+import { productsTable, wishlistTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { and, desc, eq } from 'drizzle-orm';

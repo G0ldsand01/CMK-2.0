@@ -1,18 +1,4 @@
 import {
-	BellIcon,
-	Check,
-	ChevronsUpDown,
-	CreditCardIcon,
-	GalleryVerticalEnd,
-	Link,
-	LogOutIcon,
-	MoreVerticalIcon,
-	UserCircleIcon,
-} from 'lucide-react';
-import * as React from 'react';
-
-import type { user } from '@/actions/user';
-import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
@@ -27,6 +13,13 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
+import {
+	BellIcon,
+	CreditCardIcon,
+	LogOutIcon,
+	MoreVerticalIcon,
+	UserCircleIcon,
+} from 'lucide-react';
 import type { userData } from './AdminSidebar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
