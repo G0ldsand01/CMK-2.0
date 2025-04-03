@@ -84,8 +84,8 @@ importers:
         specifier: ^0.41.0
         version: 0.41.0(@opentelemetry/api@1.9.0)(@prisma/client@6.5.0(typescript@5.8.2))(@types/pg@8.11.11)(gel@2.0.1)(pg@8.14.1)
       lucide-react:
-        specifier: ^0.486.0
-        version: 0.486.0(react@19.0.0)
+        specifier: ^0.487.0
+        version: 0.487.0(react@19.0.0)
       nanostores:
         specifier: ^0.11.4
         version: 0.11.4
@@ -108,8 +108,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       stripe:
-        specifier: ^17.7.0
-        version: 17.7.0
+        specifier: ^18.0.0
+        version: 18.0.0
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
@@ -2637,8 +2637,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.486.0:
-    resolution: {integrity: sha512-xWop/wMsC1ikiEVLZrxXjPKw4vU/eAip33G2mZHgbWnr4Nr5Rt4Vx4s/q1D3B/rQVbxjOuqASkEZcUxDEKzecw==}
+  lucide-react@0.487.0:
+    resolution: {integrity: sha512-aKqhOQ+YmFnwq8dWgGjOuLc8V1R9/c/yOd+zDY4+ohsR2Jo05lSGc3WsstYPIzcTpeosN7LoCkLReUUITvaIvw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -3518,8 +3518,8 @@ packages:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
     engines: {node: '>=12'}
 
-  stripe@17.7.0:
-    resolution: {integrity: sha512-aT2BU9KkizY9SATf14WhhYVv2uOapBWX0OFWF4xvcj1mPaNotlSc2CsxpS4DS46ZueSppmCF5BX1sNYBtwBvfw==}
+  stripe@18.0.0:
+    resolution: {integrity: sha512-3Fs33IzKUby//9kCkCa1uRpinAoTvj6rJgQ2jrBEysoxEvfsclvXdna1amyEYbA2EKkjynuB4+L/kleCCaWTpA==}
     engines: {node: '>=12.*'}
 
   stylehacks@7.0.4:
@@ -6349,7 +6349,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.486.0(react@19.0.0):
+  lucide-react@0.487.0(react@19.0.0):
     dependencies:
       react: 19.0.0
 
@@ -7460,9 +7460,9 @@ snapshots:
     dependencies:
       ansi-regex: 6.1.0
 
-  stripe@17.7.0:
+  stripe@18.0.0:
     dependencies:
-      '@types/node': 22.13.9
+      '@types/node': 22.13.14
       qs: 6.14.0
 
   stylehacks@7.0.4(postcss@8.5.3):

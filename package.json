@@ -39,7 +39,7 @@
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.41.0",
-    "lucide-react": "^0.486.0",
+    "lucide-react": "^0.487.0",
     "nanostores": "^0.11.4",
     "next-themes": "^0.4.6",
     "pg": "^8.14.1",
@@ -47,7 +47,7 @@
     "react-dom": "^19.0.0",
     "recharts": "^2.15.1",
     "sonner": "^2.0.1",
-    "stripe": "^17.7.0",
+    "stripe": "^18.0.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.0",
     "tailwindcss-animate": "^1.0.7"
