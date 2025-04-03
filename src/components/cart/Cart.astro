@@ -20,7 +20,7 @@ const { classes, variant } = Astro.props;
 
 const user = await getUser(Astro.request);
 if (!user) {
-	throw new Error('User not found');
+	return null;
 }
 
 const cart = await db
