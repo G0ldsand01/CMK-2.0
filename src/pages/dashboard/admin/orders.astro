@@ -1,0 +1,68 @@
+---
+import { getUser } from '@/lib/user';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+
+const user = await getUser(Astro.request);
+
+if (!user || !user.isAdmin()) {
+  return Astro.redirect('/dashboard');
+}
+---
+
+<AdminDashboardLayout title="Orders" breadcrumb={{
+  '/orders': 'Manage Orders',
+}}>
+  <div class="content">
+    <div class="head">
+      <div class="welcome-message">
+        <h1>Orders</h1>
+        <p>Manage Orders</p>
+      </div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>123456</td>
+            <td>2023-01-01</td>
+            <td>$100.00</td>
+            <td>Pending</td>
+            <td>
+              <a href="#">View</a>
+              <a href="#">Cancel</a>
+            </td>
+          </tr>
+          <tr>
+            <td>123456</td>
+            <td>2023-01-01</td>
+            <td>$100.00</td>
+            <td>Pending</td>
+            <td>
+              <a href="#">View</a>
+              <a href="#">Cancel</a>
+            </td>
+          </tr>
+          <tr>
+            <td>123456</td>
+            <td>2023-01-01</td>
+            <td>$100.00</td>
+            <td>Pending</td>
+            <td>
+              <a href="#">View</a>
+              <a href="#">Cancel</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminDashboardLayout>

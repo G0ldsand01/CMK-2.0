@@ -1,0 +1,91 @@
+---
+import { getUser } from '@/lib/user';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+
+const user = await getUser(Astro.request);
+
+if (!user || !user.isAdmin()) {
+  return Astro.redirect('/dashboard');
+}
+---
+
+<AdminDashboardLayout title="Categories" breadcrumb={{
+  '/categories': 'Manage Categories',
+}}>
+    <div class="content">    
+        <div class="head">
+            <div class="welcome-message">
+                <h1>Categories</h1>
+                <p>Manage Categories</p>
+            </div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Electronics</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Clothing</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Accessories</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Toys</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Home</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Beauty</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Grocery</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>    
+        </div>    
+    </div>      
+</AdminDashboardLayout>

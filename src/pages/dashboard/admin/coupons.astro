@@ -1,0 +1,63 @@
+---
+import { getUser } from '@/lib/user';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+
+const user = await getUser(Astro.request);
+
+if (!user || !user.isAdmin()) {
+  return Astro.redirect('/dashboard');
+}
+---
+
+<AdminDashboardLayout title="Coupons" breadcrumb={{
+  '/coupons': 'Manage Coupons',
+}}>
+    <div class="content">
+        <div class="head">
+            <div class="welcome-message">
+                <h1>Coupons</h1>
+                <p>Manage Coupons</p>
+            </div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Coupon Code</th>
+                        <th>Discount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>123456</td>
+                        <td>$100.00</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>123456</td>
+                        <td>$100.00</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>123456</td>
+                        <td>$100.00</td>
+                        <td>
+                            <a href="#">View</a>
+                            <a href="#">Edit</a>
+                            <a href="#">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>    
+        </div>
+    </div>
+</AdminDashboardLayout>
