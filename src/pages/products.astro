@@ -7,8 +7,8 @@ import '../styles/products.css';
 import { products as productsActions } from '../actions/products';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
-	{},
+  productsActions.getBestProducts,
+  {},
 );
 const bestProducts = bestProductsActions.data;
 ---
@@ -24,7 +24,9 @@ const bestProducts = bestProductsActions.data;
     <div class="products-grid">
       {
         bestProducts && bestProducts.length > 0 ? (
-          bestProducts.map((product) => <ProductCard product={product} />)
+          bestProducts.map((product) => (
+            <ProductCard product={product} server:defer />
+          ))
         ) : (
           <p>No products found</p>
         )
