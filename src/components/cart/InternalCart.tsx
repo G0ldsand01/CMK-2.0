@@ -47,7 +47,11 @@ export default function InternalCart({
           {children}
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent
+        style={{
+          zIndex: 1000,
+        }}
+      >
         <SheetHeader>
           <SheetTitle>Your cart</SheetTitle>
           <SheetDescription>
