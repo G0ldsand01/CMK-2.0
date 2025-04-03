@@ -1,0 +1,20 @@
+---
+import { cartTable } from '@/db/schema';
+import db from '@/lib/db';
+import { getUser } from '@/lib/user';
+import { eq } from 'drizzle-orm';
+const user = await getUser(Astro.request);
+if (!user) {
+  return null;
+}
+const cart = await db
+  .select()
+  .from(cartTable)
+  .where(eq(cartTable.userId, user.getId()));
+---
+
+<span
+  id="cart-count"
+  class="bg-muted text-foreground text-xs w-5 h-5 flex items-center justify-center rounded-full ml-2"
+  >{cart.length}</span
+>

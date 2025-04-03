@@ -1,9 +1,10 @@
 ---
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
-
-import { getSession } from 'auth-astro/server';
-import { Auth, SignOut } from 'auth-astro/components';
-const session = await getSession(Astro.request)
+import Cart from '@/components/cart/Cart.astro';
+import { SignOut } from 'auth-astro/components';
+import { getUser } from '@/lib/user';
+import CartItemCount from '@/components/cart/CartItemCount.astro';
+const user = await getUser(Astro.request)
 ---
 
 <header>
@@ -21,43 +22,32 @@ const session = await getSession(Astro.request)
   </nav>
   <!-- Auth Buttons or Profile Section -->
 
-<Auth>
-  {session ? (
+  {user ? (
     <div
       id="auth-buttons"
       class="login"
       style="display: flex; align-items: center; gap: 1rem;"
     >
-    <div id="profile-section" class="profile-section">
-      <a href="/dashboard" >
-      <img
-        id="profile-picture"
-        src={session?.user?.image || '@assets/cdn/circle-user.svg'}
-        alt="Profile Picture"
-        width="40"
-        height="40"
-      />
-      <div class="user">
+      <div id="profile-section" class="profile-section">
         <a href="/dashboard" >
-        <h1 class="user">Welcome, {session?.user?.name}</h1>
-        </a>
-        <SignOut>Logout</SignOut>
+        <img
+          id="profile-picture"
+          src={user.getImage() || '@assets/cdn/circle-user.svg'}
+          alt="Profile Picture"
+          width="40"
+          height="40"
+        />
+        <div class="user">
+          <a href="/dashboard" >
+          <h1 class="user">Welcome, {user.getDisplayName()}</h1>
+          </a>
+          <SignOut>Logout</SignOut>
+        </div>
       </div>
-    </div>
-     <button
-        class="checkout"
-        data-item-url={Astro.url}
-        style="display: flex; align-items: center; background-color: #292929; border: none; color: #e7dcdc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;"
-        onmouseover="this.style.backgroundColor='#3d3d3d';"
-        onmouseout="this.style.backgroundColor='#292929';"
-      >
-        <ShoppingBag />
-        <span
-          id="cart-count"
-          style="background: #e7dcdc; color: #000; font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 0.5rem;"
-          ></span>
-      </button>
-    </div>
+      <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
+        <ShoppingBag /> <CartItemCount />
+      </Cart>
+      </div>
     </div>
   ) : (
     <div
@@ -99,7 +89,7 @@ const session = await getSession(Astro.request)
       </button>
     </div>
   )}
-</Auth>
+
   <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -137,12 +127,12 @@ const session = await getSession(Astro.request)
       <li><a href="/products" data-astro-prefetch>Products</a></li>
       <li><a href="/about" data-astro-prefetch>About Us</a></li>
       <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
-        {session ? (
+        {user ? (
           <div id="profile-section-nav">
             <a href="/dashboard" >
             <img
               id="profile-picture"
-              src={session?.user?.image || '<circle-user />'}
+              src={user.getImage() || '<circle-user />'}
               alt="Profile Picture"
               width="40"
               height="40"
@@ -150,7 +140,7 @@ const session = await getSession(Astro.request)
             </a>
             <div class="user_info_logout">
               <a href="/dashboard" >
-              <h1 class="user"  >Welcome, {session?.user?.name}</h1>
+              <h1 class="user"  >Welcome, {user.getDisplayName()}</h1>
               </a>
               <SignOut>Logout</SignOut>
             </div>
@@ -183,7 +173,7 @@ const session = await getSession(Astro.request)
   </nav>
 </header>
 <script>
-
+  import { signOut } from 'auth-astro/client';
   function menuToggleFunction() {
     const overlayNav = document.querySelector('.overlay-nav');
     if (overlayNav) {
@@ -192,12 +182,12 @@ const session = await getSession(Astro.request)
   }
 
   document.getElementById('menu-toggle')?.addEventListener('click', menuToggleFunction);
-    import("auth-astro/client").then(({ signOut }) => {
+
       const logoutButton = document.querySelector("#logout") as HTMLButtonElement;
       if (logoutButton) {
         logoutButton.onclick = () => signOut();
       }
-    });
+
 </script>
 
 <style>
