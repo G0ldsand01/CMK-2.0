@@ -76,7 +76,7 @@ const user = await getUser(Astro.request);
 
       <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
         <ShoppingBag /> <CartItemCount server:defer />
-      </Cart> 
+      </Cart>
     </div>
   )}
 
@@ -143,22 +143,6 @@ const user = await getUser(Astro.request);
               <a href="/register" style="text-decoration: none;">Register</a>
             </li>
         )}
-      <li>
-
-          <button
-            id="cart"
-            class="checkout"
-            data-item-url="(astro.url)"
-          >
-            <ShoppingBag />
-            <span
-              id="cart-count"
-              style="position: relative; top: -30px; right: -15px; background: rgb(247, 247, 247); color: rgb(0, 0, 0); font-size: 12px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;"
-              >0</span
-            >
-          </button>
-
-      </li>
     </ul>
   </nav>
 </header>
