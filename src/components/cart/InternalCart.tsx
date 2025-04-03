@@ -12,6 +12,7 @@ import { Separator } from '../ui/separator';
 import { setCart } from '@/lib/cart';
 import { cartAtom } from '@/store';
 import { useStore } from '@nanostores/react';
+import { useState } from 'react';
 export default function InternalCart({
   children,
   newCart,
@@ -44,11 +45,13 @@ export default function InternalCart({
     | 'destructive';
 }>) {
   const $cart = useStore(cartAtom);
+  const [isFirstOpen, setIsFirstOpen] = useState(false);
 
   return (
     <Sheet
       onOpenChange={(open) => {
-        if (open) {
+        if (open && !isFirstOpen) {
+          setIsFirstOpen(true);
           setCart(newCart);
         }
       }}
