@@ -5,23 +5,23 @@ import '@/styles/global.css';
 import { AdminSidebar } from '@/components/AdminSidebar';
 
 interface Props {
-	title: string;
-	breadcrumb: Record<string, string>;
+  title: string;
+  breadcrumb: Record<string, string>;
 }
 
 const { title, breadcrumb } = Astro.props;
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-	return Astro.redirect('/dashboard');
+  return Astro.redirect('/dashboard');
 }
 
 const userData = {
-	id: user.getId(),
-	name: user.getDisplayName(),
-	email: user.getEmail(),
-	image: user.getImage(),
-	role: user.getRole(),
+  id: user.getId(),
+  name: user.getDisplayName(),
+  email: user.getEmail(),
+  image: user.getImage(),
+  role: user.getRole(),
 };
 ---
 
@@ -36,10 +36,5 @@ const userData = {
   body {
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
   }
 </style>

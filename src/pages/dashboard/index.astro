@@ -6,7 +6,7 @@ import { getUser } from '@/lib/user';
 const user = await getUser(Astro.request);
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 ---
 
@@ -44,7 +44,6 @@ if (!user) {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
   }
   .head {
     margin-top: 5rem;

@@ -5,15 +5,15 @@ import { getUser } from '@/lib/user';
 import Layout from './Layout.astro';
 
 interface Props {
-	title: string;
-	activeId: string;
+  title: string;
+  activeId: string;
 }
 
 const { title, activeId } = Astro.props;
 const user = await getUser(Astro.request);
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 ---
 
@@ -166,7 +166,6 @@ if (!user) {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
   }
 
   /* Sidebar */
@@ -209,7 +208,6 @@ if (!user) {
   .main-layout {
     display: flex;
     min-height: 100vh;
-    padding-top: 5rem;
   }
 
   /* Header */
