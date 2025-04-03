@@ -12,6 +12,9 @@ import {
 import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 const user = await getUser(Astro.request);
 const {
@@ -28,10 +31,6 @@ const {
 if (!user || !user.isAdmin()) {
 	return Astro.redirect('/dashboard');
 }
-
-import Stripe from 'stripe';
-
-const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 async function fetchStripeMetrics() {
 	try {
@@ -66,10 +65,8 @@ async function fetchStripeMetrics() {
 					).toFixed(2)}%`
 				: '0%';
 
-		// @ts-expect-error TODO: Fix Stripe
 		const latestOrders = await stripe.paymentIntents.list({
 			limit: 5,
-			order: 'desc',
 		});
 
 		return {
