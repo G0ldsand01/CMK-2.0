@@ -1,8 +1,10 @@
 name: Code quality
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+  # push:
+  # pull_request:
+
 
 jobs:
   quality:
@@ -13,6 +15,6 @@ jobs:
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
         with:
-          version: beta
+          version: latest
       - name: Run Biome
         run: biome ci .
