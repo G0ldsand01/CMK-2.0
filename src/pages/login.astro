@@ -4,10 +4,11 @@ import { Image } from 'astro:assets';
 import Layout from '@layouts/Layout.astro';
 import { SignIn } from 'auth-astro/components';
 import { getSession } from 'auth-astro/server';
+import Icon from '@/components/images/Icon.astro';
 
 const session = await getSession(Astro.request);
 if (session) {
-	return Astro.redirect('/dashboard');
+  return Astro.redirect('/dashboard');
 }
 ---
 
@@ -16,9 +17,9 @@ if (session) {
     <h1>Welcome Back</h1>
     <div class="login-with-social">
       <SignIn provider="github">
-        <Image
-          src={'/api/image/github.svg'}
-          alt="Github"
+        <Icon
+          imagePath={'github'}
+          altText={'Github'}
           width={128}
           height={128}
           class="icon"
@@ -26,9 +27,9 @@ if (session) {
         Login with Github
       </SignIn>
       <SignIn provider="discord">
-        <Image
-          src={'/api/image/discord.svg'}
-          alt={'Discord'}
+        <Icon
+          imagePath={'discord'}
+          altText={'Discord'}
           width={64}
           height={64}
           class="icon"
@@ -36,9 +37,9 @@ if (session) {
         Login with Discord
       </SignIn>
       <SignIn provider="google">
-        <Image
-          src={'/api/image/google.svg'}
-          alt={'Google'}
+        <Icon
+          imagePath={'google'}
+          altText={'Google'}
           width={64}
           height={64}
           class="icon"
@@ -54,6 +55,6 @@ if (session) {
         <button type="submit">Sign in with Email</button>
       </form>
     </div>
-    <p> <a href="/"> Back to Home</a></p>
+    <p><a href="/"> Back to Home</a></p>
   </div>
 </Layout>

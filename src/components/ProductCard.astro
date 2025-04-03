@@ -2,9 +2,10 @@
 import { Image } from 'astro:assets';
 import '@/styles/product-card.css';
 import type { productsTable } from '@/db/schema';
+import ProductImage from './images/ProductImage.astro';
 
 interface Props {
-	product: typeof productsTable.$inferSelect;
+  product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -12,11 +13,12 @@ const { product } = Astro.props;
 
 <div class="product">
   <div class="product-image">
-    <Image
-      src={'/api/image/' + product.image + '.png'}
-      alt={product.name}
+    <ProductImage
+      imagePath={product.image}
+      altText={product.name}
       width={200}
       height={200}
+      class=""
     />
   </div>
   <div class="product-info">

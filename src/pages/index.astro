@@ -5,8 +5,8 @@ import '../styles/index.css';
 import { products as productsActions } from '../actions/products';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
-	{},
+  productsActions.getBestProducts,
+  {},
 );
 const bestProducts = bestProductsActions.data;
 ---
@@ -34,10 +34,12 @@ const bestProducts = bestProductsActions.data;
     <div class="products-grid">
       {
         bestProducts &&
-          bestProducts.map((product) => <ProductCard product={product} />)
+          bestProducts.map((product) => (
+            <ProductCard product={product} server:defer />
+          ))
       }
     </div>
-    <button class="view-all-button" onclick="window.location.href='products'">
+    <button class="view-all-button">
       <a href="/products">View All Products</a>
     </button>
   </div>
@@ -54,7 +56,8 @@ const bestProducts = bestProductsActions.data;
     });
 </script>
 <style>
-  html, body {
+  html,
+  body {
     height: 100%;
     margin: 0;
     overflow-y: auto; /* Ensures vertical scrolling is enabled */
