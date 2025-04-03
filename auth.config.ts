@@ -11,6 +11,12 @@ import {
   sessionsTable,
   verificationTokensTable,
 } from './src/db/schema';
+import {
+  DISCORD_CLIENT_ID,
+  DISCORD_CLIENT_SECRET,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+} from 'astro:env/server';
 
 export default defineConfig({
   adapter: DrizzleAdapter(db, {
@@ -21,12 +27,12 @@ export default defineConfig({
   }) as Adapter,
   providers: [
     GitHub({
-      clientId: import.meta.env.GITHUB_CLIENT_ID,
-      clientSecret: import.meta.env.GITHUB_CLIENT_SECRET,
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
     }),
     Discord({
-      clientId: import.meta.env.DISCORD_CLIENT_ID,
-      clientSecret: import.meta.env.DISCORD_CLIENT_SECRET,
+      clientId: DISCORD_CLIENT_ID,
+      clientSecret: DISCORD_CLIENT_SECRET,
     }),
   ],
   callbacks: {
