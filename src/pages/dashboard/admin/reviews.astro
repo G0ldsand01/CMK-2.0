@@ -1,13 +1,5 @@
 ---
-import { Star, Stars, UserCircleIcon } from 'lucide-react';
-import { getUser } from '@/lib/user';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-
-const user = await getUser(Astro.request);
-
-if (!user || !user.isAdmin()) {
-  return Astro.redirect('/dashboard');
-}
 ---
 
 <AdminDashboardLayout title="Reviews" breadcrumb={{
