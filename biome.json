@@ -48,8 +48,7 @@
 			"correctness": {
 				"noUnusedImports": "error"
 			}
-		},
-		"includes": ["**", "!**/src/components/ui/*.tsx"]
+		}
 	},
 	"javascript": {
 		"formatter": {
