@@ -21,7 +21,7 @@
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"noUnusedImports": "off"
+				"noUnusedImports": "error"
 			}
 		},
 		"ignore": ["src/components/ui/*.tsx"]
@@ -31,5 +31,21 @@
 			"quoteStyle": "single",
 			"semicolons": "always"
 		}
-	}
+	},
+	"overrides": [
+		{
+			"include": ["*.svelte", "*.astro", "*.vue"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useConst": "off",
+						"useImportType": "off"
+					},
+					"correctness": {
+						"noUnusedImports": "off"
+					}
+				}
+			}
+		}
+	]
 }
