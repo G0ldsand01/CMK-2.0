@@ -1,3 +1,4 @@
+import { actions } from 'astro:actions';
 import { useStore } from '@nanostores/react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -117,6 +118,17 @@ export default function InternalCart({
 														variant="outline"
 														size="icon"
 														className="h-8 w-8"
+														onClick={async () => {
+															const { data, error } =
+																await actions.cart.updateCartItem({
+																	productId: item.products.id.toString(),
+																	decrement: true,
+																});
+
+															if (!error) {
+																setCart(data.cart);
+															}
+														}}
 													>
 														<Minus className="h-4 w-4" />
 													</Button>
@@ -127,6 +139,17 @@ export default function InternalCart({
 														variant="outline"
 														size="icon"
 														className="h-8 w-8"
+														onClick={async () => {
+															const { data, error } =
+																await actions.cart.updateCartItem({
+																	productId: item.products.id.toString(),
+																	increment: true,
+																});
+
+															if (!error) {
+																setCart(data.cart);
+															}
+														}}
 													>
 														<Plus className="h-4 w-4" />
 													</Button>
@@ -134,6 +157,16 @@ export default function InternalCart({
 														variant="ghost"
 														size="icon"
 														className="h-8 w-8 ml-auto text-destructive"
+														onClick={async () => {
+															const { data, error } =
+																await actions.cart.deleteCartItem({
+																	productId: item.products.id.toString(),
+																});
+
+															if (!error) {
+																setCart(data.cart);
+															}
+														}}
 													>
 														<Trash2 className="h-4 w-4" />
 													</Button>
