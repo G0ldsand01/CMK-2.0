@@ -8,6 +8,7 @@ import Cart from '@/components/cart/Cart.astro';
 import ReviewSection from '@/components/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/user';
+import ProductImage from '@/components/images/ProductImage.astro';
 
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
@@ -37,11 +38,11 @@ const { product, isInWishlist } = data;
             <Heart />
           </div>
           <div class="product-info">
-            <Image
-              src={'/api/image/' + product.image + '.png'}
-              alt={product.name}
+            <ProductImage
+              imagePath={product.image}
               width={400}
               height={400}
+              altText={product.name}
             />
             <h3>{product.name}</h3>
             <p>{product.description}</p>
@@ -77,6 +78,7 @@ const { product, isInWishlist } = data;
                   id="add-to-cart-button"
                   className="font-bold py-2 px-4 rounded flex items-center gap-2"
                   client:load
+                  server:defer={true}
                 >
                   <ShoppingCart /> Add to Cart
                 </Button>
