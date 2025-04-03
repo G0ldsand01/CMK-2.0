@@ -97,6 +97,7 @@ const { product, isInWishlist } = data;
 <script>
   import { actions } from 'astro:actions';
   import { toast } from 'sonner';
+  import { setCart } from '@/lib/cart';
 
   /*
     Product ID
@@ -141,8 +142,22 @@ const { product, isInWishlist } = data;
   const addToCartButton = document.querySelector('#add-to-cart-button');
   if (addToCartButton) {
     addToCartButton.addEventListener('click', async () => {
-      console.log('Add to Cart ', productId);
-      toast('Added to Cart: ' + productId);
+        const { error, data } = await actions.cart.addProductIdToCart({
+            productId: productId as string,
+        });
+
+        if (!error) {
+          if (data.success) {
+            toast.success('Successfully added to cart');
+            console.log(setCart(data.cart));
+          } else {
+            toast.warning('Product already in cart');
+            console.log(setCart(data.cart));
+          }
+
+        } else {
+            toast.error('Failed to add to cart');
+        }
     });
   }
 </script>

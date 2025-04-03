@@ -8,14 +8,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../ui/sheet';
-
+import { Separator } from '../ui/separator';
+import { setCart } from '@/lib/cart';
+import { cartAtom } from '@/store';
+import { useStore } from '@nanostores/react';
 export default function InternalCart({
   children,
-  cart,
+  newCart,
   classes,
   variant,
 }: React.PropsWithChildren<{
-  cart: {
+  newCart: {
     products: {
       id: number;
       name: string;
@@ -40,8 +43,16 @@ export default function InternalCart({
     | 'link'
     | 'destructive';
 }>) {
+  const $cart = useStore(cartAtom);
+
   return (
-    <Sheet>
+    <Sheet
+      onOpenChange={(open) => {
+        if (open) {
+          setCart(newCart);
+        }
+      }}
+    >
       <SheetTrigger>
         <Button variant={variant} className={cn(classes)}>
           {children}
@@ -55,13 +66,14 @@ export default function InternalCart({
         <SheetHeader>
           <SheetTitle>Your cart</SheetTitle>
           <SheetDescription>
-            {cart.length} items in your cart
+            {Object.values($cart).length} items in your cart
             <div className="flex flex-col gap-2">
-              {cart.map((item) => (
-                <div>
-                  <h3>{item.products.name}</h3>
-                  <p>{item.products.price}</p>
-                  <p>{item.cart.quantity}</p>
+              {Object.values($cart).map((item) => (
+                <div key={item.products.id} className="flex flex-row gap-2">
+                  <h3 className="text-lg font-bold">{item.products.name}</h3>
+                  <p className="text-sm text-gray-500">{item.products.price}</p>
+                  <p className="text-sm text-gray-500">{item.cart.quantity}</p>
+                  <Separator />
                 </div>
               ))}
             </div>

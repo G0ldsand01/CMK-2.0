@@ -1,9 +1,11 @@
 import { products } from './products';
 import { user } from './user';
+import { cart } from './cart';
 
 export const server = {
   products,
   user,
+  cart,
 };
 
 // Logging & security utils

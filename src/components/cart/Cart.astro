@@ -30,6 +30,6 @@ const cart = await db
   .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
 
-<InternalCart cart={cart} client:load classes={classes} variant={variant}>
+<InternalCart newCart={cart} client:load classes={classes} variant={variant}>
   <slot />
 </InternalCart>
