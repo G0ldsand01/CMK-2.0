@@ -15,6 +15,8 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import type User from '@/lib/models/user';
+import { UserMenu } from './UserMenu';
 
 // This is sample data.
 const data = {
@@ -148,11 +150,14 @@ const data = {
   ],
 };
 
-function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { user: User }) {
+  const user = props.user;
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <h1>Admin Dashboard</h1>
+        <UserMenu user={user} />
         {/* <VersionSwitcher
           versions={data.versions}
           defaultVersion={data.versions[0]}
@@ -183,10 +188,13 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-export function AdminSidebar({ children }: React.PropsWithChildren) {
+export function AdminSidebar({
+  user,
+  children,
+}: React.PropsWithChildren<{ user: User }>) {
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={user} />
       <SidebarInset>
         <SidebarTrigger />
         <SidebarContent>{children}</SidebarContent>
