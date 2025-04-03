@@ -1,0 +1,28 @@
+---
+import { cartTable, productsTable } from '@/db/schema';
+import db from '@/lib/db';
+import { getUser } from '@/lib/user';
+import { eq } from 'drizzle-orm';
+import InternalCart from './InternalCart';
+
+interface Props {
+  classes?: string;
+}
+
+const { classes } = Astro.props;
+
+const user = await getUser(Astro.request);
+if (!user) {
+  throw new Error('User not found');
+}
+
+const cart = await db
+  .select()
+  .from(cartTable)
+  .where(eq(cartTable.userId, user.getId()))
+  .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+---
+
+<InternalCart cart={cart} client:load classes={classes}>
+  <slot />
+</InternalCart>

@@ -85,6 +85,17 @@ export const wishlistTable = pgTable('wishlist', {
     .references(() => productsTable.id, { onDelete: 'cascade' }),
 });
 
+export const cartTable = pgTable('cart', {
+  id: serial('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  productId: integer('productId')
+    .notNull()
+    .references(() => productsTable.id, { onDelete: 'cascade' }),
+  quantity: integer('quantity').notNull().default(1),
+});
+
 // One to many relationship between users and accounts
 export const accountsTable = pgTable(
   'account',

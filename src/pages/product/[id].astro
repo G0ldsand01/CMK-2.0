@@ -2,15 +2,17 @@
 import { Image } from 'astro:assets';
 import { products as productsActions } from '../../actions/products';
 import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
 import '../../styles/product.css';
-import { Heart } from 'lucide-react';
+import { Heart, ShoppingCart } from 'lucide-react';
 import ReviewSection from '@/components/ReviewSection.astro';
+import Cart from '@/components/cart/Cart.astro';
+import { getUser } from '@/lib/user';
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
   id: Number(id),
 });
 const data = productActions.data;
+const user = await getUser(Astro.request);
 
 if (!data) {
   return Astro.redirect('/');
@@ -19,8 +21,7 @@ if (!data) {
 const { product, isInWishlist } = data;
 ---
 
-<Layout title={product ? 'Viewing: ' + product.name : 'Product'}>
-  <Header />
+<Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
   {
     product ? (
       <div class="product-details">
@@ -57,39 +58,18 @@ const { product, isInWishlist } = data;
                 {Number(product.price).toFixed(2) || '0.00'}
               </span>
             </div>
-            <ReviewSection product={product} server:defer />
-            <div class="tooltip-container">
-              <button
-                class="snipcart-add-item button add-to-cart-button"
-                id="popoverTrigger"
-                data-item-id={product.id}
-                data-item-price={Number(product.price).toFixed(2) || '0.00'}
-                data-item-description={product.description}
-                data-item-image={product.image || '@assets/mouse.png'}
-                data-item-name={product.name}
-                data-item-url={Astro.url}
-              >
-                Add to Cart
-              </button>
-              <div class="popover-content" id="popoverContent">
-                <p>
-                  <shopping-basket />
-                  <span>{product.name} has been added to your cart!</span>
-                </p>
+            <div class="flex justify-center py-4">
+              <div class="p-4 border-2 border-gray-300 rounded-md ">
+                <ReviewSection product={product} server:defer />
               </div>
             </div>
-            <button
-              id="buy-now-button"
-              class="snipcart-add-item snipcart-checkout"
-              data-item-id={product.id}
-              data-item-price={Number(product.price).toFixed(2) || '0.00'}
-              data-item-description={product.description}
-              data-item-image={product.image}
-              data-item-name={product.name}
-              data-item-url={Astro.url}
-            >
-              Buy now
-            </button>
+            <div class="flex justify-center py-4">
+              {user && (
+                <Cart classes="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded flex items-center gap-2">
+                  <ShoppingCart /> View Cart
+                </Cart>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -102,7 +82,6 @@ const { product, isInWishlist } = data;
     )
   }
 </Layout>
-<div id="snipcart" hidden="true" style="z-index: 1000;"></div>
 
 <script>
   import { actions } from 'astro:actions';
@@ -126,21 +105,4 @@ const { product, isInWishlist } = data;
       }
     });
   }
-
-  // document.getElementById('review-form')!.addEventListener('submit', async (event) => {
-  //   event.preventDefault();;
-  //   const rating = (document.getElementById('review-rating') as HTMLInputElement)!.value;
-  //   const productId = { id: Number(id) };
-
-  //   const { error } = await actions.products.addReview({
-  //     productId,
-  //     rating: Number(rating)
-  //   });
-
-  //   if (!error) {
-  //     location.reload();
-  //   } else {
-  //     console.error('Failed to add review');
-  //   }
-  // });
 </script>
