@@ -143,9 +143,14 @@ export function AppSidebar({
     <Sidebar {...props}>
       <SidebarHeader className="flex items-center justify-center">
         <div className="flex items-center">
-          <a href="/" aria-label="Home" title="Home">
-          <CircuitBoard size={24} className="mr-2 m-0.5"  />
-          <div className="text-2xl font-bold">CMK</div>
+          <a
+            href="/"
+            aria-label="Home"
+            title="Home"
+            className="flex items-center"
+          >
+            <CircuitBoard size={24} className="mr-2 m-0.5" />
+            <div className="text-2xl font-bold">CMK</div>
           </a>
         </div>
       </SidebarHeader>
