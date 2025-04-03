@@ -42,20 +42,24 @@ export default defineConfig({
 			GITHUB_CLIENT_ID: envField.string({
 				access: 'secret',
 				context: 'server',
-				// TODO: Remove optional once we have a client ID
-				optional: true,
 			}),
 			GITHUB_CLIENT_SECRET: envField.string({
 				access: 'secret',
 				context: 'server',
-				// TODO: Remove optional once we have a client ID
-				optional: true,
 			}),
 			DISCORD_CLIENT_ID: envField.string({
 				access: 'secret',
 				context: 'server',
 			}),
 			DISCORD_CLIENT_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			GOOGLE_CLIENT_ID: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			GOOGLE_CLIENT_SECRET: envField.string({
 				access: 'secret',
 				context: 'server',
 			}),

@@ -1,6 +1,7 @@
 import type { Adapter } from '@auth/core/adapters';
 import Discord from '@auth/core/providers/discord';
 import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { defineConfig } from 'auth-astro';
 import db from './src/lib/db';
@@ -10,6 +11,8 @@ import {
 	DISCORD_CLIENT_SECRET,
 	GITHUB_CLIENT_ID,
 	GITHUB_CLIENT_SECRET,
+	GOOGLE_CLIENT_ID,
+	GOOGLE_CLIENT_SECRET,
 } from 'astro:env/server';
 import {
 	accountsTable,
@@ -33,6 +36,10 @@ export default defineConfig({
 		Discord({
 			clientId: DISCORD_CLIENT_ID,
 			clientSecret: DISCORD_CLIENT_SECRET,
+		}),
+		Google({
+			clientId: GOOGLE_CLIENT_ID,
+			clientSecret: GOOGLE_CLIENT_SECRET,
 		}),
 	],
 	callbacks: {
