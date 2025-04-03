@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/index.css';
+import '../styles/products.css';
+import { ShoppingBag, Home } from 'lucide-react';
+---
+
+<Layout title="Order Canceled" navbar={false}>
+  <div class="container">
+    <div class="cancel-message">
+      <div class="icon-wrapper">
+        <ShoppingBag color="Black" size={64} />
+      </div>
+      <h1>Thank you for your order!</h1>
+      <h2>A confirmation email has been sent to your email address.</h2>
+      <p>Thank you for choosing CMK!</p>
+      <p>If you have any questions, feel free to contact our support team.</p>
+      <button><a href="/"><div class="button-icon"><Home/>Go to Home</div></a></button>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+  }
+
+  .cancel-message {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 1em;
+  }
+  .button-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  h1 {
+    color: #27ae60;
+    margin-bottom: 20px;
+    font-size: 2.2em;
+    font-weight: 600;
+  }
+  h2 {
+    color: #444;
+    margin-bottom: 15px;
+    font-size: 1.6em; 
+    font-weight: 500;
+  }
+  p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5;
+  }
+  button {
+    padding: 0.75rem 1.5rem;
+    background-color: #29292900;
+    color: #292929;
+    border: solid 2px #27ae60;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+    display: block;
+  } 
+  button:hover {
+    background-color: #27ae60;
+    color: #fff;
+    border: solid 2px #27ae60;
+    transform: scale(1.05);
+  }
+</style>

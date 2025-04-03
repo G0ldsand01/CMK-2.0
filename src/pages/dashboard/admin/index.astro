@@ -1,60 +1,255 @@
 ---
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardHeader,
   CardDescription,
   CardTitle,
   CardFooter,
-} from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import { getUser } from '@/lib/user';
-import { TrendingUpIcon, TrendingDownIcon } from 'lucide-react';
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import AdminDashboardLayout from "@/layouts/AdminDashboardLayout.astro";
+import { getUser } from "@/lib/user";
+import { TrendingUpIcon, TrendingDownIcon } from "lucide-react";
+
 const user = await getUser(Astro.request);
+const {
+  totalRevenue,
+  newCustomers,
+  activeAccounts,
+  growthRate,
+  revenueTrend,
+  customerTrend,
+  accountTrend,
+  latestOrders,
+} = await fetchStripeMetrics();
 
 if (!user || !user.isAdmin()) {
-  return Astro.redirect('/dashboard');
+  return Astro.redirect("/dashboard");
+}
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+async function fetchStripeMetrics() {
+  try {
+    const balance = await stripe.balance.retrieve();
+    const customers = await stripe.customers.list({ limit: 100 });
+    const activeSubscriptions = await stripe.subscriptions.list({ limit: 100 });
+
+    // Simuler la récupération des revenus des 3 derniers mois
+    const revenueData = await stripe.balanceTransactions.list({
+      type: "charge",
+      created: { gte: Math.floor(Date.now() / 1000) - 3 * 30 * 24 * 60 * 60 }, // Derniers 3 mois
+      limit: 100,
+    });
+
+    const monthlyRevenue: Record<number, number> = revenueData.data.reduce(
+      (acc, txn) => {
+        const month = new Date(txn.created * 1000).getMonth();
+        acc[month] = (acc[month] || 0) + txn.amount;
+        return acc;
+      },
+      {} as Record<number, number>
+    );
+
+    const revenueValues = Object.values(monthlyRevenue).map((v) => v / 100); // Convert cents to dollars
+    const revenueTrend =
+      revenueValues.length > 1
+        ? (
+            ((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
+              revenueValues[0]) *
+            100
+          ).toFixed(2) + "%"
+        : "0%";
+
+    const latestOrders = await stripe.paymentIntents.list({
+      limit: 5,
+      order: "desc",
+    });
+
+    return {
+      totalRevenue: (balance.available[0]?.amount || 0) / 100,
+      newCustomers: customers.data.length,
+      activeAccounts: activeSubscriptions.data.length,
+      growthRate: "4.5%", // Placeholder
+      revenueTrend: revenueTrend || "0%",
+      customerTrend: "0%",
+      accountTrend: "0%",
+      latestOrders: latestOrders.data.map((order) => ({
+        id: order.id,
+        amount: order.amount / 100,
+        currency: order.currency.toUpperCase(),
+        status: order.status,
+        created: new Date(order.created * 1000).toLocaleDateString(),
+      })),
+    };
+  } catch (error) {
+    console.error("Error fetching Stripe metrics:", error);
+    return {
+      totalRevenue: 0,
+      newCustomers: 0,
+      activeAccounts: 0,
+      growthRate: "0%",
+      revenueTrend: "0%",
+      customerTrend: "0%",
+      accountTrend: "0%",
+      latestOrders: [],
+    };
+  }
 }
 ---
 
 <AdminDashboardLayout
   title="Admin Dashboard"
   breadcrumb={{
-    '/': 'Home',
+    "/": "Home",
   }}
 >
-  <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-  <p class="text-foreground">
-    Welcome to the admin dashboard, {user.getDisplayName()}!
-  </p>
+  <div class="head">
+    <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+    <p>
+      Welcome to the admin dashboard, {user.getDisplayName()}!
+    </p>
+  </div>
   <Separator />
-  <div class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6">
-    {[
-      { title: 'Total Revenue', value: '{Sales.totals}', trend: '+12.5%', icon: <TrendingUpIcon className="size-3" />, description: 'Trending up this month', subtext: 'Visitors for the last 6 months', isPositive: true },
-      { title: 'New Customers', value: '1,234', trend: '-20%', icon: <TrendingDownIcon className="size-3" />, description: 'Down 20% this period', subtext: 'Acquisition needs attention', isPositive: false },
-      { title: 'Active Accounts', value: '45,678', trend: '+12.5%', icon: <TrendingUpIcon className="size-3" />, description: 'Strong user retention', subtext: 'Engagement exceed targets', isPositive: true },
-      { title: 'Growth Rate', value: '4.5%', trend: '+4.5%', icon: <TrendingUpIcon className="size-3" />, description: 'Steady performance', subtext: 'Meets growth projections', isPositive: true },
-    ].map(({ title, value, trend, icon, description, subtext, isPositive }, index) => (
-      <Card key={index} className="@container/card">
-        <CardHeader className="relative">
-          <CardDescription>{title}</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-            {value}
-          </CardTitle>
-          <div class="absolute right-4 top-4">
-            <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
-              {icon} {trend}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1 text-sm">
-          <div class="line-clamp-1 flex gap-2 font-medium">
-            {description} {icon}
-          </div>
-          <div class="text-muted-foreground">{subtext}</div>
-        </CardFooter>
-      </Card>
-    ))}
+  <div
+    class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6"
+  >
+    {
+      [
+        {
+          title: "Total Revenue",
+          value: `${totalRevenue}$`,
+          trend: "+12.5%",
+          icon: <TrendingUpIcon className="size-3" />,
+          description: "Trending up this month",
+          subtext: "Visitors for the last 6 months",
+          isPositive: true,
+        },
+        {
+          title: "New Customers",
+          value: newCustomers,
+          trend: "-20%",
+          icon: <TrendingDownIcon className="size-3" />,
+          description: "Down 20% this period",
+          subtext: "Acquisition needs attention",
+          isPositive: false,
+        },
+        {
+          title: "Active Accounts",
+          value: activeAccounts,
+          trend: "+12.5%",
+          icon: <TrendingUpIcon className="size-3" />,
+          description: "Strong user retention",
+          subtext: "Engagement exceed targets",
+          isPositive: true,
+        },
+        {
+          title: "Growth Rate",
+          value: `${growthRate}`,
+          trend: "+4.5%",
+          icon: <TrendingUpIcon className="size-3" />,
+          description: "Steady performance",
+          subtext: "Meets growth projections",
+          isPositive: true,
+        },
+      ].map(
+        (
+          { title, value, trend, icon, description, subtext, isPositive },
+          index
+        ) => (
+          <Card key={index} className="@container/card">
+            <CardHeader className="relative">
+              <CardDescription>{title}</CardDescription>
+              <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+                {value}
+              </CardTitle>
+              <div class="absolute right-4 top-4">
+                <Badge
+                  variant="outline"
+                  className="flex gap-1 rounded-lg text-xs"
+                >
+                  {icon} {trend}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1 text-sm">
+              <div class="line-clamp-1 flex gap-2 font-medium">
+                {description} {icon}
+              </div>
+              <div class="text-muted-foreground">{subtext}</div>
+            </CardFooter>
+          </Card>
+        )
+      )
+    }
+  </div>
+  <!-- Latest orders -->
+  <div class="px-4 lg:px-6" id="latest-orders">
+    <h2 class="text-xl font-bold">Latest Stripe Orders</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-collapse border border-gray-200">
+        <thead>
+          <tr>
+            <th class="border border-gray-200 px-4 py-2">Order ID</th>
+            <th class="border border-gray-200 px-4 py-2">Amount</th>
+            <th class="border border-gray-200 px-4 py-2">Currency</th>
+            <th class="border border-gray-200 px-4 py-2">Status</th>
+            <th class="border border-gray-200 px-4 py-2">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            latestOrders.map((order) => (
+              <tr key={order.id}>
+                <td class="border border-gray-200 px-4 py-2">{order.id}</td>
+                <td class="border border-gray-200 px-4 py-2">{order.amount}</td>
+                <td class="border border-gray-200 px-4 py-2">
+                  {order.currency}
+                </td>
+                <td class="border border-gray-200 px-4 py-2">{order.status}</td>
+                <td class="border border-gray-200 px-4 py-2">
+                  {order.created}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </AdminDashboardLayout>
+
+<style>
+  .head {
+    padding: 2rem;
+    background-color: var(--background);
+    color: var(--foreground);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .head h1 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .head p {
+    font-size: 1rem;
+  }
+  #latest-orders {
+    margin-top: 2rem;
+  }
+  #latest-orders table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  #latest-orders table th,
+  #latest-orders table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  #latest-orders table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
