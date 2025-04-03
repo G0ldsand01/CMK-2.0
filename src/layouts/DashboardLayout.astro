@@ -1,19 +1,19 @@
 ---
-import Layout from './Layout.astro';
 import { getUser } from '@/lib/user';
 import { Auth, SignOut } from 'auth-astro/components';
 import { ShoppingBag } from 'lucide-react';
+import Layout from './Layout.astro';
 
 interface Props {
-  title: string;
-  activeId: string;
+	title: string;
+	activeId: string;
 }
 
 const { title, activeId } = Astro.props;
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect('/login');
+	return Astro.redirect('/login');
 }
 ---
 

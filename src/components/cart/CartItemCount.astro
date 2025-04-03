@@ -5,12 +5,12 @@ import { getUser } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 const user = await getUser(Astro.request);
 if (!user) {
-  return null;
+	return null;
 }
 const cart = await db
-  .select()
-  .from(cartTable)
-  .where(eq(cartTable.userId, user.getId()));
+	.select()
+	.from(cartTable)
+	.where(eq(cartTable.userId, user.getId()));
 ---
 
 <span

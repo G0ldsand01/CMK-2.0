@@ -1,0 +1,11 @@
+{
+	"[astro]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": null
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": null
+	}
+}

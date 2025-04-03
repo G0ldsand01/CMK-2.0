@@ -1,20 +1,19 @@
 ---
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { actions } from 'astro:actions';
-import Image from 'astro/components/Image.astro';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getUser } from '@/lib/user';
+import Image from 'astro/components/Image.astro';
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect('/login');
+	return Astro.redirect('/login');
 }
-
 
 const action = await Astro.callAction(actions.user.getWishlist, {});
 const data = action.data;
 
 if (!data) {
-  return Astro.redirect('/dashboard/');
+	return Astro.redirect('/dashboard/');
 }
 
 const wishlist = data.wishlist ?? [];

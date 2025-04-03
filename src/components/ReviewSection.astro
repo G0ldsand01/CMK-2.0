@@ -1,11 +1,11 @@
 ---
-import { reviewsTable, usersTable, type productsTable } from '@/db/schema';
+import { type productsTable, reviewsTable, usersTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq, desc, and } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 interface Props {
-  product: typeof productsTable.$inferSelect;
+	product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -13,39 +13,39 @@ const productId = product.id;
 
 const user = await getUser(Astro.request);
 const reviews: {
-  review: typeof reviewsTable.$inferSelect;
-  user: typeof usersTable.$inferSelect;
+	review: typeof reviewsTable.$inferSelect;
+	user: typeof usersTable.$inferSelect;
 }[] = [];
 
 const reviewsTx = await db
-  .select()
-  .from(reviewsTable)
-  .where(eq(reviewsTable.productId, productId))
-  .innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
-  .orderBy(desc(reviewsTable.rating))
-  .limit(5);
+	.select()
+	.from(reviewsTable)
+	.where(eq(reviewsTable.productId, productId))
+	.innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
+	.orderBy(desc(reviewsTable.rating))
+	.limit(5);
 
 reviews.push(
-  ...reviewsTx.map((review) => ({
-    review: review.reviews,
-    user: review.user,
-  }))
+	...reviewsTx.map((review) => ({
+		review: review.reviews,
+		user: review.user,
+	})),
 );
 
 let userReview: typeof reviewsTable.$inferSelect | null = null;
 if (user) {
-  const userReviewTx = await db
-    .select()
-    .from(reviewsTable)
-    .where(
-      and(
-        eq(reviewsTable.userId, user.getId()),
-        eq(reviewsTable.productId, productId)
-      )
-    );
-  if (userReviewTx[0]) {
-    userReview = userReviewTx[0];
-  }
+	const userReviewTx = await db
+		.select()
+		.from(reviewsTable)
+		.where(
+			and(
+				eq(reviewsTable.userId, user.getId()),
+				eq(reviewsTable.productId, productId),
+			),
+		);
+	if (userReviewTx[0]) {
+		userReview = userReviewTx[0];
+	}
 }
 ---
 

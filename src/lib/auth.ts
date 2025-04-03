@@ -9,29 +9,29 @@ import type { UserRole } from '@/db/schema';
 //     image?: string | null
 //   }
 type BaseUser = {
-  id?: string;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
+	id?: string;
+	name?: string | null;
+	email?: string | null;
+	image?: string | null;
 };
 
 export type CMKUser = BaseUser & {
-  role: UserRole;
+	role: UserRole;
 
-  firstName: string | null;
-  lastName: string | null;
-  phone: string | null;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  zip: string | null;
-  country: string | null;
+	firstName: string | null;
+	lastName: string | null;
+	phone: string | null;
+	address: string | null;
+	city: string | null;
+	state: string | null;
+	zip: string | null;
+	country: string | null;
 };
 
 declare module '@auth/core/types' {
-  interface Session {
-    user: CMKUser;
-  }
+	interface Session {
+		user: CMKUser;
+	}
 
-  interface User extends CMKUser {}
+	interface User extends CMKUser {}
 }

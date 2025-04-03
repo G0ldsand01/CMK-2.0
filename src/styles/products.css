@@ -1,58 +1,59 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  line-height: 1.5;
-  color: #e7dcdc;
-  background-color: #121212;
+	line-height: 1.5;
+	color: #e7dcdc;
+	background-color: #121212;
 }
 
 .title {
-  text-align: center;
-  padding: 2rem;
-  color: #e7dcdc;
-  font-size: 1.5rem;
-  width: 100%;
-  font-family: "Atkinson Hyperlegible Next", serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  font-style: normal;
+	text-align: center;
+	padding: 2rem;
+	color: #e7dcdc;
+	font-size: 1.5rem;
+	width: 100%;
+	font-family: "Atkinson Hyperlegible Next", serif;
+	font-optical-sizing: auto;
+	font-weight: 200;
+	font-style: normal;
 }
 
 .products-grid {
-  width: 90%;
-  display: grid;
-  margin: 0 auto;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 3fr));
-  gap: 2rem;
-  margin-bottom: 3em;
+	width: 90%;
+	display: grid;
+	margin: 0 auto;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 3fr));
+	gap: 2rem;
+	margin-bottom: 3em;
 }
-body, html {
-  height: 100%;
-  margin: 0;
-  overflow-y: auto; /* Ensures vertical scrolling is enabled */
+body,
+html {
+	height: 100%;
+	margin: 0;
+	overflow-y: auto; /* Ensures vertical scrolling is enabled */
 }
 
 .container {
-  min-height: 100vh; /* Ensures the container takes up full viewport height */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+	min-height: 100vh; /* Ensures the container takes up full viewport height */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
 }
 @media screen and (max-width: 768px) {
-  #home {
-    width: 100%;
-    padding: 1rem;
-    border-radius: 0 0 16px 16px;
-    box-shadow: none;
-  }
+	#home {
+		width: 100%;
+		padding: 1rem;
+		border-radius: 0 0 16px 16px;
+		box-shadow: none;
+	}
 
-  .title {
-    padding-top: 8rem;
-  }
+	.title {
+		padding-top: 8rem;
+	}
 }

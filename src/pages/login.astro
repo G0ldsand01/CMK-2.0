@@ -1,13 +1,13 @@
 ---
 import '@styles/login.css';
-import { SignIn } from 'auth-astro/components';
-import Layout from '@layouts/Layout.astro';
 import { Image } from 'astro:assets';
+import Layout from '@layouts/Layout.astro';
+import { SignIn } from 'auth-astro/components';
 import { getSession } from 'auth-astro/server';
 
 const session = await getSession(Astro.request);
 if (session) {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 ---
 

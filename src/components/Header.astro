@@ -1,10 +1,10 @@
 ---
-import { CircuitBoard, ShoppingBag } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
-import { SignOut } from 'auth-astro/components';
-import { getUser } from '@/lib/user';
 import CartItemCount from '@/components/cart/CartItemCount.astro';
-const user = await getUser(Astro.request)
+import { getUser } from '@/lib/user';
+import { SignOut } from 'auth-astro/components';
+import { CircuitBoard, ShoppingBag } from 'lucide-react';
+const user = await getUser(Astro.request);
 ---
 
 <header>

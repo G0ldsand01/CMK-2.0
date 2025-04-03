@@ -3,20 +3,20 @@ import { Image } from 'astro:assets';
 import { products as productsActions } from '../../actions/products';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/product.css';
-import { Heart, ShoppingCart } from 'lucide-react';
 import ReviewSection from '@/components/ReviewSection.astro';
 import Cart from '@/components/cart/Cart.astro';
-import { getUser } from '@/lib/user';
 import { Button } from '@/components/ui/button';
+import { getUser } from '@/lib/user';
+import { Heart, ShoppingCart } from 'lucide-react';
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
-  id: Number(id),
+	id: Number(id),
 });
 const data = productActions.data;
 const user = await getUser(Astro.request);
 
 if (!data) {
-  return Astro.redirect('/');
+	return Astro.redirect('/');
 }
 
 const { product, isInWishlist } = data;

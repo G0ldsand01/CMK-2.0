@@ -1,11 +1,11 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { Heart, ShoppingBag } from 'lucide-react';
 import { getUser } from '@/lib/user';
+import { Heart, ShoppingBag } from 'lucide-react';
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect('/login');
+	return Astro.redirect('/login');
 }
 ---
 
