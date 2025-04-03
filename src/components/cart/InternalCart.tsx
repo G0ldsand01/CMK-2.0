@@ -13,6 +13,7 @@ export default function InternalCart({
   children,
   cart,
   classes,
+  variant,
 }: React.PropsWithChildren<{
   cart: {
     products: {
@@ -31,11 +32,20 @@ export default function InternalCart({
     };
   }[];
   classes?: string;
+  variant?:
+    | 'outline'
+    | 'default'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'destructive';
 }>) {
   return (
     <Sheet>
       <SheetTrigger>
-        <button className={cn(classes)}>{children}</button>
+        <Button variant={variant} className={cn(classes)}>
+          {children}
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

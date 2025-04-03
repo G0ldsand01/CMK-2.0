@@ -7,9 +7,16 @@ import InternalCart from './InternalCart';
 
 interface Props {
   classes?: string;
+  variant?:
+    | 'outline'
+    | 'default'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'destructive';
 }
 
-const { classes } = Astro.props;
+const { classes, variant } = Astro.props;
 
 const user = await getUser(Astro.request);
 if (!user) {
@@ -23,6 +30,6 @@ const cart = await db
   .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
 
-<InternalCart cart={cart} client:load classes={classes}>
+<InternalCart cart={cart} client:load classes={classes} variant={variant}>
   <slot />
 </InternalCart>

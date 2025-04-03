@@ -7,6 +7,7 @@ import { Heart, ShoppingCart } from 'lucide-react';
 import ReviewSection from '@/components/ReviewSection.astro';
 import Cart from '@/components/cart/Cart.astro';
 import { getUser } from '@/lib/user';
+import { Button } from '@/components/ui/button';
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
   id: Number(id),
@@ -25,13 +26,12 @@ const { product, isInWishlist } = data;
   {
     product ? (
       <div class="product-details">
-        <div class="product">
+        <div class="product" product-id={id}>
           <div
             class={`add-to-wishlist-button ${
               isInWishlist ? 'add-to-wishlist-button-active' : ''
             }`}
             id="add-to-wishlist-button"
-            product-id={id}
           >
             <Heart />
           </div>
@@ -63,11 +63,22 @@ const { product, isInWishlist } = data;
                 <ReviewSection product={product} server:defer />
               </div>
             </div>
-            <div class="flex justify-center py-4">
+            <div class="justify-center py-4 flex gap-2">
               {user && (
-                <Cart classes="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded flex items-center gap-2">
+                <Cart
+                  classes="font-bold py-2 px-4 rounded flex items-center gap-2"
+                  variant="outline"
+                  server:defer
+                >
                   <ShoppingCart /> View Cart
                 </Cart>
+                <Button
+                  id="add-to-cart-button"
+                  className="font-bold py-2 px-4 rounded flex items-center gap-2"
+                  client:load
+                >
+                  <ShoppingCart /> Add to Cart
+                </Button>
               )}
             </div>
           </div>
@@ -85,16 +96,33 @@ const { product, isInWishlist } = data;
 
 <script>
   import { actions } from 'astro:actions';
+  import { toast } from 'sonner';
+
+  /*
+    Product ID
+  */
+
+  const product = document.querySelector('.product');
+  if (!product) {
+    console.error('Product is not set');
+    throw new Error('Product is not set');
+  }
+
+  const productId = product.getAttribute('product-id');
+  if (!productId) {
+    console.error('Product ID is not set');
+    throw new Error('Product ID is not set');
+  }
+
+  /*
+    Wishlist Button
+  */
+
   const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
   if (addToWishlistButton) {
     addToWishlistButton.addEventListener('click', async () => {
-      const productId = addToWishlistButton.getAttribute('product-id');
-      if (!productId) {
-        console.error('Product ID is not set');
-        return;
-      }
       const { error, data } = await actions.user.toggleProductFromWishlist({
-        productId: productId,
+        productId: productId as string,
       });
       if (!error) {
         if (data.inWishlist) {
@@ -103,6 +131,18 @@ const { product, isInWishlist } = data;
           addToWishlistButton.classList.remove('add-to-wishlist-button-active');
         }
       }
+    });
+  }
+
+  /*
+    Add to Cart Button
+  */
+
+  const addToCartButton = document.querySelector('#add-to-cart-button');
+  if (addToCartButton) {
+    addToCartButton.addEventListener('click', async () => {
+      console.log('Add to Cart ', productId);
+      toast('Added to Cart: ' + productId);
     });
   }
 </script>
