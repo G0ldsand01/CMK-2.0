@@ -1,11 +1,3 @@
-import type { Adapter } from '@auth/core/adapters';
-import Discord from '@auth/core/providers/discord';
-import GitHub from '@auth/core/providers/github';
-import Google from '@auth/core/providers/google';
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { defineConfig } from 'auth-astro';
-import db from './src/lib/db';
-
 import {
 	DISCORD_CLIENT_ID,
 	DISCORD_CLIENT_SECRET,
@@ -14,12 +6,20 @@ import {
 	GOOGLE_CLIENT_ID,
 	GOOGLE_CLIENT_SECRET,
 } from 'astro:env/server';
+import type { Adapter, AdapterAccountType } from '@auth/core/adapters';
+import Discord from '@auth/core/providers/discord';
+import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { defineConfig } from 'auth-astro';
+import { and, eq } from 'drizzle-orm';
 import {
 	accountsTable,
 	sessionsTable,
 	usersTable,
 	verificationTokensTable,
 } from './src/db/schema';
+import db from './src/lib/db';
 
 export default defineConfig({
 	adapter: DrizzleAdapter(db, {
@@ -59,6 +59,35 @@ export default defineConfig({
 			session.user.country = user.country;
 
 			return session;
+		},
+		async signIn({ account, profile }) {
+			if (!profile?.email) return false;
+
+			const existingUser = await db.query.usersTable.findFirst({
+				where: eq(usersTable.email, profile.email),
+			});
+
+			if (existingUser) {
+				if (!account) return false;
+
+				const existingAccount = await db.query.accountsTable.findFirst({
+					where: and(
+						eq(accountsTable.provider, account.provider),
+						eq(accountsTable.providerAccountId, account.providerAccountId),
+					),
+				});
+
+				if (!existingAccount) {
+					await db.insert(accountsTable).values({
+						userId: existingUser.id,
+						type: account.type as AdapterAccountType,
+						provider: account.provider,
+						providerAccountId: account.providerAccountId,
+					});
+				}
+			}
+
+			return true;
 		},
 	},
 });
