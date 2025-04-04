@@ -126,6 +126,7 @@ const user = await getUser(Astro.request);
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </button>
+    <ModeToggle client:load />
     <ul>
       <li><a href="/" data-astro-prefetch>Home</a></li>
       <li><a href="/products" data-astro-prefetch>Products</a></li>
