@@ -8,7 +8,7 @@ interface Props {
   cart?: boolean;
 }
 
-const { title, navbar, cart } = Astro.props;
+const { title, navbar = true, cart = true } = Astro.props;
 ---
 
 <!doctype html>
