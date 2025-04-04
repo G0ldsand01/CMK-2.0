@@ -5,6 +5,12 @@ import Cart from '@/components/cart/Cart.astro';
 import CartItemCount from '@/components/cart/CartItemCount.astro';
 import { getUser } from '@/lib/user';
 
+interface Props {
+  cart?: boolean;
+}
+
+const { cart } = Astro.props;
+
 const user = await getUser(Astro.request);
 ---
 
@@ -45,9 +51,11 @@ const user = await getUser(Astro.request);
           <SignOut>Logout</SignOut>
         </div>
       </div>
-      <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
-        <ShoppingBag /> <CartItemCount server:defer />
-      </Cart>
+      {cart ? (
+        <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
+          <ShoppingBag /> <CartItemCount server:defer />
+        </Cart>
+      ) : null}
       </div>
     </div>
   ) : (
@@ -75,9 +83,11 @@ const user = await getUser(Astro.request);
         </button>
       </a>
 
-      <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
-        <ShoppingBag /> <CartItemCount server:defer />
-      </Cart>
+      {cart ? (
+        <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2" variant="outline" server:defer >
+          <ShoppingBag /> <CartItemCount server:defer />
+        </Cart>
+      ) : null}
     </div>
   )}
 

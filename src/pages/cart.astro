@@ -1,27 +1,30 @@
 ---
 // Cart.astro
 import { getUser } from '@/lib/user';
-import { getCart } from '@/lib/cart';
 import Layout from '@/layouts/Layout.astro';
-
+import db from '@/lib/db';
+import { cartTable, productsTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');
 
-const cartEntries = await getCart();
-console.log(cartEntries);
+const cart = await db
+  .select()
+  .from(cartTable)
+  .where(eq(cartTable.userId, user.getId()))
+  .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
 
-<Layout title="Your Cart" navbar={true}>
+<Layout title="Your Cart" navbar={true} cart={false}>
   <main class="max-w-4xl mx-auto px-4 py-10 pt-25">
     <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
-    <!-- <CartPage client:load newCart={cartEntries} /> -->
-    <!-- {
-      cartEntries.map((item) => (
+    {
+      cart.map((item) => (
         <div>
           <h2>{item.products.name}</h2>
           <p>{item.cart.quantity}</p>
         </div>
       ))
-    } -->
+    }
   </main>
 </Layout>
