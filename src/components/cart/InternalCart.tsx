@@ -2,7 +2,7 @@ import { actions } from 'astro:actions';
 import { useStore } from '@nanostores/react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { setCart } from '@/lib/cart';
+import { setCart, type CartItem } from '@/lib/cart';
 import { cn } from '@/lib/utils';
 import { cartAtom } from '@/store';
 import { Button } from '../ui/button';
@@ -22,22 +22,7 @@ export default function InternalCart({
 	classes,
 	variant,
 }: React.PropsWithChildren<{
-	newCart: {
-		products: {
-			id: number;
-			name: string;
-			price: string;
-			description: string;
-			image: string;
-			category: string;
-		};
-		cart: {
-			id: number;
-			userId: string;
-			productId: number;
-			quantity: number;
-		};
-	}[];
+	newCart: CartItem[];
 	classes?: string;
 	variant?:
 		| 'outline'

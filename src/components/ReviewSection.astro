@@ -1,88 +1,60 @@
 ---
-import { and, desc, eq } from 'drizzle-orm';
-import { type productsTable, reviewsTable, usersTable } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { type productsTable, reviewsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
+import EditReview from './EditReview';
 
 interface Props {
-	product: typeof productsTable.$inferSelect;
+  product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
 const productId = product.id;
 
 const user = await getUser(Astro.request);
-const reviews: {
-	review: typeof reviewsTable.$inferSelect;
-	user: typeof usersTable.$inferSelect;
-}[] = [];
-
-const reviewsTx = await db
-	.select()
-	.from(reviewsTable)
-	.where(eq(reviewsTable.productId, productId))
-	.innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
-	.orderBy(desc(reviewsTable.rating))
-	.limit(5);
-
-reviews.push(
-	...reviewsTx.map((review) => ({
-		review: review.reviews,
-		user: review.user,
-	})),
-);
 
 let userReview: typeof reviewsTable.$inferSelect | null = null;
 if (user) {
-	const userReviewTx = await db
-		.select()
-		.from(reviewsTable)
-		.where(
-			and(
-				eq(reviewsTable.userId, user.getId()),
-				eq(reviewsTable.productId, productId),
-			),
-		);
-	if (userReviewTx[0]) {
-		userReview = userReviewTx[0];
-	}
+  const userReviewTx = await db
+    .select()
+    .from(reviewsTable)
+    .where(
+      and(
+        eq(reviewsTable.userId, user.getId()),
+        eq(reviewsTable.productId, productId),
+      ),
+    );
+  if (userReviewTx[0]) {
+    userReview = userReviewTx[0];
+  }
 }
 ---
 
-<div class="reviews-section">
+<div>
+  <h3>Customer Reviews</h3>
+  <h4>Add a Review</h4>
   {
-    userReview && (
+    userReview ? (
       <div class="user-review">
         <h3>Your Review</h3>
         <p>Rating: {userReview.rating}★</p>
-        <button class="button">Edit Review</button>
+        <EditReview />
       </div>
+    ) : (
+      <form id="review-form">
+        <input
+          type="number"
+          id="review-rating"
+          min="1"
+          max="5"
+          placeholder="0"
+          required
+        />
+        <button type="submit" class="button">
+          Submit Review
+        </button>
+      </form>
     )
   }
-  <h3>Customer Reviews</h3>
-  <ul>
-    {
-      reviews && Array.isArray(reviews) && reviews.length > 0 ? (
-        reviews.map((review) => (
-          <li>
-            ({review.review.rating}★) - {review.user.name}
-          </li>
-        ))
-      ) : (
-        <li>No reviews yet</li>
-      )
-    }
-  </ul>
-  <h4>Add a Review</h4>
-  <form id="review-form">
-    <input
-      type="number"
-      id="review-rating"
-      min="1"
-      max="5"
-      placeholder="0"
-      required
-    />
-    <button type="submit" class="button">Submit Review</button>
-  </form>
 </div>

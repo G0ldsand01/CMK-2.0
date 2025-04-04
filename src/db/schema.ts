@@ -6,6 +6,7 @@ import {
 	numeric,
 	pgTable,
 	primaryKey,
+	real,
 	serial,
 	text,
 	timestamp,
@@ -24,6 +25,7 @@ export const productsTable = pgTable(
 		description: text().notNull(),
 		image: varchar({ length: 255 }).notNull(),
 		category: varchar({ length: 255 }).notNull(),
+		averageRating: real('average_rating').notNull().default(0),
 	},
 	(table) => [index('product_name_idx').on(table.name)],
 );
@@ -40,7 +42,6 @@ export const reviewsTable = pgTable(
 			.references(() => usersTable.id, { onDelete: 'cascade' })
 			.unique(),
 		rating: integer('rating').notNull(),
-		// review: text('review').notNull(),
 		createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
 	},
 	(table) => [
