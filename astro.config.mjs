@@ -31,6 +31,11 @@ export default defineConfig({
 				access: 'secret',
 				context: 'server',
 			}),
+			REDIS_URL: envField.string({
+				access: 'secret',
+				context: 'server',
+				optional: true,
+			}),
 			STRIPE_SECRET_KEY: envField.string({
 				access: 'secret',
 				context: 'server',

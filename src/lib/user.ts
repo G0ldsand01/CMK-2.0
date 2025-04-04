@@ -7,5 +7,5 @@ export async function getUser(request: Request) {
 		return null;
 	}
 
-	return new User(session.user);
+	return new User(request, session.user);
 }
