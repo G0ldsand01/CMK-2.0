@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import * as baseSchema from '@/db/schema';
 
 export const schema = {
-  ...baseSchema,
+	...baseSchema,
 };
 
 const db = drizzle(DATABASE_URL, { schema });

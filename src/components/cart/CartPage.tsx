@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import { useStore } from '@nanostores/react';
-import { setCart } from '@/lib/cart'; // Ensure both are correctly imported from the store
 import { actions } from 'astro:actions';
+import { useStore } from '@nanostores/react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
+import { setCart } from '@/lib/cart'; // Ensure both are correctly imported from the store
 import { cartAtom } from '@/store';
 import { Button } from '../ui/button';
 export default function CartPage({ newCart }: { newCart: any[] }) {
@@ -16,8 +15,8 @@ export default function CartPage({ newCart }: { newCart: any[] }) {
 		Object.values(cart)
 			.reduce(
 				(total, item) =>
-					total + parseFloat(item.products.price) * item.cart.quantity,
-				0
+					total + Number.parseFloat(item.products.price) * item.cart.quantity,
+				0,
 			)
 			.toFixed(2);
 
@@ -52,11 +51,10 @@ export default function CartPage({ newCart }: { newCart: any[] }) {
 								variant="outline"
 								size="icon"
 								onClick={async () => {
-									const { data, error } =
-										await actions.cart.updateCartItem({
-											productId: item.products.id.toString(),
-											decrement: true,
-										});
+									const { data, error } = await actions.cart.updateCartItem({
+										productId: item.products.id.toString(),
+										decrement: true,
+									});
 									if (!error) setCart(data.cart);
 								}}
 							>
@@ -67,11 +65,10 @@ export default function CartPage({ newCart }: { newCart: any[] }) {
 								variant="outline"
 								size="icon"
 								onClick={async () => {
-									const { data, error } =
-										await actions.cart.updateCartItem({
-											productId: item.products.id.toString(),
-											increment: true,
-										});
+									const { data, error } = await actions.cart.updateCartItem({
+										productId: item.products.id.toString(),
+										increment: true,
+									});
 									if (!error) setCart(data.cart);
 								}}
 							>
@@ -82,10 +79,9 @@ export default function CartPage({ newCart }: { newCart: any[] }) {
 								size="icon"
 								className="ml-auto text-destructive"
 								onClick={async () => {
-									const { data, error } =
-										await actions.cart.deleteCartItem({
-											productId: item.products.id.toString(),
-										});
+									const { data, error } = await actions.cart.deleteCartItem({
+										productId: item.products.id.toString(),
+									});
 									if (!error) setCart(data.cart);
 								}}
 							>

@@ -4,10 +4,10 @@ import Layout from '../../layouts/Layout.astro';
 import '@/styles/product.css';
 import { Heart, ShoppingCart } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
+import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/user';
-import ProductImage from '@/components/images/ProductImage.astro';
 
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {

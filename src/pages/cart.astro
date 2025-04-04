@@ -1,7 +1,7 @@
 ---
 import CartPage from '@/components/cart/CartPage.tsx';
-import { getUser } from '@/lib/user';
 import { getCart } from '@/lib/cart';
+import { getUser } from '@/lib/user';
 
 const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');

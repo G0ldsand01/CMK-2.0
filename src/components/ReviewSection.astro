@@ -6,7 +6,7 @@ import { getUser } from '@/lib/user';
 import EditReview from './EditReview';
 
 interface Props {
-  product: typeof productsTable.$inferSelect;
+	product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -16,18 +16,18 @@ const user = await getUser(Astro.request);
 
 let userReview: typeof reviewsTable.$inferSelect | null = null;
 if (user) {
-  const userReviewTx = await db
-    .select()
-    .from(reviewsTable)
-    .where(
-      and(
-        eq(reviewsTable.userId, user.getId()),
-        eq(reviewsTable.productId, productId),
-      ),
-    );
-  if (userReviewTx[0]) {
-    userReview = userReviewTx[0];
-  }
+	const userReviewTx = await db
+		.select()
+		.from(reviewsTable)
+		.where(
+			and(
+				eq(reviewsTable.userId, user.getId()),
+				eq(reviewsTable.productId, productId),
+			),
+		);
+	if (userReviewTx[0]) {
+		userReview = userReviewTx[0];
+	}
 }
 ---
 

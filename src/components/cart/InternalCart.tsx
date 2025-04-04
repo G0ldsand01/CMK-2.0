@@ -2,7 +2,7 @@ import { actions } from 'astro:actions';
 import { useStore } from '@nanostores/react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { setCart, type CartItem } from '@/lib/cart';
+import { type CartItem, setCart } from '@/lib/cart';
 import { cn } from '@/lib/utils';
 import { cartAtom } from '@/store';
 import { Button } from '../ui/button';

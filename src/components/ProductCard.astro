@@ -1,13 +1,13 @@
 ---
-import { Image } from "astro:assets";
-import "@/styles/product-card.css";
-import type { productsTable } from "@/db/schema";
-import ProductImage from "./images/ProductImage.astro";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart , ChevronRight } from "lucide-react";
+import { Image } from 'astro:assets';
+import '@/styles/product-card.css';
+import { ChevronRight, ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { productsTable } from '@/db/schema';
+import ProductImage from './images/ProductImage.astro';
 
 interface Props {
-  product: typeof productsTable.$inferSelect;
+	product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
