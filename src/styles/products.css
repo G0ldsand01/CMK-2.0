@@ -1,18 +1,17 @@
 body {
 	line-height: 1.5;
-	color: #e7dcdc;
-	background-color: #121212;
+	color: var(--color-foreground);
+	background-color: var(--color-background);
 }
 
 .title {
 	text-align: center;
 	padding: 2rem;
-	color: #e7dcdc;
-	font-size: 1.5rem;
+	color: var(--color-foreground);
 	width: 100%;
 	font-family: "Atkinson Hyperlegible Next", serif;
 	font-optical-sizing: auto;
-	font-weight: 200;
+	font-size: 2.5rem;
 	font-style: normal;
 }
 
@@ -22,7 +21,7 @@ body {
 	margin: 0 auto;
 	grid-template-columns: repeat(auto-fit, minmax(320px, 3fr));
 	gap: 2rem;
-	margin-bottom: 3em;
+	margin-bottom: 1em;
 }
 body,
 html {

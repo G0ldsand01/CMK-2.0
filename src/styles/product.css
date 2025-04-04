@@ -2,8 +2,8 @@ body {
 	font-family: "Poppins", sans-serif;
 	font-size: 1rem;
 	line-height: 1.5;
-	color: #e7dcdc;
-	background-color: #121212;
+	color: var(--color-foreground);
+	background-color: var(--color-background);
 }
 
 /* Product Section */
@@ -16,7 +16,7 @@ body {
 	justify-content: center;
 	padding: 2rem;
 	min-height: 100vh;
-	background: #121212;
+	background: var(--color-background);
 	border-radius: 0 0 16px 16px;
 	overflow: hidden;
 	position: relative;
@@ -29,7 +29,7 @@ body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+	background: linear-gradient(to bottom, var(--color-background), var(--color-foreground));
 	z-index: -1;
 	border-radius: 0 0 16px 16px;
 }
@@ -38,17 +38,17 @@ body {
 	position: relative; /* Ensure the product card is the reference point for absolute positioning */
 	width: 90%;
 	max-width: 800px;
-	background-color: #292929;
+	background-color: var(--color-muted);
 	border-radius: 1.5rem;
 	padding: 1.5rem;
 	margin: 1rem;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 4px 12px var(--color-border);
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product:hover {
 	transform: translateY(-10px);
-	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 8px 20px var(--color-border);
 }
 
 img {
@@ -75,7 +75,7 @@ img {
 .product-info p {
 	font-size: 1rem;
 	margin-bottom: 1rem;
-	color: #b0b0b0;
+	color: var(--color-foreground);
 }
 
 .product-price {
@@ -84,15 +84,15 @@ img {
 	margin-bottom: 1rem;
 }
 
-#buy-now-button {
+#view-cart-button {
 	display: block; /* Assure que chaque bouton prend toute la largeur disponible */
 	width: 100%; /* Ajuste la largeur au conteneur parent */
 	text-align: center; /* Centre le texte */
 	margin-top: 0.5rem; /* Ajoute un petit espace entre les boutons */
 	margin-top: 1rem;
 	padding: 0.75rem 1.5rem;
-	background-color: #27ae60;
-	color: #292929;
+	background-color: var(--color-foreground);
+	color: var(--color-muted);
 	border: none;
 	border-radius: 0.5rem;
 	cursor: pointer;
@@ -101,14 +101,12 @@ img {
 	text-decoration: none;
 }
 
-#buy-now-button:hover {
-	background-color: #292929;
-	color: #e7dcdc;
-	border: solid 2px #e7dcdc;
+#view-cart-button:hover {
+	background-color: var(--color-muted);
+	color: var(--color-foreground);
+	border: solid 2px var(--color-foreground);
 }
-.add-to-cart-button {
-	background-color: #27ae60;
-	color: #292929;
+#add-to-cart-button {
 	border: none;
 	border-radius: 0.5rem;
 	cursor: pointer;
@@ -116,14 +114,14 @@ img {
 	text-align: center;
 	text-decoration: none;
 }
-.add-to-cart-button:hover {
-	background-color: #292929;
-	color: #27ae60;
-	border: solid 2px #27ae60;
+#add-to-cart-button:hover {
+	background-color: var(--color-muted);
+	color: var(--color-foreground);
+	border: solid 2px var(--color-foreground);
 }
 .add-to-wishlist-button {
-	background-color: #ffffff;
-	color: #292929;
+	background-color: var(--color-foreground);
+	color: var(--color-muted);
 	border: none;
 	border-radius: 50%; /* Make the button circular */
 	cursor: pointer;

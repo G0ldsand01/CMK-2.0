@@ -23,7 +23,7 @@ body {
 	font-size: 1rem;
 	line-height: 1.5;
 	color: #27ae60;
-	background-color: #121212;
+	background-color: var(--color-background);
 }
 
 ul {
@@ -85,16 +85,24 @@ img {
 .title {
 	text-align: center;
 	padding: 2rem;
-	color: #e7dcdc;
+	color: white;
+	font-size: 1.5rem;
+	font-family: "Atkinson Hyperlegible Next", serif;
+	font-optical-sizing: auto;
+	font-size: 3rem;
+	font-style: normal;
+}
+
+.products-title h1 {
+	text-align: center;
+	padding: 2rem;
+	color: var(--color-foreground);
 	font-size: 1.5rem;
 
 	font-family: "Atkinson Hyperlegible Next", serif;
 	font-optical-sizing: auto;
 	font-weight: 200;
 	font-style: normal;
-}
-
-.title h1 {
 	font-size: 3rem;
 	font-weight: 600;
 }
@@ -160,7 +168,11 @@ img {
 	margin-left: auto;
 	margin-right: auto;
 }
-
+#view-all-button:hover {
+	background-color: var(--color-foreground);
+	color: var(--color-background);
+	border: solid 2px var(--color-foreground);
+}
 @media screen and (max-width: 768px) {
 	#home {
 		width: 100%;

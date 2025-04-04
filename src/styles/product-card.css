@@ -8,12 +8,12 @@
 }
 
 .product {
-	background-color: #161616;
+	background-color: var(--color-muted);
 	padding: 20px;
 	border-radius: 10px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 	transition: all 0.2s ease-in-out;
-	border: solid 3px #43434300;
+	border: solid 3px var(--color-border);
 }
 
 .product:hover {
@@ -31,7 +31,7 @@
 .product-info h3 {
 	text-align: left;
 	margin-top: 1em;
-	color: #e7dcdc;
+	color: var(--color-foreground);
 	font-size: 1.5rem;
 	font-family: "Atkinson Hyperlegible", sans-serif;
 	font-size: 1.5rem;
@@ -42,13 +42,13 @@
 .product-info p {
 	font-size: 1rem;
 	margin-bottom: 1rem;
-	color: #e7dcdc;
+	color: var(--color-foreground);
 }
 
 .product-price {
 	text-align: left;
 	margin-top: 1em;
-	color: #e7dcdc;
+	color: var(--color-foreground);
 	font-size: 1.5rem;
 	font-family: "Atkinson Hyperlegible", sans-serif;
 	font-size: 1.2rem;
