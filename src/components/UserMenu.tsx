@@ -73,24 +73,32 @@ export function UserMenu({ userData }: { userData: userData }) {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<UserCircleIcon />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<CreditCardIcon />
-								Billing
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<BellIcon />
-								Notifications
-							</DropdownMenuItem>
+							<a href="/dashboard">
+								<DropdownMenuItem>
+									<UserCircleIcon />
+									Account
+								</DropdownMenuItem>
+							</a>
+							<a href="/billing">
+								<DropdownMenuItem>
+									<CreditCardIcon />
+									Billing
+								</DropdownMenuItem>
+							</a>
+							<a href="/notifications">
+								<DropdownMenuItem>
+									<BellIcon />
+									Notifications
+								</DropdownMenuItem>
+							</a>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<LogOutIcon />
-							Log out
-						</DropdownMenuItem>
+						<a href="/logout">
+							<DropdownMenuItem>
+								<LogOutIcon />
+								Log out
+							</DropdownMenuItem>
+						</a>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>
