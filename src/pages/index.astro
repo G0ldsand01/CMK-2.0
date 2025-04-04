@@ -3,6 +3,7 @@ import ProductCard from '../components/ProductCard.astro';
 import Layout from '../layouts/Layout.astro';
 import '../styles/index.css';
 import { products as productsActions } from '../actions/products';
+import { Button } from '../components/ui/button';
 
 const bestProductsActions = await Astro.callAction(
 	productsActions.getBestProducts,
@@ -39,9 +40,14 @@ const bestProducts = bestProductsActions.data;
           ))
       }
     </div>
-    <button class="view-all-button">
-      <a href="/products">View All Products</a>
-    </button>
+      <a href="/products" class="view-all-button"><Button
+        id="add-to-cart-button"
+        className="font-bold py-2 px-4 rounded flex items-center gap-2"
+        client:load
+        server:defer={true}
+      >
+        View All Products
+      </Button></a>
   </div>
 </Layout>
 
