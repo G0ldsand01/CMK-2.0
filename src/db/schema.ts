@@ -1,8 +1,10 @@
+import type { CartItem } from '@/lib/cart';
 import type { AdapterAccount } from '@auth/core/adapters';
 import {
 	boolean,
 	index,
 	integer,
+	jsonb,
 	numeric,
 	pgTable,
 	primaryKey,
@@ -96,6 +98,23 @@ export const cartTable = pgTable('cart', {
 		.references(() => productsTable.id, { onDelete: 'cascade' }),
 	quantity: integer('quantity').notNull().default(1),
 });
+
+export const ordersTable = pgTable('orders', {
+	id: serial('id').primaryKey(),
+	userId: text('userId')
+		.notNull()
+		.references(() => usersTable.id, { onDelete: 'cascade' }),
+	stripeSessionId: text('stripeSessionId').notNull(),
+	status: text('status').notNull(),
+	cartJSON: jsonb('cartJSON').notNull().$type<CartItem[]>(),
+	createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+});
+
+/*
+ *
+ * Auth.js
+ *
+ */
 
 // One to many relationship between users and accounts
 export const accountsTable = pgTable(

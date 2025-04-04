@@ -2,7 +2,7 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
 import { WEBSITE_URL } from 'astro:env/server';
 import { and, eq, sql } from 'drizzle-orm';
-import { cartTable, productsTable } from '@/db/schema';
+import { cartTable, ordersTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
@@ -188,6 +188,13 @@ export const cart = {
 				line_items,
 				success_url: `${WEBSITE_URL}/success`,
 				cancel_url: `${WEBSITE_URL}/cancel`,
+			});
+
+			await db.insert(ordersTable).values({
+				userId: user.getId(),
+				stripeSessionId: session.id,
+				cartJSON: cart,
+				status: 'pending',
 			});
 
 			return {
