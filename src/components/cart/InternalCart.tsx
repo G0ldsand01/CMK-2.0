@@ -1,6 +1,6 @@
 import { actions } from 'astro:actions';
 import { useStore } from '@nanostores/react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { type CartItem, setCart } from '@/lib/cart';
 import { cn } from '@/lib/utils';
@@ -171,7 +171,13 @@ export default function InternalCart({
 								<span className="text-gray-500">Subtotal</span>
 								<span className="font-medium">${calculateTotal()}</span>
 							</div>
-							<Button className="w-full">Proceed to Checkout</Button>
+							<Button className="w-full" asChild>
+								<a href="/cart">
+									<div className="flex items-center gap-2">
+										<ShoppingBag /> Proceed to Checkout
+									</div>
+								</a>
+							</Button>
 						</div>
 					</SheetFooter>
 				)}

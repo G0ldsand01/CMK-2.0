@@ -27,6 +27,10 @@ export default defineConfig({
 
 	env: {
 		schema: {
+			WEBSITE_URL: envField.string({
+				access: 'public',
+				context: 'server',
+			}),
 			DATABASE_URL: envField.string({
 				access: 'secret',
 				context: 'server',

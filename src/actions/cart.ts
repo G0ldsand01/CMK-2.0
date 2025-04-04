@@ -1,8 +1,10 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
+import { WEBSITE_URL } from 'astro:env/server';
 import { and, eq, sql } from 'drizzle-orm';
 import { cartTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
+import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
 
@@ -148,6 +150,49 @@ export const cart = {
 					cart: cart,
 				};
 			});
+		},
+	}),
+	checkout: defineAction({
+		handler: async (_input, context) => {
+			const user = await getUser(context.request);
+
+			if (!user) {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in.',
+				});
+			}
+
+			const cart = await db
+				.select()
+				.from(cartTable)
+				.where(eq(cartTable.userId, user.getId()))
+				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+
+			const line_items = Object.values(cart).map(({ products, cart }) => ({
+				price_data: {
+					currency: 'cad',
+					product_data: {
+						name: products.name,
+						description: products.description,
+						images: [`${WEBSITE_URL}/api/image/${products.image}.png`],
+					},
+					unit_amount: Number.parseInt(products.price) * 100,
+				},
+				quantity: cart.quantity,
+			}));
+
+			const session = await stripe.checkout.sessions.create({
+				payment_method_types: ['card'],
+				mode: 'payment',
+				line_items,
+				success_url: `${WEBSITE_URL}/success`,
+				cancel_url: `${WEBSITE_URL}/cancel`,
+			});
+
+			return {
+				url: session.url,
+			};
 		},
 	}),
 };
