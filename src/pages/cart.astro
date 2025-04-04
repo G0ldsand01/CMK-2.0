@@ -1,23 +1,27 @@
 ---
 // Cart.astro
-import CartPage from '@/components/cart/CartPage.tsx';
 import { getUser } from '@/lib/user';
 import { getCart } from '@/lib/cart';
+import Layout from '@/layouts/Layout.astro';
 
 const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');
 
-const cartEntries = await getCart(user.id);
+const cartEntries = await getCart();
+console.log(cartEntries);
 ---
 
-<html lang="en">
-  <head>
-    <title>Your Cart</title>
-  </head>
-  <body class="bg-background text-foreground">
-    <main class="max-w-4xl mx-auto px-4 py-10">
-      <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
-      <CartPage client:load newCart={cartEntries} />
-    </main>
-  </body>
-</html>
+<Layout title="Your Cart" navbar={true}>
+  <main class="max-w-4xl mx-auto px-4 py-10 pt-25">
+    <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
+    <!-- <CartPage client:load newCart={cartEntries} /> -->
+    <!-- {
+      cartEntries.map((item) => (
+        <div>
+          <h2>{item.products.name}</h2>
+          <p>{item.cart.quantity}</p>
+        </div>
+      ))
+    } -->
+  </main>
+</Layout>
