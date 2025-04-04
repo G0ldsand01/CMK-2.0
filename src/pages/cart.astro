@@ -1,12 +1,13 @@
 ---
+// Cart.astro
 import CartPage from '@/components/cart/CartPage.tsx';
-import { getCart } from '@/lib/cart';
 import { getUser } from '@/lib/user';
+import { getCart } from '@/lib/cart';
 
 const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');
 
-const cartEntries = Object.entries(await getCart(user));
+const cartEntries = await getCart(user.id);
 ---
 
 <html lang="en">
