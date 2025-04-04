@@ -5,6 +5,8 @@ import type { CMKUser as IUser } from '@/lib/auth';
 import db from '../db';
 
 class User {
+	private request: Request;
+
 	private id: string;
 	private name: string;
 	private email: string;
@@ -19,10 +21,13 @@ class User {
 	private country: string;
 	private role: UserRole;
 
-	constructor(user: IUser) {
+	constructor(request: Request, user: IUser) {
 		if (!user.id || !user.name || !user.email || !user.role) {
 			throw new Error('User is not valid');
 		}
+
+		this.request = request;
+
 		this.id = user.id;
 		this.name = user.name;
 		this.email = user.email;
