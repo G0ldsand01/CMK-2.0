@@ -4,6 +4,7 @@ import { CircuitBoard, ShoppingBag } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
 import CartItemCount from '@/components/cart/CartItemCount.astro';
 import { getUser } from '@/lib/user';
+import { ModeToggle } from './ModeToggle';
 
 interface Props {
   cart?: boolean;
@@ -56,6 +57,7 @@ const user = await getUser(Astro.request);
           <ShoppingBag /> <CartItemCount server:defer />
         </Cart>
       ) : null}
+      <ModeToggle client:load />
       </div>
     </div>
   ) : (
@@ -88,6 +90,7 @@ const user = await getUser(Astro.request);
           <ShoppingBag /> <CartItemCount server:defer />
         </Cart>
       ) : null}
+      <ModeToggle client:load />
     </div>
   )}
 
