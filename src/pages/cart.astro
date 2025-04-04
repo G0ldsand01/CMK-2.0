@@ -1,12 +1,16 @@
 ---
 // Cart.astro
-import { getUser } from '@/lib/user';
-import Layout from '@/layouts/Layout.astro';
-import db from '@/lib/db';
-import { cartTable, productsTable } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { getUser } from "@/lib/user";
+import Layout from "@/layouts/Layout.astro";
+import db from "@/lib/db";
+import { cartTable, productsTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { actions } from "astro:actions";
+import ProductImage from "@/components/images/ProductImage.astro";
 const user = await getUser(Astro.request);
-if (!user) return Astro.redirect('/login');
+if (!user) return Astro.redirect("/login");
 
 const cart = await db
   .select()
@@ -16,15 +20,92 @@ const cart = await db
 ---
 
 <Layout title="Your Cart" navbar={true} cart={false}>
-  <main class="max-w-4xl mx-auto px-4 py-10 pt-25">
-    <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
+  <main class="max-w-4xl mx-auto px-4 py-10" mt-2rem>
+    <h1 class="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+
     {
-      cart.map((item) => (
-        <div>
-          <h2>{item.products.name}</h2>
-          <p>{item.cart.quantity}</p>
+      cart.length === 0 ? (
+        <p class="text-center text-gray-500">Your cart is empty.</p>
+      ) : (
+        <div class="space-y-6">
+          {cart.map((item) => (
+            <div class="flex items-center justify-between gap-6 bg-#f000 p-4 rounded-2xl shadow-md">
+              <div class="flex items-center gap-4">
+                <ProductImage
+              imagePath={item.products.image}
+              width={400}
+              height={400}
+              altText={item.products.name}
+                />
+                <div>
+                  <h2 class="text-lg font-semibold">{item.products.name}</h2>
+                  <p class="text-gray-500">
+                    ${Number(item.products.price).toFixed(2)}
+                  </p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Total: $
+                    {(item.cart.quantity * item.products.price).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={async () => {
+                    const { data, error } = await actions.cart.updateCartItem({
+                      productId: item.products.id.toString(),
+                      decrement: true,
+                    });
+
+                    if (!error) {
+                      setCart(data.cart);
+                    }
+                  }}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-8 text-center">{item.cart.quantity}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={async () => {
+                    const { data, error } = await actions.cart.updateCartItem({
+                      productId: item.products.id.toString(),
+                      increment: true,
+                    });
+
+                    if (!error) {
+                      setCart(data.cart);
+                    }
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 ml-auto text-destructive"
+                  onClick={async () => {
+                    const { data, error } = await actions.cart.deleteCartItem({
+                      productId: item.products.id.toString(),
+                    });
+
+                    if (!error) {
+                      setCart(data.cart);
+                    }
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))
+      )
     }
   </main>
 </Layout>
