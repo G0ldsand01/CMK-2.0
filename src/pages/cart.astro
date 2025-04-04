@@ -1,16 +1,14 @@
 ---
 // Cart.astro
-import { getUser } from "@/lib/user";
-import Layout from "@/layouts/Layout.astro";
-import db from "@/lib/db";
-import { cartTable, productsTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { Minus, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { actions } from "astro:actions";
-import ProductImage from "@/components/images/ProductImage.astro";
+import { getUser } from '@/lib/user';
+import Layout from '@/layouts/Layout.astro';
+import db from '@/lib/db';
+import { cartTable, productsTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import FullPageCart from '@/components/cart/FullPageCart';
+
 const user = await getUser(Astro.request);
-if (!user) return Astro.redirect("/login");
+if (!user) return Astro.redirect('/login');
 
 const cart = await db
   .select()
@@ -28,82 +26,7 @@ const cart = await db
         <p class="text-center text-gray-500">Your cart is empty.</p>
       ) : (
         <div class="space-y-6">
-          {cart.map((item) => (
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 bg-[var(--muted)] p-4 rounded-lg shadow-sm">
-              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
-                <ProductImage
-                  imagePath={item.products.image}
-                  width={120}
-                  height={120}
-                  altText={item.products.name}
-                />
-                <div class="flex-1">
-                  <h2 class="text-lg font-semibold">{item.products.name}</h2>
-                  <p class="text-foreground">
-                    ${Number(item.products.price).toFixed(2)}
-                  </p>
-                  <p class="text-sm text-foreground">
-                    Total: $
-                    {(item.cart.quantity * item.products.price).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-2 sm:gap-4 mt-4 sm:mt-0">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={async () => {
-                    const { data, error } = await actions.cart.updateCartItem({
-                      productId: item.products.id.toString(),
-                      decrement: true,
-                    });
-
-                    if (!error) {
-                      setCart(data.cart);
-                    }
-                  }}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="w-8 text-center">{item.cart.quantity}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={async () => {
-                    const { data, error } = await actions.cart.updateCartItem({
-                      productId: item.products.id.toString(),
-                      increment: true,
-                    });
-
-                    if (!error) {
-                      setCart(data.cart);
-                    }
-                  }}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 ml-auto sm:ml-0 text-destructive"
-                  onClick={async () => {
-                    const { data, error } = await actions.cart.deleteCartItem({
-                      productId: item.products.id.toString(),
-                    });
-
-                    if (!error) {
-                      setCart(data.cart);
-                    }
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+          <FullPageCart newCart={cart} client:load />
         </div>
       )
     }
