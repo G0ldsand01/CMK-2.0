@@ -161,16 +161,6 @@ img {
 	margin-right: auto;
 }
 
-	.view-all-button {
-		display: flex;
-		justify-content: center;
-		margin-top: 2rem;
-		margin-bottom: 4rem;
-		width: fit-content;
-		margin-left: auto;
-		margin-right: auto;
-		cursor: pointer;
-	}
 @media screen and (max-width: 768px) {
 	#home {
 		width: 100%;
