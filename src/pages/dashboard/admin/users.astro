@@ -1,8 +1,9 @@
 ---
-import { CircleUser, UserCircleIcon } from 'lucide-react';
+import { CircleUser, UserCircleIcon } from '@lucide/astro';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 ---
-<AdminDashboardLayout title="Users" breadcrumb={{'/users': 'Manage Users'}}>
+
+<AdminDashboardLayout title="Users" breadcrumb={{ '/users': 'Manage Users' }}>
     <div class="content">
         <div class="head">
             <div class="welcome-message">
@@ -26,7 +27,7 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
                         <td>Email</td>
                         <td>Role</td>
                         <td>
-                            <a href="#"><CircleUser/></a>
+                            <a href="#"><CircleUser /></a>
                             <a href="#">Edit</a>
                             <a href="#">Delete</a>
                         </td>
@@ -36,7 +37,7 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
                         <td>Email</td>
                         <td>Role</td>
                         <td>
-                            <a href="#"><CircleUser/></a>
+                            <a href="#"><CircleUser /></a>
                             <a href="#">Edit</a>
                             <a href="#">Delete</a>
                         </td>
@@ -46,13 +47,13 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
                         <td>Email</td>
                         <td>Role</td>
                         <td>
-                            <a href="#"><CircleUser/></a>
+                            <a href="#"><CircleUser /></a>
                             <a href="#">Edit</a>
                             <a href="#">Delete</a>
                         </td>
-                    </tr>    
+                    </tr>
                 </tbody>
-            </table>    
+            </table>
         </div>
     </div>
 </AdminDashboardLayout>

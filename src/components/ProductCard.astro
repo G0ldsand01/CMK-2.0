@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
 import '@/styles/product-card.css';
-import { ChevronRight, ShoppingCart } from 'lucide-react';
+import { ChevronRight, ShoppingCart } from '@lucide/astro';
 import { Button } from '@/components/ui/button';
 import type { productsTable } from '@/db/schema';
 import ProductImage from './images/ProductImage.astro';
 
 interface Props {
-	product: typeof productsTable.$inferSelect;
+  product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -27,7 +27,7 @@ const { product } = Astro.props;
     <h3>{product.name}</h3>
     <p>{product.description}</p>
     <div class="product-price">${Number(product.price).toFixed(2)}</div>
-    <a href={"/product/" + product.id} class="button" data-astro-prefetch>
+    <a href={'/product/' + product.id} class="button" data-astro-prefetch>
       <Button
         id="view-product-button"
         className="font-bold py-2 px-4 rounded flex items-center gap-2"
