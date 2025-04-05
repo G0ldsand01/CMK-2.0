@@ -62,9 +62,6 @@ importers:
       astro-critters:
         specifier: ^2.2.1
         version: 2.2.1(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2)
-      astro-purgecss:
-        specifier: ^5.2.2
-        version: 5.2.2(astro@5.6.0(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2))(purgecss@7.0.2)
       auth-astro:
         specifier: ^4.2.0
         version: 4.2.0(@auth/core@0.38.0)(astro@5.6.0(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2))
@@ -1732,12 +1729,6 @@ packages:
 
   astro-critters@2.2.1:
     resolution: {integrity: sha512-C9wYbSWEqvBZ65/tarpR56GjuxH7psILuzwtV3MCHWfT5rfI3ESo8DfxQab1bTAjinBDla0ohAtM7GdXo/OJKQ==}
-
-  astro-purgecss@5.2.2:
-    resolution: {integrity: sha512-lL4JqBlIyRTj6CQPJrGRWJYX6OzyGBEGjLwxmgSHALn0xKsU0zf9X4Lnd+L+SM0wa+o7UbD9wXMhmK42sjXl8g==}
-    peerDependencies:
-      astro: ^5.0.0
-      purgecss: ^7.0.0
 
   astro@5.6.0:
     resolution: {integrity: sha512-ZzHqdTQ4qtCnXzN9bVb75p/F0UweZYubmijjo++frn4E4KxLX8E7fizbX5Wbo2flvA6z/tUsoDwnYASxLHiM1Q==}
@@ -5455,11 +5446,6 @@ snapshots:
       - typescript
       - uploadthing
       - yaml
-
-  astro-purgecss@5.2.2(astro@5.6.0(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2))(purgecss@7.0.2):
-    dependencies:
-      astro: 5.6.0(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2)
-      purgecss: 7.0.2
 
   astro@5.6.0(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.3)(rollup@4.34.9)(terser@5.39.0)(typescript@5.8.2):
     dependencies:
