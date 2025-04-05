@@ -8,14 +8,12 @@ import critters from 'astro-critters';
 import auth from 'auth-astro';
 import dotenv from 'dotenv';
 
-import purgecss from 'astro-purgecss';
-
 dotenv.config();
 
 // https://astro.build/config
 export default defineConfig({
     // prefetch: true,
-    integrations: [react(), auth(), critters(), purgecss(), compress()],
+    integrations: [react(), auth(), critters(), compress()],
 
     output: 'server',
 
