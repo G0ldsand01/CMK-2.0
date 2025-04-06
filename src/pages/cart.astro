@@ -1,7 +1,7 @@
 ---
 import { actions } from 'astro:actions';
-import { eq } from 'drizzle-orm';
 import { ShoppingBag } from '@lucide/astro';
+import { eq } from 'drizzle-orm';
 import FullPageCart from '@/components/cart/FullPageCart';
 import { Button } from '@/components/ui/button';
 import { cartTable, productsTable } from '@/db/schema';
@@ -14,10 +14,10 @@ const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');
 
 const cart = await db
-  .select()
-  .from(cartTable)
-  .where(eq(cartTable.userId, user.getId()))
-  .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+	.select()
+	.from(cartTable)
+	.where(eq(cartTable.userId, user.getId()))
+	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
 
 <Layout title="Your Cart" navbar={true} cart={false}>

@@ -73,6 +73,9 @@ export const cart = {
 			const user = await getUser(context.request);
 
 			if (!user) {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in.',
@@ -121,6 +124,9 @@ export const cart = {
 			const user = await getUser(context.request);
 
 			if (!user) {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in.',
@@ -157,6 +163,9 @@ export const cart = {
 			const user = await getUser(context.request);
 
 			if (!user) {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in.',

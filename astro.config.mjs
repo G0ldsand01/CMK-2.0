@@ -12,66 +12,66 @@ dotenv.config();
 
 // https://astro.build/config
 export default defineConfig({
-    // prefetch: true,
-    integrations: [react(), auth(), critters(), compress()],
+	// prefetch: true,
+	integrations: [react(), auth(), critters(), compress()],
 
-    output: 'server',
+	output: 'server',
 
-    vite: {
-        plugins: [tailwindcss()],
-    },
+	vite: {
+		plugins: [tailwindcss()],
+	},
 
-    adapter: vercel({
-        imageService: true,
-    }),
+	adapter: vercel({
+		imageService: true,
+	}),
 
-    env: {
-        schema: {
-            WEBSITE_URL: envField.string({
-                access: 'public',
-                context: 'server',
-            }),
-            DATABASE_URL: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            REDIS_URL: envField.string({
-                access: 'secret',
-                context: 'server',
-                optional: true,
-            }),
-            STRIPE_SECRET_KEY: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
+	env: {
+		schema: {
+			WEBSITE_URL: envField.string({
+				access: 'public',
+				context: 'server',
+			}),
+			DATABASE_URL: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			REDIS_URL: envField.string({
+				access: 'secret',
+				context: 'server',
+				optional: true,
+			}),
+			STRIPE_SECRET_KEY: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
 
-            /*
+			/*
        Auth
       */
-            GITHUB_CLIENT_ID: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            GITHUB_CLIENT_SECRET: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            DISCORD_CLIENT_ID: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            DISCORD_CLIENT_SECRET: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            GOOGLE_CLIENT_ID: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-            GOOGLE_CLIENT_SECRET: envField.string({
-                access: 'secret',
-                context: 'server',
-            }),
-        },
-    },
+			GITHUB_CLIENT_ID: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			GITHUB_CLIENT_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			DISCORD_CLIENT_ID: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			DISCORD_CLIENT_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			GOOGLE_CLIENT_ID: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			GOOGLE_CLIENT_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+		},
+	},
 });

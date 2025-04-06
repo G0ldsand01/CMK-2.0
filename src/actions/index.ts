@@ -1,11 +1,14 @@
 import { cart } from './cart';
 import { products } from './products';
+import { reviews } from './reviews';
 import { user } from './user';
 
 export const server = {
-	products,
-	user,
 	cart,
+	//
+	products,
+	reviews,
+	user,
 };
 
 // Logging & security utils

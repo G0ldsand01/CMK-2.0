@@ -1,23 +1,30 @@
 ---
-import { products as productsActions } from '../../actions/products';
-import Layout from '../../layouts/Layout.astro';
-import '@/styles/product.css';
 import { Heart, ShoppingCart } from '@lucide/astro';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
-import ReviewSection from '@/components/ReviewSection.astro';
+import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { getUser } from '@/lib/user';
+import { products as productsActions } from '../../actions/products';
+import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
-	id: Number(id),
+  id: Number(id),
 });
 const data = productActions.data;
 const user = await getUser(Astro.request);
 
 if (!data) {
-	return Astro.redirect('/');
+  return Astro.redirect('/');
 }
 
 const { product, isInWishlist } = data;
@@ -26,83 +33,104 @@ const { product, isInWishlist } = data;
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
   {
     product ? (
-      <div class="product-details">
-        <div class="product" product-id={id}>
-          <div
-            class={`add-to-wishlist-button ${
-              isInWishlist ? 'add-to-wishlist-button-active' : ''
-            }`}
-            id="add-to-wishlist-button"
-          >
-            <Heart />
-          </div>
-          <div class="product-info">
-            <ProductImage
-              imagePath={product.image}
-              width={400}
-              height={400}
-              altText={product.name}
-            />
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            {/* <div class="product-rating">
-              <span class="product-rating-stars">
-                {'★'.repeat(Math.floor(Number(product.rating || 0)))}{' '}
-              </span>
-              <span class="product-rating-count">
-                ({product.reviews || 0} reviews)
-              </span>
-            </div> */}
-            <div class="product-price">
-              <span class="product-price-currency">$</span>
-              <span class="product-price-amount">
-                {Number(product.price).toFixed(2) || '0.00'}
-              </span>
-            </div>
-            <div class="flex justify-center py-4">
-              <div class="p-4 border-2 border-gray-300 rounded-md ">
-                <ReviewSection product={product} server:defer />
+      <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
+        <Card>
+          <CardContent className="p-6 relative">
+            <button
+              class={`absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-md
+              ${isInWishlist ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'}
+              transition-all duration-200 hover:scale-110 hover:shadow-lg active:scale-95`}
+              id="add-to-wishlist-button"
+              aria-label={
+                isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
+              }
+            >
+              <Heart class={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
+            </button>
+            <div data-product-id={id}>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left column - Image */}
+                <div class="relative">
+                  <ProductImage
+                    imagePath={product.image}
+                    width={600}
+                    height={600}
+                    altText={product.name}
+                    class="rounded-lg w-full h-auto object-cover"
+                  />
+                </div>
+
+                {/* Right column - Content */}
+                <div class="flex flex-col">
+                  <CardHeader className="px-0">
+                    <CardTitle className="text-3xl">{product.name}</CardTitle>
+                    <CardDescription className="text-base">
+                      {product.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <div class="mb-6">
+                    <span class="text-2xl font-bold">
+                      ${Number(product.price).toFixed(2) || '0.00'}
+                    </span>
+                  </div>
+                  <CardFooter className="px-0 mt-auto">
+                    <div class="flex gap-4 w-full">
+                      {user && (
+                        <>
+                          <Cart
+                            classes="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
+                            variant="outline"
+                            server:defer
+                          >
+                            <ShoppingCart /> View Cart
+                          </Cart>
+                          <Button
+                            id="add-to-cart-button"
+                            className="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
+                            client:load
+                            server:defer={true}
+                          >
+                            <ShoppingCart /> Add to Cart
+                          </Button>
+                        </>
+                      )}
+                      {!user && (
+                        <a href="/login" class="w-full">
+                          <Button
+                            id="add-to-cart-button"
+                            className="w-full font-bold py-2 px-4 rounded flex items-center gap-2 justify-center"
+                            client:load
+                            server:defer={true}
+                          >
+                            <ShoppingCart /> Login to Add to Cart
+                          </Button>
+                        </a>
+                      )}
+                    </div>
+                  </CardFooter>
+                </div>
               </div>
             </div>
-            <div class="justify-center py-4 flex gap-2">
-              {user && (
-                <Cart
-                  classes="font-bold py-2 px-4 rounded flex items-center gap-2"
-                  variant="outline"
-                  server:defer
-                >
-                  <ShoppingCart /> View Cart
-                </Cart>
-                <Button
-                  id="add-to-cart-button"
-                  className="font-bold py-2 px-4 rounded flex items-center gap-2"
-                  client:load
-                  server:defer={true}
-                >
-                  <ShoppingCart /> Add to Cart
-                </Button>
-              )}
-              {!user && (
-                <a href="/login">
-                  <Button
-                    id="add-to-cart-button"
-                    className="font-bold py-2 px-4 rounded flex items-center gap-2"
-                    client:load
-                    server:defer={true}
-                  >
-                    <ShoppingCart /> Login to Add to Cart
-                  </Button>
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
+
+        {/* Review section below */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Reviews</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ReviewSection product={product} />
+          </CardContent>
+        </Card>
       </div>
     ) : (
-      <div class="product-details">
-        <div class="product">
-          <h1>Product not found</h1>
-        </div>
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="p-6">
+            <h1 class="text-2xl font-bold">Product not found</h1>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -117,13 +145,13 @@ const { product, isInWishlist } = data;
     Product ID
   */
 
-  const product = document.querySelector('.product');
+  const product = document.querySelector('[data-product-id]');
   if (!product) {
     console.error('Product is not set');
     throw new Error('Product is not set');
   }
 
-  const productId = product.getAttribute('product-id');
+  const productId = product.getAttribute('data-product-id');
   if (!productId) {
     console.error('Product ID is not set');
     throw new Error('Product ID is not set');
@@ -141,9 +169,11 @@ const { product, isInWishlist } = data;
       });
       if (!error) {
         if (data.inWishlist) {
-          addToWishlistButton.classList.add('add-to-wishlist-button-active');
+          addToWishlistButton.classList.add('text-red-500');
+          addToWishlistButton.classList.remove('text-gray-400');
         } else {
-          addToWishlistButton.classList.remove('add-to-wishlist-button-active');
+          addToWishlistButton.classList.remove('text-red-500');
+          addToWishlistButton.classList.add('text-gray-400');
         }
       }
     });
@@ -156,22 +186,58 @@ const { product, isInWishlist } = data;
   const addToCartButton = document.querySelector('#add-to-cart-button');
   if (addToCartButton) {
     addToCartButton.addEventListener('click', async () => {
-        const { error, data } = await actions.cart.addProductIdToCart({
-            productId: productId as string,
-        });
+      const { error, data } = await actions.cart.addProductIdToCart({
+        productId: productId as string,
+      });
 
-        if (!error) {
-          if (data.success) {
-            toast.success('Successfully added to cart');
-            console.log(setCart(data.cart));
-          } else {
-            toast.warning('Product already in cart');
-            console.log(setCart(data.cart));
-          }
+      if (!error) {
+        setCart(data.cart);
+        if (data.success) {
+          toast.success('Successfully added to cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Undo',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
 
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
         } else {
-            toast.error('Failed to add to cart');
+          toast.warning('Product already in cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Remove',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
+
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
         }
+      } else {
+        toast.error('Failed to add to cart');
+      }
     });
   }
 </script>
