@@ -94,7 +94,7 @@ const user = await getUser(Astro.request);
     </div>
   )}
 
-  <button id="menu-toggle" onclick="menuToggleFunction()" style="z-index: 991">
+  <button id="menu-toggle" style="z-index: 991">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -162,21 +162,24 @@ const user = await getUser(Astro.request);
   </nav>
 </header>
 <script>
-  import { signOut } from 'auth-astro/client';
-  function menuToggleFunction() {
+  document.addEventListener('DOMContentLoaded', () => {
     const overlayNav = document.querySelector('.overlay-nav');
-    if (overlayNav) {
-      overlayNav.classList.toggle('active');
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeMenu = document.querySelector('.close-menu');
+
+    if (!overlayNav || !menuToggle || !closeMenu) {
+      console.warn('One or more navigation elements not found');
+      return;
     }
-  }
 
-  document.getElementById('menu-toggle')?.addEventListener('click', menuToggleFunction);
+    menuToggle.addEventListener('click', () => {
+      overlayNav.classList.toggle('active');
+    });
 
-      const logoutButton = document.querySelector("#logout") as HTMLButtonElement;
-      if (logoutButton) {
-        logoutButton.onclick = () => signOut();
-      }
-
+    closeMenu.addEventListener('click', () => {
+      overlayNav.classList.remove('active');
+    });
+  });
 </script>
 
 <style>
