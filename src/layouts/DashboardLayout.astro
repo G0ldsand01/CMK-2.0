@@ -1,8 +1,13 @@
 ---
-import { ShoppingBag } from '@lucide/astro';
 import { Auth, SignOut } from 'auth-astro/components';
-import { getUser } from '@/lib/user';
 import Layout from './Layout.astro';
+import { Button } from './ui/button';
+import { CircuitBoard, ShoppingBag } from '@lucide/astro';
+import { SignOut } from 'auth-astro/components';
+import Cart from '@/components/cart/Cart.astro';
+import CartItemCount from '@/components/cart/CartItemCount.tsx';
+import { getUser } from '@/lib/user';
+import { ModeToggle } from '../components/ModeToggle';
 
 interface Props {
 	title: string;
@@ -49,6 +54,12 @@ if (!user) {
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
+      <div class="toggle">
+        <ModeToggle client:load />
+        <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2 cart" variant="outline" server:defer>
+          <ShoppingBag /> <CartItemCount client:load />
+        </Cart>
+      </div>
       <ul>
         <li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/dashboard/orders">My Orders</a></li>
@@ -166,6 +177,7 @@ if (!user) {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
 
   /* Sidebar */
@@ -282,6 +294,14 @@ if (!user) {
     background: none;
     border: none;
     font-size: 10em;
+  }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: absolute;
+    top: 1.5rem;
+    right: 5rem;
   }
   .overlay-nav {
     display: none;
