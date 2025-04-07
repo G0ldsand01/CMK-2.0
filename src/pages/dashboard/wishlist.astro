@@ -108,8 +108,8 @@ const wishlist = data.wishlist ?? [];
   /* Global Styles */
   body {
     font-family: Arial, sans-serif;
-    background-color: #0f0f0f;
-    color: #333;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -125,9 +125,9 @@ const wishlist = data.wishlist ?? [];
   .head {
     margin-top: 5rem;
     width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
+    background-color: var(--color-muted);
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px  var(--color-shadow);
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
@@ -140,7 +140,7 @@ const wishlist = data.wishlist ?? [];
   }
 
   .welcome-message p {
-    color: #666;
+    color: var(--color-foreground);
     font-size: 16px;
   }
 
@@ -148,9 +148,9 @@ const wishlist = data.wishlist ?? [];
   .wishlist {
     margin-top: 3rem;
     width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
+    background-color: var(--color-muted);
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--color-shadow);
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
@@ -158,10 +158,10 @@ const wishlist = data.wishlist ?? [];
   .wishlist-list-body-item h2 {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #f4f2f2;
+    color: var(--color-foreground);
   }
   .wishlist-list-body-item {
-    background-color: rgba(0, 0, 0, 0.18);
+    background-color: var(--color-background);
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 0.5rem;
@@ -175,9 +175,8 @@ const wishlist = data.wishlist ?? [];
   }
 
   .wishlist-list-body-item:hover {
-    background-color: #202121;
     transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px var(--color-shadow);
   }
 
   .wishlist-list-body-item a {
@@ -201,12 +200,12 @@ const wishlist = data.wishlist ?? [];
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    color: #f4f2f2;
+    color: var(--color-foreground);
   }
 
   .wishlist-list-body-item-price {
     font-weight: bold;
-    color: #f4f2f2;
+    color: var(--color-foreground);
     margin-left: auto; /* Push price to the right */
   }
   /* add margin at the end of the wishlist */
@@ -216,7 +215,7 @@ const wishlist = data.wishlist ?? [];
 
   .remove-from-wishlist-button {
     background-color: #e74c3c;
-    color: white;
+    color: var(--color-foreground);
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;

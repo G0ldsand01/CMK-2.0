@@ -33,7 +33,7 @@ const orders: string[] = [];
           <h1>Orders</h1>
           <p>Showing orders for {userEmail}</p>
         </div>
-        <!-- {
+        {
           orders.map((order) => (
             <div class="orders-list-body-item">
               <div class="orders-list-body-item-header">
@@ -50,7 +50,7 @@ const orders: string[] = [];
               </div>
             </div>
           ))
-        } -->
+        }
         {orders.length === 0 && <p>No orders found for this email address.</p>}
       </div>
     </div>
@@ -67,9 +67,9 @@ const orders: string[] = [];
   .head {
     margin-top: 5rem;
     width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
+    background-color: var(--color-muted);
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--color-shadow);
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
@@ -82,15 +82,15 @@ const orders: string[] = [];
   }
 
   .welcome-message p {
-    color: #666;
+    color: var(--color-foreground);
     font-size: 16px;
   }
   .order {
     margin-top: 3rem;
     width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
+    background-color: var(--color-muted);
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--color-shadow);
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
@@ -98,9 +98,9 @@ const orders: string[] = [];
   .orders-list {
     margin-top: 3rem;
     width: 50%;
-    background-color: hsla(0, 0%, 20%, 0.274);
+    background-color: var(--color-muted);
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--color-shadow);
     border-radius: 2rem;
     margin-left: auto;
     margin-right: auto;
