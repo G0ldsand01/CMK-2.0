@@ -6,6 +6,7 @@ import CartItemCount from '@/components/cart/CartItemCount.tsx';
 import { getUser } from '@/lib/user';
 import { ModeToggle } from './ModeToggle';
 import { Button } from './ui/button';
+import { UserMenu } from '@/components/UserMenu';
 
 interface Props {
 	cart?: boolean;
@@ -14,6 +15,14 @@ interface Props {
 const { cart } = Astro.props;
 
 const user = await getUser(Astro.request);
+
+const userData = {
+	id: user.getId(),
+	name: user.getDisplayName(),
+	email: user.getEmail(),
+	image: user.getImage(),
+	role: user.getRole(),
+};
 ---
 
 <header>
@@ -49,6 +58,7 @@ const user = await getUser(Astro.request);
             />
             <div class="user">
               <a href="/dashboard">
+                {/* <UserMenu userData={userData} /> */}
                 <h1 class="user">Welcome, {user.getDisplayName()}</h1>
               </a>
               <SignOut>Logout</SignOut>
