@@ -1,28 +1,20 @@
 ---
-import { CircuitBoard, ShoppingBag } from '@lucide/astro';
-import { SignOut } from 'auth-astro/components';
-import Cart from '@/components/cart/Cart.astro';
-import CartItemCount from '@/components/cart/CartItemCount.tsx';
-import { getUser } from '@/lib/user';
-import { ModeToggle } from './ModeToggle';
-import { Button } from './ui/button';
-// import { UserMenu } from '@/components/UserMenu';
+import { CircuitBoard, ShoppingBag } from "@lucide/astro";
+import { SignOut } from "auth-astro/components";
+import Cart from "@/components/cart/Cart.astro";
+import CartItemCount from "@/components/cart/CartItemCount.tsx";
+import { getUser } from "@/lib/user";
+import { ModeToggle } from "./ModeToggle";
+import { Button } from "./ui/button";
+import { HeaderMenu } from "@components/Header.tsx";
 
 interface Props {
-	cart?: boolean;
+  cart?: boolean;
 }
 
 const { cart } = Astro.props;
 
 const user = await getUser(Astro.request);
-
-// const userData = {
-// 	id: user.getId(),
-// 	name: user.getDisplayName(),
-// 	email: user.getEmail(),
-// 	image: user.getImage(),
-// 	role: user.getRole(),
-// };
 ---
 
 <header>
@@ -30,14 +22,9 @@ const user = await getUser(Astro.request);
     <CircuitBoard />
     <a href="/">CMK</a>
   </div>
-  <nav>
-    <ul>
-      <li><a href="/" data-astro-prefetch>Home</a></li>
-      <li><a href="/products" data-astro-prefetch>Products</a></li>
-      <li><a href="/about" data-astro-prefetch>About Us</a></li>
-      <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
-    </ul>
-  </nav>
+  <div class="HeaderMenu">
+    <HeaderMenu  client:load/>
+  </div>
   <!-- Auth Buttons or Profile Section -->
 
   {
@@ -51,7 +38,7 @@ const user = await getUser(Astro.request);
           <a href="/dashboard">
             <img
               id="profile-picture"
-              src={user.getImage() || '@assets/cdn/circle-user.svg'}
+              src={user.getImage() || "@assets/cdn/circle-user.svg"}
               alt="Profile Picture"
               width="40"
               height="40"
@@ -133,14 +120,17 @@ const user = await getUser(Astro.request);
       </svg>
     </button>
     <div class="toggle">
-      
       <ModeToggle client:load />
-      <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2 cart" variant="outline" server:defer>
-        <ShoppingBag /> <CartItemCount client:load />
+      <Cart
+        classes="font-bold py-2 px-4 rounded flex items-center gap-2 cart"
+        variant="outline"
+        server:defer
+      >
+        <ShoppingBag />
+        <CartItemCount client:load />
       </Cart>
-      
     </div>
-    
+
     <ul>
       <li><a href="/" data-astro-prefetch>Home</a></li>
       <li><a href="/products" data-astro-prefetch>Products</a></li>
@@ -152,7 +142,7 @@ const user = await getUser(Astro.request);
             <a href="/dashboard">
               <img
                 id="profile-picture"
-                src={user.getImage() || '<circle-user />'}
+                src={user.getImage() || "<circle-user />"}
                 alt="Profile Picture"
                 width="40"
                 height="40"
@@ -175,22 +165,22 @@ const user = await getUser(Astro.request);
   </nav>
 </header>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlayNav = document.querySelector('.overlay-nav');
-    const menuToggle = document.getElementById('menu-toggle');
-    const closeMenu = document.querySelector('.close-menu');
+  document.addEventListener("DOMContentLoaded", () => {
+    const overlayNav = document.querySelector(".overlay-nav");
+    const menuToggle = document.getElementById("menu-toggle");
+    const closeMenu = document.querySelector(".close-menu");
 
     if (!overlayNav || !menuToggle || !closeMenu) {
-      console.warn('One or more navigation elements not found');
+      console.warn("One or more navigation elements not found");
       return;
     }
 
-    menuToggle.addEventListener('click', () => {
-      overlayNav.classList.toggle('active');
+    menuToggle.addEventListener("click", () => {
+      overlayNav.classList.toggle("active");
     });
 
-    closeMenu.addEventListener('click', () => {
-      overlayNav.classList.remove('active');
+    closeMenu.addEventListener("click", () => {
+      overlayNav.classList.remove("active");
     });
   });
 </script>
@@ -242,7 +232,7 @@ const user = await getUser(Astro.request);
 
   nav ul li a {
     font:
-      1.4rem 'grandstander',
+      1.4rem "grandstander",
       sans-serif;
     color: var(--color-foreground);
     text-decoration: none;
@@ -263,7 +253,7 @@ const user = await getUser(Astro.request);
     font-size: 2rem;
     z-index: 991;
   }
- 
+
   .toggle {
     display: flex;
     align-items: center;
@@ -380,7 +370,7 @@ const user = await getUser(Astro.request);
       display: block;
     }
 
-    nav ul {
+    .HeaderMenu {
       display: none;
     }
 

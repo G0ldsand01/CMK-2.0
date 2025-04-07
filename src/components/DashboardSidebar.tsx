@@ -1,5 +1,6 @@
 import {
 	CircuitBoard,
+	Cog,
 	HomeIcon,
 	Package,
 	ShoppingCartIcon,
@@ -163,7 +164,7 @@ export function DashboardSidebar({
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem>
-								<BreadcrumbLink href="/dashboard/admin">
+								<BreadcrumbLink href="/dashboard">
 									Dashboard
 								</BreadcrumbLink>
 							</BreadcrumbItem>
