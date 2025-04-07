@@ -15,31 +15,6 @@ export const products = {
 			return products;
 		},
 	}),
-	getProductById: defineAction({
-		input: z.object({
-			id: z.number(),
-		}),
-		handler: async (input, ctx) => {
-			const products = await db.query.productsTable.findMany({
-				where: eq(productsTable.id, input.id),
-			});
-
-			const product = products.find((doc) => doc.id === input.id);
-
-			const user = await getUser(ctx.request);
-			if (user?.getId()) {
-				const wishlist = await db.query.wishlistTable.findMany({
-					where: and(
-						eq(wishlistTable.userId, user.getId()),
-						eq(wishlistTable.productId, input.id),
-					),
-				});
-				return { product, isInWishlist: wishlist.length > 0 };
-			}
-
-			return { product, isInWishlist: false };
-		},
-	}),
 	// getProductsByCategory: defineAction({
 	//   input: z.object({
 	//     category: z.string(),

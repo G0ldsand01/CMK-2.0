@@ -13,21 +13,41 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { getUser } from '@/lib/user';
-import { products as productsActions } from '../../actions/products';
 import Layout from '../../layouts/Layout.astro';
+import db from '@/lib/db';
+import { productsTable, wishlistTable } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 const { id } = Astro.params;
-const productActions = await Astro.callAction(productsActions.getProductById, {
-  id: Number(id),
-});
-const data = productActions.data;
+
 const user = await getUser(Astro.request);
 
-if (!data) {
+const { product, isInWishlist } = await db.transaction(async (tx) => {
+  const [product] = await tx
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.id, Number(id)));
+
+  if (user && product) {
+    const isInWishlist = await tx
+      .select()
+      .from(wishlistTable)
+      .where(
+        and(
+          eq(wishlistTable.userId, user.getId()),
+          eq(wishlistTable.productId, Number(id)),
+        ),
+      );
+
+    return { product, isInWishlist };
+  }
+
+  return { product, isInWishlist: false };
+});
+
+if (!product) {
   return Astro.redirect('/');
 }
-
-const { product, isInWishlist } = data;
 ---
 
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
@@ -103,8 +123,6 @@ const { product, isInWishlist } = data;
                           <Button
                             id="add-to-cart-button"
                             className="w-full font-bold py-2 px-4 rounded flex items-center gap-2 justify-center"
-                            client:load
-                            server:defer={true}
                           >
                             <ShoppingCart /> Login to Add to Cart
                           </Button>
