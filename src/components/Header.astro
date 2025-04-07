@@ -122,7 +122,15 @@ const user = await getUser(Astro.request);
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </button>
-    <ModeToggle client:load />
+    <div class="toggle">
+      
+      <ModeToggle client:load />
+      <Cart classes="font-bold py-2 px-4 rounded flex items-center gap-2 cart" variant="outline" server:defer>
+        <ShoppingBag /> <CartItemCount client:load />
+      </Cart>
+      
+    </div>
+    
     <ul>
       <li><a href="/" data-astro-prefetch>Home</a></li>
       <li><a href="/products" data-astro-prefetch>Products</a></li>
@@ -245,9 +253,18 @@ const user = await getUser(Astro.request);
     font-size: 2rem;
     z-index: 991;
   }
-  .close-menu {
+ 
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     position: absolute;
     top: 1rem;
+    right: 4rem;
+  }
+  .close-menu {
+    position: absolute;
+    top: 1.2rem;
     right: 0rem;
     background: none;
     border: none;
@@ -255,7 +272,12 @@ const user = await getUser(Astro.request);
     font-size: 2rem;
     color: #e7dcdc;
   }
-
+  .cart {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
   .button:hover {
     background-color: var(--color-foreground);
     color: var(--color-background);
