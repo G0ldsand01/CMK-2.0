@@ -27,6 +27,12 @@ const cart = await db
     {
       cart.length === 0 ? (
         <p class="text-center text-gray-500">Your cart is empty.</p>
+        <div class="continue-shopping">
+          <Button variant="outline" class="w-full" href="/products">
+            <ShoppingBag />
+            <span class="ml-2"> Continue Shopping</span>
+          </Button>
+        </div>
       ) : (
         <div class="space-y-6">
           <FullPageCart newCart={cart} client:load />
@@ -35,3 +41,15 @@ const cart = await db
     }
   </main>
 </Layout>
+
+<style>
+  .continue-shopping {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+
+  }
+</style>

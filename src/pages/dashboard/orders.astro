@@ -13,7 +13,9 @@ const userEmail = user.getEmail();
 const orders: string[] = [];
 ---
 
-<DashboardLayout title="Dashboard" activeId="orders">
+<DashboardLayout title="Orders History" breadcrumb={{
+  '/orders': 'Orders',
+}}>
   <div class="content">
     <div class="head">
       <div class="welcome-message">

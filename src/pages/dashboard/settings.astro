@@ -9,7 +9,9 @@ if (!user) {
 }
 ---
 
-<DashboardLayout title="Dashboard" activeId="settings">
+<DashboardLayout title="Dashboard" breadcrumb={{
+  '/settings': 'Settings',
+}}>
   <div class="content">
     <div class="head">
       <div class="welcome-message">

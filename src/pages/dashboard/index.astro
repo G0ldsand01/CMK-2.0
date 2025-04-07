@@ -10,7 +10,9 @@ if (!user) {
 }
 ---
 
-<DashboardLayout title="Dashboard" activeId="dashboard">
+<DashboardLayout title="Dashboard" breadcrumb={{
+  '/': 'Home',
+}} >
   <div class="content">
     <div class="head">
       <div class="welcome-message">
@@ -44,10 +46,6 @@ if (!user) {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    padding: auto;
   }
   .head {
     margin-top: 5rem;
@@ -75,11 +73,12 @@ if (!user) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 5rem;
     width: 50%;
     flex-wrap: wrap;
+    margin-top: 5rem;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 5rem;
   }
 
   .icon {
