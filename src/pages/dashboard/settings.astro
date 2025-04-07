@@ -200,7 +200,7 @@ if (!user) {
       /* Body */
       body {
         font-family: Arial, sans-serif;
-        background-color: #0f0f0f;
+        background-color: var(--color-background);
         display: flex;
         min-height: 100vh;
         flex-direction: column;
@@ -217,9 +217,9 @@ if (!user) {
       .head {
         margin-top: 5rem;
         width: 50%;
-        background-color: hsla(0, 0%, 20%, 0.274);
+        background-color: var(--color-muted);
         padding: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px var(--color-shadow);
         border-radius: 2rem;
         margin-left: auto;
         margin-right: auto;
@@ -238,10 +238,10 @@ if (!user) {
       /* Settings Section */
       form {
         margin-top: 3rem;
-        background-color: #1e1e1e;
+        background-color: var(--color-muted);
         padding: 2rem;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 10px var(--color-shadow);
         max-width: 50%;
         margin-left: auto;
         margin-right: auto;
@@ -290,7 +290,7 @@ if (!user) {
         grid-column: span 2;
       }
       label {
-        color: #fff;
+        color: var(--color-foreground);
         font-weight: bold;
       }
 
@@ -299,8 +299,8 @@ if (!user) {
         padding: 12px;
         border: 2px solid #27ae60;
         border-radius: 8px;
-        background-color: #121212;
-        color: #ecf0f1;
+        background-color: var(--color-background);
+        color: var(--color-foreground);
         outline: none;
         transition: border 0.3s ease-in-out;
       }
@@ -313,7 +313,7 @@ if (!user) {
       button[type='submit'] {
         margin-top: 1.5rem;
         background-color: #27ae60;
-        color: #fff;
+        color: var(--color-foreground);
         padding: 12px 24px;
         border: none;
         border-radius: 8px;
