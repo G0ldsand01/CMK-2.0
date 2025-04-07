@@ -20,7 +20,9 @@ if (!data) {
 const wishlist = data.wishlist ?? [];
 ---
 
-<DashboardLayout title="Wishlist" activeId="wishlist">
+<DashboardLayout title="Wishlist" breadcrumb={{
+  '/whislist': 'Wishlist',
+}}>
   <div class="content">
     <div class="head">
       <div class="welcome-message">
