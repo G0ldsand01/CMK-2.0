@@ -5,12 +5,12 @@ import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 } from '@/components/ui/card';
 import { getUser } from '@/lib/user';
 import { products as productsActions } from '../../actions/products';
@@ -18,13 +18,13 @@ import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
-  id: Number(id),
+	id: Number(id),
 });
 const data = productActions.data;
 const user = await getUser(Astro.request);
 
 if (!data) {
-  return Astro.redirect('/');
+	return Astro.redirect('/');
 }
 
 const { product, isInWishlist } = data;

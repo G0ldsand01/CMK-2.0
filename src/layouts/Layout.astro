@@ -3,9 +3,9 @@ import { Toaster } from '@/components/ui/sonner';
 import Header from '../components/Header.astro';
 import '@styles/global.css';
 interface Props {
-  title: string;
-  navbar?: boolean;
-  cart?: boolean;
+	title: string;
+	navbar?: boolean;
+	cart?: boolean;
 }
 
 const { title, navbar = true, cart = true } = Astro.props;

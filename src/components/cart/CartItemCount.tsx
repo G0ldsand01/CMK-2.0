@@ -5,9 +5,9 @@ function CartItemCount() {
 	const cart = useStore(cartAtom);
 	const itemCount = Object.keys(cart).length;
 
-    if (itemCount === 0) {
-        return null;
-    }
+	if (itemCount === 0) {
+		return null;
+	}
 
 	return (
 		<span

@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { reviewsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
@@ -30,20 +30,36 @@ export const reviews = {
 				.insert(reviewsTable)
 				.values({
 					productId,
-					rating,
 					userId: user.getId(),
+					rating,
+				})
+				.onConflictDoUpdate({
+					target: [reviewsTable.userId, reviewsTable.productId],
+					set: {
+						rating,
+					},
 				})
 				.returning();
 
-			return review;
+			const allReviews = await db
+				.select()
+				.from(reviewsTable)
+				.where(eq(reviewsTable.productId, productId));
+
+			return {
+				productId,
+				review,
+				allReviews,
+			};
 		},
 	}),
 	update: defineAction({
 		input: z.object({
+			productId: z.number(),
 			rating: z.number().min(1).max(5).int(),
 		}),
 		handler: async (input, context) => {
-			const { rating } = input;
+			const { productId, rating } = input;
 			const user = await getUser(context.request);
 
 			if (!user) {
@@ -61,14 +77,32 @@ export const reviews = {
 				.set({
 					rating,
 				})
-				.where(eq(reviewsTable.userId, user.getId()))
+				.where(
+					and(
+						eq(reviewsTable.userId, user.getId()),
+						eq(reviewsTable.productId, productId),
+					),
+				)
 				.returning();
 
-			return review;
+			const allReviews = await db
+				.select()
+				.from(reviewsTable)
+				.where(eq(reviewsTable.productId, productId));
+
+			return {
+				productId,
+				review,
+				allReviews,
+			};
 		},
 	}),
 	delete: defineAction({
-		handler: async (_input, ctx) => {
+		input: z.object({
+			productId: z.number(),
+		}),
+		handler: async (input, ctx) => {
+			const { productId } = input;
 			const user = await getUser(ctx.request);
 
 			if (!user) {
@@ -83,9 +117,23 @@ export const reviews = {
 
 			await db
 				.delete(reviewsTable)
-				.where(eq(reviewsTable.userId, user.getId()));
+					.where(
+						and(
+							eq(reviewsTable.userId, user.getId()),
+							eq(reviewsTable.productId, productId),
+						),
+					);
 
-			return true;
+				const allReviews = await db
+					.select()
+					.from(reviewsTable)
+					.where(eq(reviewsTable.productId, productId));
+
+				return {
+					productId,
+					review: null,
+				allReviews,
+			};
 		},
 	}),
 };

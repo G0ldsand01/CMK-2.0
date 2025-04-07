@@ -1,9 +1,11 @@
 import { actions } from 'astro:actions';
+import { useStore } from '@nanostores/react';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import type { reviewsTable } from '@/db/schema';
+import { productReviewsAtom } from '@/store';
 
 interface ManageReviewProps {
 	review?: typeof reviewsTable.$inferSelect;
@@ -11,17 +13,18 @@ interface ManageReviewProps {
 }
 
 function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
+	if (!productId) {
+		toast.error('An error occurred');
+		return null;
+	}
+
 	const [review, setReview] = useState(initialReview);
 	const [rating, setRating] = useState(initialReview?.rating || 0);
 	const [hoveredRating, setHoveredRating] = useState(0);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const $reviews = useStore(productReviewsAtom);
 
 	const handleSubmit = async () => {
-		if (!productId) {
-			toast.error('An error occurred');
-			return;
-		}
-
 		if (!rating) {
 			toast.error('Please select a rating');
 			return;
@@ -31,6 +34,7 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 		try {
 			if (review) {
 				const { data, error } = await actions.reviews.update({
+					productId,
 					rating,
 				});
 
@@ -39,11 +43,11 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 					throw new Error('Failed to update rating');
 				}
 
-				setRating(data.rating);
-				setReview(data);
+				setRating(data.review.rating);
+				setReview(data.review);
+				productReviewsAtom.setKey(productId.toString(), data.allReviews);
 
 				toast.success('Rating updated successfully');
-				window.location.reload();
 			} else {
 				const { data, error } = await actions.reviews.create({
 					productId,
@@ -55,11 +59,11 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 					throw new Error('Failed to save rating');
 				}
 
-				setRating(data.rating);
-				setReview(data);
+				setRating(data.review.rating);
+				setReview(data.review);
+				productReviewsAtom.setKey(productId.toString(), data.allReviews);
 
 				toast.success('Rating added successfully');
-				window.location.reload();
 			}
 		} catch (error) {
 			toast.error('Failed to save rating');
@@ -73,7 +77,9 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 		if (!review) return;
 
 		try {
-			const { error } = await actions.reviews.delete();
+			const { data, error } = await actions.reviews.delete({
+				productId: productId,
+			});
 
 			if (error) {
 				toast.error('An error occurred');
@@ -82,9 +88,9 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 
 			setReview(undefined);
 			setRating(0);
+			productReviewsAtom.setKey(productId.toString(), data.allReviews);
 
 			toast.success('Rating deleted successfully');
-			window.location.reload();
 		} catch (error) {
 			toast.error('Failed to delete rating');
 			console.error(error);
