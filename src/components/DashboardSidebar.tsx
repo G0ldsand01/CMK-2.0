@@ -99,6 +99,19 @@ export function AppSidebar({
 	userData,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { userData: userData }) {
+
+	if (userData.role === 'admin') {
+		data.navMain.push({
+			title: 'Admin',
+			items: [
+				{
+					title: 'Admin Dashboard',
+					url: '/dashboard/admin/',
+					icon: UserCog,
+				},
+			],
+		});
+	}
 	return (
 		<Sidebar {...props}>
 			<SidebarHeader className="flex items-center justify-center">
