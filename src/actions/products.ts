@@ -1,7 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { productCategoryEnum, productsTable, wishlistTable } from '@/db/schema';
+import { productsTable, wishlistTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
@@ -104,12 +104,12 @@ export const products = {
 				});
 			}
 
-			if (!Object.values(productCategoryEnum).includes(input.category)) {
-				throw new ActionError({
-					code: 'BAD_REQUEST',
-					message: 'Invalid category.',
-				});
-			}
+			// if (!Object.values(productCategoryEnum).includes(input.category)) {
+			// 	throw new ActionError({
+			// 		code: 'BAD_REQUEST',
+			// 		message: 'Invalid category.',
+			// 	});
+			// }
 
 			const newProduct = {
 				name: input.name,
