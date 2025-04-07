@@ -1,15 +1,14 @@
 ---
-import { productCategoryEnum } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
 
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-	return Astro.redirect('/dashboard');
+  return Astro.redirect('/dashboard');
 }
 
-const categories = productCategoryEnum.enumValues;
+const categories = ['mouse', 'keyboard', 'headset'];
 ---
 
 <AdminDashboardLayout
