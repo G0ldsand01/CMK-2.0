@@ -5,7 +5,6 @@ import {
 	integer,
 	jsonb,
 	numeric,
-	pgEnum,
 	pgTable,
 	primaryKey,
 	real,
@@ -19,11 +18,7 @@ import type { CartItem } from '@/lib/cart';
 
 // Base CMK
 
-export const productCategoryEnum = pgEnum('product_category', [
-	'mouse',
-	'keyboard',
-	'headset',
-]);
+export type ProductCategory = 'mouse' | 'keyboard' | 'headset';
 
 export const productsTable = pgTable(
 	'products',
@@ -33,7 +28,7 @@ export const productsTable = pgTable(
 		price: numeric().notNull(),
 		description: text().notNull(),
 		image: varchar({ length: 255 }).notNull(),
-		category: productCategoryEnum('category').notNull(),
+		category: varchar({ length: 255 }).notNull().$type<ProductCategory>(),
 		averageRating: real('average_rating').notNull().default(0),
 	},
 	(table) => [index('product_name_idx').on(table.name)],
