@@ -72,7 +72,7 @@ function Reviews({
 						<div className="w-12 text-sm text-gray-600">{stars} stars</div>
 						<div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
 							<div
-								className="h-full bg-yellow-400 rounded-full"
+								className="h-full bg-yellow-400 rounded-full transition-all duration-500 ease-in-out"
 								style={{
 									width: `${
 										allReviews.length
