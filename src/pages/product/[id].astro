@@ -5,12 +5,12 @@ import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import { getUser } from '@/lib/user';
 import { products as productsActions } from '../../actions/products';
@@ -18,13 +18,13 @@ import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 const productActions = await Astro.callAction(productsActions.getProductById, {
-	id: Number(id),
+  id: Number(id),
 });
 const data = productActions.data;
 const user = await getUser(Astro.request);
 
 if (!data) {
-	return Astro.redirect('/');
+  return Astro.redirect('/');
 }
 
 const { product, isInWishlist } = data;
@@ -36,17 +36,21 @@ const { product, isInWishlist } = data;
       <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
         <Card>
           <CardContent className="p-6 relative">
-            <button
-              class={`absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-md
+            {user && (
+              <button
+                class={`absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-md
               ${isInWishlist ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'}
               transition-all duration-200 hover:scale-110 hover:shadow-lg active:scale-95`}
-              id="add-to-wishlist-button"
-              aria-label={
-                isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
-              }
-            >
-              <Heart class={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
-            </button>
+                id="add-to-wishlist-button"
+                aria-label={
+                  isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
+                }
+              >
+                <Heart
+                  class={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
+                />
+              </button>
+            )}
             <div data-product-id={id}>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left column - Image */}
