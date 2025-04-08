@@ -179,6 +179,13 @@ export const cart = {
 				.where(eq(cartTable.userId, user.getId()))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
+			if (cart.length === 0) {
+				throw new ActionError({
+					code: 'BAD_REQUEST',
+					message: 'Your cart is empty.',
+				});
+			}
+
 			const line_items = Object.values(cart).map(({ products, cart }) => ({
 				price_data: {
 					currency: 'cad',
@@ -192,20 +199,59 @@ export const cart = {
 				quantity: cart.quantity,
 			}));
 
+			// Calculate total amount for metadata
+			const totalAmount = line_items.reduce((sum, item) => {
+				return sum + (item.price_data.unit_amount * item.quantity);
+			}, 0);
+
+			// Create order first to get the order ID
+			const order = await db.insert(ordersTable).values({
+				userId: user.getId(),
+				status: 'pending',
+				cartJSON: cart,
+				stripeSessionId: 'pending', // Temporary value, will be updated after session creation
+			}).returning();
+
+			if (!order || order.length === 0) {
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'Failed to create order.',
+				});
+			}
+
+			const orderId = order[0].id;
+
+			// Create Stripe checkout session with enhanced metadata
 			const session = await stripe.checkout.sessions.create({
 				payment_method_types: ['card'],
 				mode: 'payment',
 				line_items,
-				success_url: `${WEBSITE_URL}/success`,
+				success_url: `${WEBSITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
 				cancel_url: `${WEBSITE_URL}/cancel`,
+				customer_email: user.getEmail(),
+				metadata: {
+					orderId: orderId.toString(),
+					userId: user.getId().toString(),
+				},
+				payment_intent_data: {
+					metadata: {
+						orderId: orderId.toString(),
+						userId: user.getId().toString(),
+					},
+				},
+				shipping_address_collection: {
+					allowed_countries: ['CA'],
+				},
+				billing_address_collection: 'required',
+				allow_promotion_codes: true,
+				expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
 			});
 
-			const order = await db.insert(ordersTable).values({
-				userId: user.getId(),
-				stripeSessionId: session.id,
-				cartJSON: cart,
-				status: 'pending',
-			}).returning();
+			// Update order with Stripe session ID
+			await db
+				.update(ordersTable)
+				.set({ stripeSessionId: session.id })
+				.where(eq(ordersTable.id, orderId));
 
 			return {
 				url: session.url,
