@@ -99,15 +99,12 @@ const orders = await db
     color: var(--color-foreground);
     font-size: 16px;
   }
-  .order {
-    margin-top: 3rem;
-    width: 50%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
+  .orders {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 5rem;
   }
   .orders-list {
     margin-top: 3rem;
@@ -123,6 +120,11 @@ const orders = await db
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+    background-color: var(--color-background);
+    border: #27ae60 solid 1px;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
   }
 
   .orders-list-body-item-header {
@@ -136,24 +138,43 @@ const orders = await db
     flex-direction: column;
     gap: 0.5rem;
   }
-  .orders-list-header h1 {
+  .orders-list-header {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #f4f2f2;
+    color: var(--color-foreground);
+    margin-left: 2rem;
+    margin-right: auto;
   }
   .orders-list-body-item-body p {
-    color: #f4f2f2;
+    color: var(--color-foreground);
   }
   .orders-list-body-item-body p:first-child {
-    font-weight: bold;
+    color: var(--color-foreground);
   }
   .orders-list-body-item-body p:last-child {
     font-weight: bold;
-    color: #27ae60;
+    color: var(--color-foreground);
   }
   .error-message {
     color: red;
     margin-top: 1rem;
+  }
+  @media (max-width: 1200px) {
+    .head {
+      width: 80%;
+    }
+    .orders-list {
+      width: 80%;
+    }
+    .order {
+      width: 80%;
+    }
+    .orders-list-header {
+      font-size: 1.5rem;
+    }
+    .orders-list-body-item-header {
+      font-size: 1.25rem;
+    }
   }
   @media (max-width: 768px) {
     .orders-list {
@@ -164,6 +185,29 @@ const orders = await db
     }
     .order {
       width: 90%;
+    }
+    .orders-list-header {
+      font-size: 1.1rem;
+    }
+    .orders-list-body-item-header {
+      font-size: 1rem;
+    }
+  }
+  @media (max-width: 508px) {
+    .head {
+      width: 90%;
+    }
+    .orders-list {
+      width: 90%;
+    }
+    .order {
+      width: 90%;
+    }
+    .orders-list-header {
+      font-size: 0.8rem;
+    }
+    .orders-list-body-item-header {
+      font-size: 0.9rem;
     }
   }
 </style>
