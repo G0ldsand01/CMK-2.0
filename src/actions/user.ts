@@ -6,7 +6,7 @@ import { containsDangerousPattern, logSecurityEvent } from './index';
 const sanitizeString = (str: string) => str.trim().replace(/[<>]/g, '');
 const sanitizeEmail = (email: string) => email.toLowerCase().trim();
 const sanitizePhone = (phone: string) => phone.replace(/[^\d+()-]/g, '');
-const sanitizeZip = (zip: string) => zip.replace(/[^\d-]/g, '');
+const sanitizeZip = (zip: string) => zip.replace(/[^\dA-Za-z-]/g, '');
 
 export const user = {
 	setUserDetails: defineAction({
