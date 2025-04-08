@@ -40,6 +40,19 @@ export default defineConfig({
 				context: 'server',
 				optional: true,
 			}),
+
+			/*
+			Stripe
+			*/
+
+			STRIPE_WEBHOOK_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+			STRIPE_PUBLIC_KEY: envField.string({
+				access: 'public',
+				context: 'server',
+			}),
 			STRIPE_SECRET_KEY: envField.string({
 				access: 'secret',
 				context: 'server',
