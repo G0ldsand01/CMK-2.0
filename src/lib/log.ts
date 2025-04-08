@@ -1,9 +1,7 @@
 import { DISCORD_WEBHOOK_URL } from "astro:env/server";
 import axios from 'redaxios';
 
-export default function log(...args: any[]) {
-  console.log(...args);
-
+function discordLog(...args: any[]) {
   if (DISCORD_WEBHOOK_URL) {
     const formattedArgs = args.map(arg => {
       if (typeof arg === 'object' && arg !== null) {
@@ -13,7 +11,17 @@ export default function log(...args: any[]) {
     });
 
     axios.post(DISCORD_WEBHOOK_URL, {
-      content: `${formattedArgs.join(' ')}`,
+      content: `\`\`\`\n${formattedArgs.join(' ')}\n\`\`\``,
     });
   }
+}
+
+export function log(...args: any[]) {
+  console.log(...args);
+  discordLog(...args);
+}
+
+export function logError(...args: any[]) {
+  console.error(...args);
+  discordLog(...args);
 }

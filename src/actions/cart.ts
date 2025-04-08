@@ -7,7 +7,7 @@ import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
-import log from '@/lib/log';
+import { log } from '@/lib/log';
 
 export const cart = {
 	addProductIdToCart: defineAction({
@@ -206,8 +206,6 @@ export const cart = {
 				cartJSON: cart,
 				status: 'pending',
 			}).returning();
-
-			log('New order:', order);
 
 			return {
 				url: session.url,

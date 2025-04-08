@@ -5,7 +5,7 @@ import type { APIRoute } from 'astro';
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
-import log from '@/lib/log';
+import { log, logError } from '@/lib/log';
 
 export const POST: APIRoute = async ({ request }) => {
     log('Stripe webhook received');
@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     const sig = request.headers.get('stripe-signature');
 
     if (!sig) {
-        console.error('No Stripe signature found in request headers');
+        logError('No Stripe signature found in request headers');
         return new Response(JSON.stringify({ error: 'No signature provided' }), {
             status: 400,
             headers: {
@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
     try {
         event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
     } catch (err) {
-        console.error('Error verifying webhook signature:', err);
+        logError('Error verifying webhook signature:', err);
         return new Response(JSON.stringify({ error: (err as Error).message }), {
             status: 400,
             headers: {
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
                 const session = event.data.object as Stripe.Checkout.Session;
 
                 if (!session.id || !session.customer_email) {
-                    console.error('Missing session id or customer email');
+                    logError('Missing session id or customer email');
                     break;
                 }
 
@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
                 const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
                 if (!paymentIntent.metadata?.sessionId) {
-                    console.error('Missing session id in payment intent metadata');
+                    logError('Missing session id in payment intent metadata');
                     break;
                 }
 
@@ -78,7 +78,7 @@ export const POST: APIRoute = async ({ request }) => {
                 const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
                 if (!paymentIntent.metadata?.sessionId) {
-                    console.error('Missing session id in payment intent metadata');
+                    logError('Missing session id in payment intent metadata');
                     break;
                 }
 
@@ -94,7 +94,7 @@ export const POST: APIRoute = async ({ request }) => {
                 const session = event.data.object as Stripe.Checkout.Session;
 
                 if (!session.id) {
-                    console.error('Missing session id');
+                    logError('Missing session id');
                     break;
                 }
 
@@ -110,14 +110,14 @@ export const POST: APIRoute = async ({ request }) => {
                 const charge = event.data.object as Stripe.Charge;
 
                 if (!charge.payment_intent) {
-                    console.error('Missing payment intent in charge');
+                    logError('Missing payment intent in charge');
                     break;
                 }
 
                 const paymentIntent = await stripe.paymentIntents.retrieve(charge.payment_intent as string);
 
                 if (!paymentIntent.metadata?.sessionId) {
-                    console.error('Missing session id in payment intent metadata');
+                    logError('Missing session id in payment intent metadata');
                     break;
                 }
 
@@ -140,7 +140,7 @@ export const POST: APIRoute = async ({ request }) => {
             }
         });
     } catch (error) {
-        console.error('Error processing webhook:', error);
+        logError('Error processing webhook:', error);
         return new Response(JSON.stringify({ error: 'Internal server error' }), {
             status: 500,
             headers: {

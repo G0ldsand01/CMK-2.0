@@ -1,4 +1,4 @@
-import log from '@/lib/log';
+import { log } from '@/lib/log';
 import { cart } from './cart';
 import { products } from './products';
 import { reviews } from './reviews';
