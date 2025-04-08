@@ -40,6 +40,11 @@ export default defineConfig({
 				context: 'server',
 				optional: true,
 			}),
+			DISCORD_WEBHOOK_URL: envField.string({
+				access: 'secret',
+				context: 'server',
+				optional: true,
+			}),
 
 			/*
 			Stripe

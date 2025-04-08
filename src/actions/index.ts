@@ -1,3 +1,4 @@
+import log from '@/lib/log';
 import { cart } from './cart';
 import { products } from './products';
 import { reviews } from './reviews';
@@ -18,7 +19,7 @@ export const logSecurityEvent = (
 	userId: string,
 	details: Record<string, unknown>,
 ) => {
-	console.log(
+	log(
 		`[SECURITY] ${event} - User: ${userId} - ${JSON.stringify(details)}`,
 	);
 	// TODO: Implement proper logging service (e.g., Winston, Pino)

@@ -5,9 +5,10 @@ import type { APIRoute } from 'astro';
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
+import log from '@/lib/log';
 
 export const POST: APIRoute = async ({ request }) => {
-    console.log('Stripe webhook received');
+    log('Stripe webhook received');
     const endpointSecret = STRIPE_WEBHOOK_SECRET;
 
     const sig = request.headers.get('stripe-signature');
@@ -37,7 +38,7 @@ export const POST: APIRoute = async ({ request }) => {
         });
     }
 
-    console.log('Processing webhook event:', event.type);
+    log('Processing webhook event:', event.type);
 
     try {
         switch (event.type) {
@@ -129,7 +130,7 @@ export const POST: APIRoute = async ({ request }) => {
             }
 
             default:
-                console.log(`Unhandled event type ${event.type}`);
+                log(`Unhandled event type ${event.type}`);
         }
 
         return new Response(JSON.stringify({ received: true }), {
