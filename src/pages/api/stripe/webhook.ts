@@ -2,12 +2,11 @@ import { ordersTable } from '@/db/schema';
 import db from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import type { APIRoute } from 'astro';
-import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
+import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
 import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe';
 
 export const POST: APIRoute = async ({ request }) => {
-    const stripe = new Stripe(STRIPE_SECRET_KEY);
-
     const endpointSecret = STRIPE_WEBHOOK_SECRET;
 
     const sig = request.headers.get('stripe-signature');
