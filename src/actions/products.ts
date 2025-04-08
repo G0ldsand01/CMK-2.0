@@ -15,17 +15,6 @@ export const products = {
 			return products;
 		},
 	}),
-	// getProductsByCategory: defineAction({
-	//   input: z.object({
-	//     category: z.string(),
-	//   }),
-	//   handler: async (input) => {
-	//     const products = await db.query.productsTable.findMany({
-	//       where: eq(productsTable.category, input.category),
-	//     });
-	//     return products;
-	//   },
-	// }),
 	getProductsBySearch: defineAction({
 		input: z.object({
 			search: z.string(),
@@ -35,16 +24,6 @@ export const products = {
 				where: eq(productsTable.name, input.search),
 			});
 			return products;
-		},
-	}),
-
-	getHighestId: defineAction({
-		handler: async () => {
-			const [highestId] = await db.query.productsTable.findMany({
-				orderBy: desc(productsTable.id),
-			});
-
-			return highestId?.id || 0;
 		},
 	}),
 	addProduct: defineAction({
