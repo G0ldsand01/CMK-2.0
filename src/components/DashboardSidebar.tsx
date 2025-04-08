@@ -96,13 +96,11 @@ export type userData = {
 	role: string;
 };
 
-export function AppSidebar({
-	userData,
-	...props
-}: React.ComponentProps<typeof Sidebar> & { userData: userData }) {
+const getNavData = (role: string) => {
+	const navData = [...data.navMain];
 
-	if (userData.role === 'admin') {
-		data.navMain.push({
+	if (role === 'admin') {
+		navData.push({
 			title: 'Admin',
 			items: [
 				{
@@ -113,6 +111,16 @@ export function AppSidebar({
 			],
 		});
 	}
+
+	return navData;
+};
+
+export function AppSidebar({
+	userData,
+	...props
+}: React.ComponentProps<typeof Sidebar> & { userData: userData }) {
+	const navData = getNavData(userData.role);
+
 	return (
 		<Sidebar {...props}>
 			<SidebarHeader className="flex items-center justify-center">
@@ -129,7 +137,7 @@ export function AppSidebar({
 				</div>
 			</SidebarHeader>
 			<SidebarContent>
-				{data.navMain.map((item) => (
+				{navData.map((item) => (
 					<SidebarGroup key={item.title}>
 						<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
 						<SidebarGroupContent>
