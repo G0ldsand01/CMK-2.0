@@ -1,7 +1,7 @@
 import { DISCORD_WEBHOOK_URL } from "astro:env/server";
 import axios from 'redaxios';
 
-function discordLog(...args: any[]) {
+async function discordLog(...args: any[]) {
   if (DISCORD_WEBHOOK_URL) {
     const formattedArgs = args.map(arg => {
       if (typeof arg === 'object' && arg !== null) {
@@ -10,8 +10,10 @@ function discordLog(...args: any[]) {
       return String(arg);
     });
 
-    axios.post(DISCORD_WEBHOOK_URL, {
+    await axios.post(DISCORD_WEBHOOK_URL, {
       content: `\`\`\`\n${formattedArgs.join(' ')}\n\`\`\``,
+    }).catch((err) => {
+      console.error('Failed to send log to Discord:', err);
     });
   }
 }
