@@ -1,21 +1,30 @@
 ---
+import { ordersTable } from '@/db/schema';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import db from '@/lib/db';
 import { getUser } from '@/lib/user';
+import { eq } from 'drizzle-orm';
 
 const user = await getUser(Astro.request);
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 
 const userEmail = user.getEmail();
 
-const orders: string[] = [];
+const orders = await db
+  .select()
+  .from(ordersTable)
+  .where(eq(ordersTable.userId, user.getId()));
 ---
 
-<DashboardLayout title="Orders History" breadcrumb={{
-  '/orders': 'Orders',
-}}>
+<DashboardLayout
+  title="Orders History"
+  breadcrumb={{
+    '/orders': 'Orders',
+  }}
+>
   <div class="content">
     <div class="head">
       <div class="welcome-message">
@@ -37,16 +46,21 @@ const orders: string[] = [];
           orders.map((order) => (
             <div class="orders-list-body-item">
               <div class="orders-list-body-item-header">
-                <h3>Order #{order.number}</h3>
+                <h3>Order #{order.id}</h3>
                 <p>
-                  Order Date:{' '}
-                  {new Date(order.creationDate).toLocaleDateString()}
+                  Order Date: {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div class="orders-list-body-item-body">
-                <p>Order Total: ${order.total.toFixed(2)}</p>
+                <p>
+                  Order Total: $
+                  {order.cartJSON.reduce(
+                    (acc, item) =>
+                      acc + Number(item.products.price) * item.cart.quantity,
+                    0,
+                  )}
+                </p>
                 <p>Order Status: {order.status}</p>
-                {order.email && <p>Email: {order.email}</p>}
               </div>
             </div>
           ))

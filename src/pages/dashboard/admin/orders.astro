@@ -3,18 +3,14 @@ import { ordersTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq } from 'drizzle-orm';
 
 const user = await getUser(Astro.request);
 
-if (!user) {
+if (!user || !user.isAdmin()) {
   throw Astro.redirect('/login');
 }
 
-const orders = await db
-  .select()
-  .from(ordersTable)
-  .where(eq(ordersTable.userId, user.getId()));
+const orders = await db.select().from(ordersTable);
 ---
 
 <AdminDashboardLayout
