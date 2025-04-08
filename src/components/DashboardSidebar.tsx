@@ -107,7 +107,7 @@ export function AppSidebar({
 			items: [
 				{
 					title: 'Admin Dashboard',
-					url: '/dashboard/admin/',
+					url: '/admin',
 					icon: UserCog,
 				},
 			],
