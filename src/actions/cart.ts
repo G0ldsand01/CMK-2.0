@@ -199,12 +199,14 @@ export const cart = {
 				cancel_url: `${WEBSITE_URL}/cancel`,
 			});
 
-			await db.insert(ordersTable).values({
+			const order = await db.insert(ordersTable).values({
 				userId: user.getId(),
 				stripeSessionId: session.id,
 				cartJSON: cart,
 				status: 'pending',
-			});
+			}).returning();
+
+			console.log('New order:', order);
 
 			return {
 				url: session.url,

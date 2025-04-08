@@ -7,6 +7,7 @@ import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 
 export const POST: APIRoute = async ({ request }) => {
+    console.log('Stripe webhook received');
     const endpointSecret = STRIPE_WEBHOOK_SECRET;
 
     const sig = request.headers.get('stripe-signature');
