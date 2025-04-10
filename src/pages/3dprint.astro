@@ -1,53 +1,563 @@
 ---
-import Header from '../components/Header.astro';
-import ProductCard from '../components/ProductCard.astro';
-import Layout from '../layouts/Layout.astro';
-import '../styles/index.css';
-import '../styles/products.css';
-import { products as productsActions } from '../actions/products';
-
-const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
-	{},
-);
-const bestProducts = bestProductsActions.data;
+import Layout from "../layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"; // Import cn for class name merging
 ---
 
-<Layout title="Products" navbar={true}>
-  <div id="products">
-    <div
-      class="title"
-      style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }"
-    >
-      <h1>Our Products</h1>
+<Layout title="3D Print Quote Service" navbar={true}>
+  <div class="container mx-auto p-4 md:p-8">
+    <div class="title text-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">
+        3D Print Quote Service
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">
+        Send us your files and we will print them for you
+      </p>
     </div>
-    <div class="products-grid">
-      {
-        bestProducts && bestProducts.length > 0 ? (
-          bestProducts.map((product) => (
-            <ProductCard product={product} server:defer />
-          ))
-        ) : (
-          <p>No products found</p>
-        )
-      }
+    <div class="form">
+      <form class="space-y-6">
+        <div class="page1 flex flex-col items-center">
+          <input
+            type="text"
+            placeholder="Name"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="Phone"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="Address"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="City"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="State"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="Zip"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <Button
+            id="next-page-button"
+            type="button"
+            class="w-full max-w-md bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+          >
+            Next
+          </Button>
+        </div>
+
+        <div class="page2 flex flex-col items-center" style="display: none;">
+          <input
+            type="file"
+            name="file"
+            id="file"
+            accept=".stl"
+            class="w-full max-w-md"
+          />
+          <select
+            id="material-select"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          >
+            <option value="PLA">PLA</option>
+            <option value="ABS">ABS</option>
+            <option value="PETG">PETG</option>
+            <option value="TPU">TPU</option>
+          </select>
+          <label for="size-printer">Size / Printer:</label>
+          <select
+            name="size-printer"
+            id="size-printer"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          >
+            <option value="small">Small / A1 mini / 180mm</option>
+            <option value="ender3">Ender 3 / 220mm</option>
+            <option value="large">Large / A1 / 256mm</option>
+          </select>
+          <label for="color">Color:</label>
+          <select
+            id="color-select"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          >
+            <option value="#000000">Black</option>
+            <option value="#ffffff">White</option>
+            <option value="#808080">Grey</option>
+            <option value="#0000ff">Blue</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Anything we should know?"
+            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+          />
+          <div class="flex justify-between w-full max-w-md">
+            <Button
+              id="prev-page-button"
+              type="button"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+            >
+              Previous
+            </Button>
+            <Button
+              id="next-page-button"
+              type="button"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+
+        <div class="page3 flex flex-col items-center" style="display: none;">
+          <div class="title text-center mb-4">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+              Here's a preview of your model
+            </h1>
+          </div>
+          <div class="3d-viewer w-full max-w-md">
+            <canvas
+              id="3d-canvas"
+              width="500"
+              height="500"
+              class="border border-gray-300 dark:border-gray-700 rounded-md"
+            ></canvas>
+          </div>
+          <div class="mt-4 text-center">
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+              Estimated Cost: <span
+                id="cost-estimate"
+                class="font-semibold text-green-600 dark:text-green-400"
+                >0.00 $</span
+              >
+            </p>
+          </div>
+          <div class="flex justify-between w-full max-w-md mt-4">
+            <Button
+              id="prev-page-button"
+              type="button"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+            >
+              Previous
+            </Button>
+            <Button
+              id="checkout-print-button"
+              type="submit"
+              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+            >
+              <i class="fa fa-shopping-cart mr-2"></i>
+              Go to Checkout & Pay
+            </Button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </Layout>
+
 <style>
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  .container {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 100vh;
+
+    padding: 2rem;
   }
 
-  .container {
-    min-height: 100vh; /* Ensures the container takes up full viewport height */
+  .title {
+    text-align: center;
+    color: var(--color-foreground);
+    background-color: var(--color-muted);
+    border-radius: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+  }
+
+  .form {
     display: flex;
+
     flex-direction: column;
-    justify-content: center;
+
     align-items: center;
-    padding: 20px;
+
+    background-color: var(--color-muted);
+
+    padding: 2rem;
+
+    border-radius: 2rem;
+  }
+
+  .form input,
+  .form select {
+    margin: 10px;
+
+    padding: 10px;
+
+    width: 300px;
+  }
+
+  .form button {
+    margin-top: 20px;
+  }
+
+  .3d-viewer {
+    width: 100%; /* Make it responsive */
+
+    max-width: 500px; /* But keep a max width */
+
+    height: auto; /* Maintain aspect ratio */
+
+    aspect-ratio: 1 / 1;
+
+    border: 1px solid #ccc;
+
+    margin: 10px 0;
+
+    position: relative;
+  }
+
+  #3d-canvas {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      margin-top: 5rem;
+    }
+
+    .title {
+      font-size: 0.9rem;
+
+      margin-bottom: 1rem;
+
+      text-align: center;
+      width: 90%;
+    }
+
+    .form {
+      flex-direction: column;
+
+      align-items: center;
+    }
+
+    .form input,
+    .form select {
+      margin: 10px;
+
+      padding: 10px;
+
+      width: 100%;
+    }
+
+    .form button {
+      margin-top: 20px;
+    }
+
+    .3d-viewer {
+      width: 100%;
+
+      height: 500px;
+
+      border: 1px solid #ccc;
+
+      margin: 10px 0;
+
+      position: relative;
+
+      border-radius: 8px;
+
+      background-color: #f9f9f9;
+    }
+
+    #3d-canvas {
+      width: 100%;
+
+      height: 100%;
+
+      display: block;
+
+      border-radius: 8px;
+    }
+
+    .range-input {
+      width: 100%;
+
+      margin: 10px 0;
+    }
+
+    #scale-value {
+      font-size: 1.1rem;
+
+      color: #333;
+
+      margin-top: 10px;
+
+      display: block;
+
+      text-align: center;
+    }
+
+    #cost-estimate-container {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #28a745;
+      margin-top: 10px;
+      text-align: center;
+    }
   }
 </style>
+
+<script>
+  import * as THREE from "three";
+  import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+  // import page elements
+  const page1 = document.querySelector(".page1");
+  const page2 = document.querySelector(".page2");
+  const page3 = document.querySelector(".page3");
+
+  let currentPage = 1;
+  const totalPages = 3;
+  const form = document.querySelector("form");
+
+  const fileInput = document.getElementById("file") as HTMLInputElement;
+  const materialSelect = document.getElementById(
+    "material-select"
+  ) as HTMLSelectElement;
+  let model: THREE.Mesh | null = null;
+  let scene: THREE.Scene | undefined;
+  let camera: THREE.PerspectiveCamera | undefined;
+  let renderer: THREE.WebGLRenderer | undefined;
+  let controls: OrbitControls | undefined;
+  let loader: STLLoader;
+  let modelVolume = 0;
+  let currentScale = 1;
+
+  const materialCosts = {
+    PLA: 0.025,
+    ABS: 0.03,
+    PETG: 0.04,
+    TPU: 0.06,
+  };
+
+  const materialDensities = {
+    // in g/mm^3 (approximate)
+    PLA: 1.24e-6,
+    ABS: 1.05e-6,
+    PETG: 1.27e-6,
+    TPU: 1.12e-6,
+  };
+
+  // Initialize the viewer
+  function initViewer() {
+    const canvas = document.getElementById("3d-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0);
+
+    camera = new THREE.PerspectiveCamera(
+      45,
+      canvas.clientWidth / canvas.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 0, 100);
+    scene.add(camera);
+
+    const ambient = new THREE.AmbientLight(0x888888);
+    scene.add(ambient);
+    const directional = new THREE.DirectionalLight(0xffffff, 0.8);
+    directional.position.set(1, 1, 1).normalize();
+    scene.add(directional);
+
+    loader = new STLLoader();
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+    controls.rotateSpeed = 0.5;
+
+    // Add resize listener to adjust camera and renderer on window resize
+    window.addEventListener("resize", () => {
+      if (camera && renderer) {
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      }
+    });
+
+    animate();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (model) model.rotation.z += 0.01;
+    controls?.update();
+    renderer?.render(scene, camera);
+  }
+
+  function loadSTL(file: File) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const contents = event.target?.result;
+      if (!contents) {
+        console.error("Failed to load file");
+        return;
+      }
+
+      try {
+        const geometry = loader.parse(contents as string | ArrayBuffer);
+
+        if (model) {
+          scene?.remove(model);
+        }
+        const material = new THREE.MeshStandardMaterial({
+          color: 0x009578,
+          wireframe: false,
+        });
+        model = new THREE.Mesh(geometry, material);
+        geometry.computeBoundingBox();
+        if (geometry.boundingBox) {
+          const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+          model.position.sub(center);
+        }
+
+        scene?.add(model);
+
+        geometry.computeVolume();
+        modelVolume = geometry.volume;
+
+        updateCostEstimate();
+      } catch (error) {
+        console.error("Error parsing STL file:", error);
+        alert("Error: Invalid STL file. Please upload a valid .stl file.");
+      }
+    };
+    reader.onerror = function (error) {
+      console.error("FileReader Error:", error);
+      alert("Error reading file. Please try again.");
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Event listener for file input change
+  fileInput.addEventListener("change", (event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      loadSTL(target.files[0]);
+    }
+  });
+
+  // Submit the form
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.cost = calculateCost();
+    console.log(data);
+    alert("Your print request has been submitted! (This is a demo)");
+  });
+
+  // Update the cost estimate
+  function updateCostEstimate() {
+    const cost = calculateCost();
+    const costElement = document.getElementById("cost-estimate");
+    if (costElement) {
+      costElement.textContent = cost.toFixed(2) + " $";
+    }
+  }
+  // Calculate the cost of the model
+  function calculateCost() {
+    const materialType = (
+      document.getElementById("material-select") as HTMLSelectElement
+    ).value;
+    const density = materialDensities[materialType] || materialDensities.PLA;
+    const costPerGram = materialCosts[materialType] || materialCosts.PLA;
+    const weight = modelVolume * density * 1000; // convert mm^3 to cm^3, density is g/cm^3
+    const cost = weight * costPerGram;
+    return cost;
+  }
+  // Switch to the next page
+  const nextPageButtons = document.querySelectorAll("#next-page-button");
+  nextPageButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updatePageVisibility();
+      }
+    });
+  });
+
+  // Switch to the previous page
+  const prevPageButtons = document.querySelectorAll("#prev-page-button");
+  prevPageButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updatePageVisibility();
+      }
+    });
+  });
+
+  function updatePageVisibility() {
+    // Hide all pages
+    if (page1) page1.style.display = "none";
+    if (page2) page2.style.display = "none";
+    if (page3) page3.style.display = "none";
+
+    // Show current page
+    switch (currentPage) {
+      case 1:
+        if (page1) page1.style.display = "flex";
+        break;
+      case 2:
+        if (page2) page2.style.display = "flex";
+        break;
+      case 3:
+        if (page3) page3.style.display = "flex";
+        break;
+    }
+
+    // Update button states
+    prevPageButtons.forEach((button) => {
+      button.disabled = currentPage === 1;
+    });
+
+    nextPageButtons.forEach((button) => {
+      button.disabled = currentPage === totalPages;
+    });
+  }
+
+  // Initialize page visibility and 3D viewer
+  updatePageVisibility();
+  document.addEventListener("DOMContentLoaded", () => {
+    initViewer();
+  });
+</script>

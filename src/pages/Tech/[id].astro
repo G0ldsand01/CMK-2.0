@@ -1,0 +1,265 @@
+---
+import { Heart, ShoppingCart } from '@lucide/astro';
+import Cart from '@/components/cart/Cart.astro';
+import ProductImage from '@/components/images/ProductImage.astro';
+import ReviewSection from '@/components/reviews/ReviewSection.astro';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { getUser } from '@/lib/user';
+import Layout from '../../layouts/Layout.astro';
+import db from '@/lib/db';
+import { productsTable, wishlistTable } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
+
+const { id } = Astro.params;
+
+const user = await getUser(Astro.request);
+
+const { product, isInWishlist } = await db.transaction(async (tx) => {
+  const [product] = await tx
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.id, Number(id)));
+
+  if (user && product) {
+    const isInWishlist = await tx
+      .select()
+      .from(wishlistTable)
+      .where(
+        and(
+          eq(wishlistTable.userId, user.getId()),
+          eq(wishlistTable.productId, Number(id)),
+        ),
+      );
+
+    return { product, isInWishlist };
+  }
+
+  return { product, isInWishlist: false };
+});
+
+if (!product) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
+  {
+    product ? (
+      <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
+        <Card>
+          <CardContent className="p-6 relative">
+            {user && (
+              <button
+                class={`absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-md
+              ${isInWishlist ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'}
+              transition-all duration-200 hover:scale-110 hover:shadow-lg active:scale-95`}
+                id="add-to-wishlist-button"
+                aria-label={
+                  isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
+                }
+              >
+                <Heart
+                  class={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
+                />
+              </button>
+            )}
+            <div data-product-id={id}>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left column - Image */}
+                <div class="relative">
+                  <ProductImage
+                    imagePath={product.image}
+                    width={600}
+                    height={600}
+                    altText={product.name}
+                    class="rounded-lg w-full h-auto object-cover"
+                  />
+                </div>
+
+                {/* Right column - Content */}
+                <div class="flex flex-col">
+                  <CardHeader className="px-0">
+                    <CardTitle className="text-3xl">{product.name}</CardTitle>
+                    <CardDescription className="text-base">
+                      {product.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <div class="mb-6">
+                    <span class="text-2xl font-bold">
+                      ${Number(product.price).toFixed(2) || '0.00'}
+                    </span>
+                  </div>
+                  <CardFooter className="px-0 mt-auto">
+                    <div class="flex gap-4 w-full">
+                      {user && (
+                        <>
+                          <Cart
+                            classes="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
+                            variant="outline"
+                            server:defer
+                          >
+                            <ShoppingCart /> View Cart
+                          </Cart>
+                          <Button
+                            id="add-to-cart-button"
+                            className="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
+                            client:load
+                            server:defer={true}
+                          >
+                            <ShoppingCart /> Add to Cart
+                          </Button>
+                        </>
+                      )}
+                      {!user && (
+                        <a href="/login" class="w-full">
+                          <Button
+                            id="add-to-cart-button"
+                            className="w-full font-bold py-2 px-4 rounded flex items-center gap-2 justify-center"
+                          >
+                            <ShoppingCart /> Login to Add to Cart
+                          </Button>
+                        </a>
+                      )}
+                    </div>
+                  </CardFooter>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Review section below */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Reviews</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ReviewSection product={product} />
+          </CardContent>
+        </Card>
+      </div>
+    ) : (
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="p-6">
+            <h1 class="text-2xl font-bold">Product not found</h1>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+</Layout>
+
+<script>
+  import { actions } from 'astro:actions';
+  import { toast } from 'sonner';
+  import { setCart } from '@/lib/cart';
+
+  /*
+    Product ID
+  */
+
+  const product = document.querySelector('[data-product-id]');
+  if (!product) {
+    console.error('Product is not set');
+    throw new Error('Product is not set');
+  }
+
+  const productId = product.getAttribute('data-product-id');
+  if (!productId) {
+    console.error('Product ID is not set');
+    throw new Error('Product ID is not set');
+  }
+
+  /*
+    Wishlist Button
+  */
+
+  const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
+  if (addToWishlistButton) {
+    addToWishlistButton.addEventListener('click', async () => {
+      const { error, data } = await actions.user.toggleProductFromWishlist({
+        productId: productId as string,
+      });
+      if (!error) {
+        if (data.inWishlist) {
+          addToWishlistButton.classList.add('text-red-500');
+          addToWishlistButton.classList.remove('text-gray-400');
+        } else {
+          addToWishlistButton.classList.remove('text-red-500');
+          addToWishlistButton.classList.add('text-gray-400');
+        }
+      }
+    });
+  }
+
+  /*
+    Add to Cart Button
+  */
+
+  const addToCartButton = document.querySelector('#add-to-cart-button');
+  if (addToCartButton) {
+    addToCartButton.addEventListener('click', async () => {
+      const { error, data } = await actions.cart.addProductIdToCart({
+        productId: productId as string,
+      });
+
+      if (!error) {
+        setCart(data.cart);
+        if (data.success) {
+          toast.success('Successfully added to cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Undo',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
+
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
+        } else {
+          toast.warning('Product already in cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Remove',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
+
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
+        }
+      } else {
+        toast.error('Failed to add to cart');
+      }
+    });
+  }
+</script>
