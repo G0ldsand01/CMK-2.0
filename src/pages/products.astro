@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard.astro';
 import Layout from '../layouts/Layout.astro';
 import '../styles/index.css';
 import '../styles/products.css';
-import { products as productsActions } from '../actions/products';
+import { products as productsActions } from '@/actions/products';
 
 const bestProductsActions = await Astro.callAction(
 	productsActions.getProductsByType
@@ -53,4 +53,5 @@ const bestProducts = bestProductsActions.data;
     align-items: center;
     padding: 20px;
   }
+
 </style>

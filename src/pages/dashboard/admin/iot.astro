@@ -12,7 +12,7 @@ if (!user || !user.isAdmin()) {
 const bestProductsActions = await Astro.callAction(
   productsActions.getProductsByType,
   {
-    type: 'products',
+    type: 'iot',
   },
 );
 const bestProducts = bestProductsActions.data;
@@ -29,7 +29,7 @@ const types = ['products', 'models', 'tech', 'iot'];
   <div class="content">
     <div class="head">
       <div class="welcome-message">
-        <h1>Add New Products</h1>
+        <h1>Add New IOT</h1>
         <p>Manage your account settings</p>
       </div>
     </div>
@@ -51,6 +51,15 @@ const types = ['products', 'models', 'tech', 'iot'];
         </>
       ) : (
         <p>No products found</p>
+        <div class="add-product">
+            <button
+              type="button"
+              class="add-product-button"
+              id="openModalButton"
+            >
+              <Plus size={60} color="#27ae60" class="glowing-plus" />
+            </button>
+          </div>
       )}
     </div>
     <div class="modal-overlay" id="modalOverlay">
