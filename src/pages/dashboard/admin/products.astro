@@ -9,6 +9,7 @@ if (!user || !user.isAdmin()) {
 }
 
 const categories = ['mouse', 'keyboard', 'headset'];
+const types = ['products', 'models', 'tech', 'iot'];
 ---
 
 <AdminDashboardLayout
@@ -39,7 +40,14 @@ const categories = ['mouse', 'keyboard', 'headset'];
 
         <label for="image">Image URL:</label>
         <input type="text" name="image" id="image" class="inputs" required />
-
+        <label for="type">Type:</label>
+        <select name="type" id="type" class="inputs" required>
+          {
+            types.map((type) => (
+              <option value={type}>{type}</option>
+            ))
+          }
+        </select>
         <label for="category">Category:</label>
         <select name="category" id="category" class="inputs" required>
           {
@@ -67,6 +75,7 @@ const categories = ['mouse', 'keyboard', 'headset'];
         price: Number(formData.get('price')) || 0,
         description: (formData.get('description') as string) || '',
         image: (formData.get('image') as string) || '',
+        type: (formData.get('type') as string) || '',
         category: (formData.get('category') as string) || '',
         stock: 0,
       });

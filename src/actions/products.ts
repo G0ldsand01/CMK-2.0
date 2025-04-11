@@ -1,7 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { and, desc, eq } from 'drizzle-orm';
-import { productsTable, wishlistTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
@@ -26,12 +26,26 @@ export const products = {
 			return products;
 		},
 	}),
+	getProductsByType: defineAction({
+		input: z.object({
+			type: z.string(),
+		}),
+		handler: async (input) => {
+			const products = await db.query.productsTable.findMany({
+				// @ts-expect-error 
+				where: eq(productsTable.type, input.type),
+				limit: 8,
+			});
+			return products;
+		},
+	}),
 	addProduct: defineAction({
 		input: z.object({
 			name: z.string(),
 			price: z.number(),
 			description: z.string(),
 			image: z.string(),
+			type: z.string(),
 			category: z.string(),
 			stock: z.number(),
 		}),
@@ -70,6 +84,7 @@ export const products = {
 				price: input.price.toString(),
 				description: input.description,
 				image: input.image,
+				type: input.type,
 				category: input.category,
 				stock: input.stock,
 			};
@@ -80,46 +95,5 @@ export const products = {
 			return newProduct;
 		},
 	}),
-	// addReview: defineAction({
-	//   input: z.object({
-	//     productId: z.number(),
-	//     rating: z.number(),
-	//   }),
-	//   handler: async (input, context) => {
-	//     const user = await getUser(context.request);
-
-	//     if (!user) {
-	//       logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
-	//         ip: context.request.headers.get('x-forwarded-for'),
-	//       });
-	//       throw new ActionError({
-	//         code: 'UNAUTHORIZED',
-	//         message: 'User must be logged in.',
-	//       });
-	//     }
-
-	//     const [product] = await db.query.productsTable.findMany({
-	//       where: eq(productsTable.id, input.productId),
-	//       limit: 1,
-	//     });
-
-	//     if (!product) {
-	//       throw new ActionError({
-	//         code: 'NOT_FOUND',
-	//         message: 'Product not found',
-	//       });
-	//     }
-
-	//     const newReview = {
-	//       user: user.getId(),
-	//       productId: input.productId,
-	//       rating: input.rating,
-	//       comment: '',
-	//     };
-
-	//     await db.insert(reviewsTable).values(newReview);
-
-	//     return newReview;
-	//   },
-	// }),
+	
 };

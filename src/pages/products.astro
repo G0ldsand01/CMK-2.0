@@ -7,8 +7,11 @@ import '../styles/products.css';
 import { products as productsActions } from '../actions/products';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
-	{},
+	productsActions.getProductsByType
+  ,
+	{
+    type: 'products',
+  },
 );
 const bestProducts = bestProductsActions.data;
 ---

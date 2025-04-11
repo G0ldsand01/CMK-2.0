@@ -7,8 +7,10 @@ import '../styles/products.css';
 import { products as productsActions } from '../actions/products';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
-	{},
+	productsActions.getProductsByType,
+  {
+    type: 'models',
+  },
 );
 const bestProducts = bestProductsActions.data;
 ---
@@ -19,7 +21,7 @@ const bestProducts = bestProductsActions.data;
       class="title"
       style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }"
     >
-      <h1>Our Products</h1>
+      <h1>Our 3D Models</h1>
     </div>
     <div class="products-grid">
       {

@@ -5,57 +5,63 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
 ---
 
 <Layout title="3D Print Quote Service" navbar={true}>
-  <div class="container mx-auto p-4 md:p-8">
-    <div class="title text-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">
+  <div class="container mx-auto p-4 md:p-8 lg:p-12">
+    <div class="title text-center mb-6 md:mb-8 lg:mb-10">
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-200">
         3D Print Quote Service
       </h1>
-      <p class="text-gray-600 dark:text-gray-400">
+      <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base lg:text-lg">
         Send us your files and we will print them for you
       </p>
     </div>
     <div class="form">
-      <form class="space-y-6">
+      <form class="space-y-4 md:space-y-6 lg:space-y-8">
         <div class="page1 flex flex-col items-center">
           <input
             type="text"
             placeholder="Name"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
           />
           <input
             type="email"
             placeholder="Email"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+            
           />
           <input
             type="text"
             placeholder="Phone"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+           
           />
           <input
             type="text"
             placeholder="Address"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+          
           />
           <input
             type="text"
             placeholder="City"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+            
           />
           <input
             type="text"
             placeholder="State"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+           
           />
           <input
             type="text"
             placeholder="Zip"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
+            
           />
           <Button
             id="next-page-button"
             type="button"
-            class="w-full max-w-md bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+            class="button"
           >
             Next
           </Button>
@@ -67,31 +73,31 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
             name="file"
             id="file"
             accept=".stl"
-            class="w-full max-w-md"
+            class="input-field"
           />
           <select
             id="material-select"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="select-field"
           >
             <option value="PLA">PLA</option>
             <option value="ABS">ABS</option>
             <option value="PETG">PETG</option>
             <option value="TPU">TPU</option>
           </select>
-          <label for="size-printer">Size / Printer:</label>
+          <label for="size-printer" class="label-field">Size / Printer:</label>
           <select
             name="size-printer"
             id="size-printer"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="select-field"
           >
             <option value="small">Small / A1 mini / 180mm</option>
             <option value="ender3">Ender 3 / 220mm</option>
             <option value="large">Large / A1 / 256mm</option>
           </select>
-          <label for="color">Color:</label>
+          <label for="color" class="label-field">Color:</label>
           <select
             id="color-select"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="select-field"
           >
             <option value="#000000">Black</option>
             <option value="#ffffff">White</option>
@@ -101,20 +107,20 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
           <input
             type="text"
             placeholder="Anything we should know?"
-            class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            class="input-field"
           />
           <div class="flex justify-between w-full max-w-md">
             <Button
               id="prev-page-button"
               type="button"
-              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+              class="button prev-button"
             >
               Previous
             </Button>
             <Button
               id="next-page-button"
               type="button"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+              class="button next-button"
             >
               Next
             </Button>
@@ -123,20 +129,20 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
 
         <div class="page3 flex flex-col items-center" style="display: none;">
           <div class="title text-center mb-4">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-gray-200">
               Here's a preview of your model
             </h1>
           </div>
           <div class="3d-viewer w-full max-w-md">
             <canvas
               id="3d-canvas"
-              width="500"
-              height="500"
+              width="300"
+              height="300"
               class="border border-gray-300 dark:border-gray-700 rounded-md"
             ></canvas>
           </div>
           <div class="mt-4 text-center">
-            <p class="text-lg text-gray-700 dark:text-gray-300">
+            <p class="text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-300">
               Estimated Cost: <span
                 id="cost-estimate"
                 class="font-semibold text-green-600 dark:text-green-400"
@@ -148,14 +154,14 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
             <Button
               id="prev-page-button"
               type="button"
-              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+              class="button prev-button"
             >
               Previous
             </Button>
             <Button
               id="checkout-print-button"
               type="submit"
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+              class="button checkout-button"
             >
               <i class="fa fa-shopping-cart mr-2"></i>
               Go to Checkout & Pay
@@ -170,161 +176,190 @@ import { cn } from "@/lib/utils"; // Import cn for class name merging
 <style>
   .container {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
-
     min-height: 100vh;
-
-    padding: 2rem;
+    padding: 1rem;
   }
 
   .title {
     text-align: center;
     color: var(--color-foreground);
     background-color: var(--color-muted);
-    border-radius: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    width: 90%; /* Adjust width for smaller screens */
   }
 
   .form {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     background-color: var(--color-muted);
-
-    padding: 2rem;
-
-    border-radius: 2rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    width: 90%; /* Adjust width for smaller screens */
   }
 
-  .form input,
-  .form select {
-    margin: 10px;
-
-    padding: 10px;
-
-    width: 300px;
+  .input-field,
+  .select-field {
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background-color: var(--color-bg);
   }
 
-  .form button {
-    margin-top: 20px;
+  .label-field {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    margin-top: 0.5rem;
+    align-self: flex-start;
   }
 
+  .button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .prev-button {
+    background-color: var(--color-gray-300);
+    color: var(--color-gray-800);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .prev-button:hover {
+    background-color: var(--color-gray-400);
+  }
+
+  .next-button {
+    background-color: var(--color-blue-500);
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .next-button:hover {
+    background-color: var(--color-blue-700);
+  }
+
+  .checkout-button {
+    background-color: var(--color-green-500);
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .checkout-button:hover {
+    background-color: var(--color-green-700);
+  }
+  option {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
   .3d-viewer {
-    width: 100%; /* Make it responsive */
-
-    max-width: 500px; /* But keep a max width */
-
-    height: auto; /* Maintain aspect ratio */
-
+    width: 100%;
+    max-width: 300px;
+    height: auto;
     aspect-ratio: 1 / 1;
-
-    border: 1px solid #ccc;
-
-    margin: 10px 0;
-
+    border: 1px solid var(--color-border);
+    margin: 0.75rem 0;
     position: relative;
+    border-radius: 0.5rem;
+    background-color: var(--color-bg-secondary);
   }
 
   #3d-canvas {
     width: 100%;
-
     height: 100%;
-
     display: block;
+    border-radius: 0.5rem;
   }
 
-  @media (max-width: 768px) {
+  @media (min-width: 768px) {
     .container {
-      margin-top: 5rem;
+      padding: 2rem;
     }
 
     .title {
-      font-size: 0.9rem;
-
-      margin-bottom: 1rem;
-
-      text-align: center;
-      width: 90%;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 70%;
     }
 
     .form {
-      flex-direction: column;
-
-      align-items: center;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 70%;
     }
 
-    .form input,
-    .form select {
-      margin: 10px;
-
-      padding: 10px;
-
-      width: 100%;
+    .input-field,
+    .select-field,
+    .label-field,
+    .button {
+      font-size: 1rem;
+      padding: 0.8rem;
+      margin: 0.8rem 0;
     }
 
-    .form button {
-      margin-top: 20px;
+    .button {
+      padding: 0.8rem 1.6rem;
     }
 
     .3d-viewer {
-      width: 100%;
+      max-width: 400px;
+      margin: 1rem 0;
+    }
+  }
 
-      height: 500px;
-
-      border: 1px solid #ccc;
-
-      margin: 10px 0;
-
-      position: relative;
-
-      border-radius: 8px;
-
-      background-color: #f9f9f9;
+  @media (min-width: 1024px) {
+    .container {
+      padding: 3rem;
     }
 
-    #3d-canvas {
-      width: 100%;
-
-      height: 100%;
-
-      display: block;
-
-      border-radius: 8px;
+    .title {
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      border-radius: 1.25rem;
+      padding: 2.5rem;
+      width: 50%;
     }
 
-    .range-input {
-      width: 100%;
-
-      margin: 10px 0;
+    .form {
+      padding: 2.5rem;
+      border-radius: 1.25rem;
+      width: 50%;
     }
 
-    #scale-value {
+    .input-field,
+    .select-field,
+    .label-field,
+    .button {
       font-size: 1.1rem;
-
-      color: #333;
-
-      margin-top: 10px;
-
-      display: block;
-
-      text-align: center;
+      padding: 0.9rem;
+      margin: 0.9rem 0;
     }
 
-    #cost-estimate-container {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #28a745;
-      margin-top: 10px;
-      text-align: center;
+    .button {
+      padding: 0.9rem 1.8rem;
+    }
+
+    .3d-viewer {
+      max-width: 500px;
+      margin: 1.25rem 0;
     }
   }
 </style>
