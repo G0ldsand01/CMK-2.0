@@ -136,7 +136,7 @@ import Layout from '../layouts/Layout.astro';
   .title h1 {
     font-size: 2.5rem;
     font-weight: 600;
-    color: #f9eeee;
+    color: var(--color-foreground);
   }
 
   .about-us {
@@ -182,14 +182,14 @@ import Layout from '../layouts/Layout.astro';
 
   .text-content h2 {
     font-size: 2rem;
-    color: #f4f4f4;
+    color: var(--color-foreground);
     margin-bottom: 1rem;
   }
 
   .text-content p {
     font-size: 1.1rem;
     line-height: 1.7;
-    color: #e7dcdc;
+    color: var(--color-foreground);
     margin-bottom: 1.5rem;
   }
 
@@ -202,7 +202,7 @@ import Layout from '../layouts/Layout.astro';
   .text-content ul li {
     font-size: 1.1rem;
     line-height: 1.5;
-    color: #fff;
+    color: var(--color-foreground);
     margin-bottom: 0.8rem;
     position: relative;
     padding-left: 1.5rem; /* Space for bullet/icon */
@@ -232,13 +232,13 @@ import Layout from '../layouts/Layout.astro';
 
   .last h2 {
     font-size: 2rem;
-    color: #f4f4f4;
+    color: var(--color-foreground);
     margin-bottom: 1rem;
   }
 
   .last p {
     font-size: 1.1rem;
-    color: #e7dcdc;
+    color: var(--color-foreground);
     margin-bottom: 1rem;
   }
 
@@ -248,7 +248,7 @@ import Layout from '../layouts/Layout.astro';
 
   .last button {
     background-color: transparent;
-    color: #fff;
+    color: var(--color-foreground);
     font-size: 1.1rem;
     font-weight: 600;
     padding: 0.8rem 1.5rem;
@@ -264,37 +264,40 @@ import Layout from '../layouts/Layout.astro';
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .section-container {
-      flex-direction: column;
-    }
-
-    .image-content {
-      order: 0; /* Reset order on smaller screens */
-    }
-
-    .text-content {
-      order: 0; /* Reset order on smaller screens */
-      padding: 15px;
-    }
-
-    .text-content.right {
-      order: 0; /* Ensure text is below image */
-    }
-
-    .text-content.left {
-      order: 0; /* Ensure text is below image */
-    }
-
-    .text-content h2 {
-      font-size: 1.75rem;
-    }
-
-    .text-content p {
-      font-size: 1rem;
-    }
-
-    .last .text-content {
-      text-align: center; /* Center text on smaller screens */
-    }
+  .section-container {
+    flex-direction: column;
+    text-align: center;
   }
+
+  .image-content {
+    order: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .image-content img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .text-content {
+    padding: 10px 5px;
+  }
+
+  .text-content h2 {
+    font-size: 1.6rem;
+  }
+
+  .text-content p,
+  .text-content ul li {
+    font-size: 1rem;
+  }
+
+  .last .text-content {
+    text-align: center;
+  }
+}
 </style>

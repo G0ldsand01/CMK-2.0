@@ -3,138 +3,120 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Contact Us" navbar={true}>
-  <div id="contact">
-    <div class="title" style="text-align: center; margin-top: 5rem;">
-      <h1>Contact Us</h1>
-    </div>
-    <center>
-      <div class="contact-form">
-        <form action="">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required />
-            <span class="error">This field is required</span>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-            <span class="error">This field is required</span>
-          </div>
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" required></textarea>
-            <span class="error">This field is required</span>
-          </div>
-          <button type="submit" class="button">Send Message</button>
-        </form>
+  <section class="contact-section">
+    <h1>Get in Touch</h1>
+    <p>We’d love to hear from you. Fill out the form below and we'll get back to you as soon as possible.</p>
+    <form class="contact-form" method="POST" action="https://formspree.io/f/xjkyjqap">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
       </div>
-    </center>
-  </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
 </Layout>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #e7dcdc;
-    background-color: #121212;
-  }
-
-  .title {
-    text-align: center;
+  .contact-section {
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
     padding: 2rem;
-    color: #e7dcdc;
-    font-family: 'Atkinson Hyperlegible Next', serif;
-    font-optical-sizing: auto;
-    font-weight: 200;
-    font-style: normal;
+    background: var(--color-muted);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 30px var(--color-shadow);
+    color: var(--color-foreground);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .title h1 {
-    font-size: 3rem;
-    font-weight: 600;
+  .contact-section h1 {
+    font: 600 Atkinson Hyperlegible, sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
   }
+
+  .contact-section p {
+    font: 400 Atkinson Hyperlegible, sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--color-foreground);
+  }
+
   .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 4rem;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    gap: 1.5rem;
+    text-align: left;
   }
-  .contact-form button {
-    padding: 0.75rem 1.5rem;
-    background-color: #e7dcdc;
-    color: #292929;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #27ae60;
+  }
+
+  button[type="submit"] {
+    align-self: center;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    background: #27ae60;
+    color: var(--color-foreground);
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-    text-align: center;
-    display: block;
-  }
-  .contact-form button:hover {
-    background-color: #292929;
-    color: #e7dcdc;
-    border: solid 2px #e7dcdc;
-  }
-  .contact-form button a {
-    text-decoration: none;
-    color: #292929;
-  }
-  .contact-form button:hover {
-    text-decoration: none;
-    color: #e7dcdc;
-  }
-  .contact-form label {
-    display: block;
-    font:
-      1.4rem 'Atkinson Hyperlegible Next',
-      serif;
-  }
-  .contact-form input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e7dcdc;
-    border-radius: 0.5rem;
-  }
-  .contact-form textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e7dcdc;
-    border-radius: 0.5rem;
+    transition: background 0.3s ease;
   }
 
-  @media screen and (max-width: 768px) {
-    #home {
-      width: 100%;
-      padding: 1rem;
-      border-radius: 0 0 16px 16px;
-      box-shadow: none;
-    }
+  button[type="submit"]:hover {
+    background: #219150;
+  }
 
-    .title {
-      padding: 1rem;
-      font-size: 1.2rem;
-    }
-
-    .title h1 {
-      font-size: 2rem;
-    }
-
-    .title h2 {
-      font-size: 1rem;
+  @media (max-width: 600px) {
+    .contact-section {
+      max-width: 90%;
+      padding: 1.5rem;
+      gap: 1rem;
+      margin-top: 10rem;
     }
   }
 </style>
