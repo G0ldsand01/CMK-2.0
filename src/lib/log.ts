@@ -2,7 +2,7 @@ import { DISCORD_WEBHOOK_URL } from 'astro:env/server';
 import axios from 'redaxios';
 
 async function discordLog(...args: any[]) {
-	if (DISCORD_WEBHOOK_URL) {
+	if (DISCORD_WEBHOOK_URL && process.env.NODE_ENV === 'production') {
 		const formattedArgs = args.map((arg) => {
 			if (typeof arg === 'object' && arg !== null) {
 				return JSON.stringify(arg, null, 2);

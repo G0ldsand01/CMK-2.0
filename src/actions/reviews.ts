@@ -26,8 +26,10 @@ export const reviews = {
 				});
 			}
 
-			const [review] = await db
-				.insert(reviewsTable)
+			console.log('Creating review');
+			try {
+				const [review] = await db
+					.insert(reviewsTable)
 				.values({
 					productId,
 					userId: user.getId(),
@@ -41,16 +43,27 @@ export const reviews = {
 				})
 				.returning();
 
+			console.log('Review created', review);
+
 			const allReviews = await db
 				.select()
 				.from(reviewsTable)
 				.where(eq(reviewsTable.productId, productId));
 
+			console.log('All reviews', allReviews);
+
 			return {
-				productId,
-				review,
-				allReviews,
-			};
+					productId,
+					review,
+					allReviews,
+				};
+			} catch (error) {
+				console.error('Error creating review', error);
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'Error creating review',
+				});
+			}
 		},
 	}),
 	update: defineAction({

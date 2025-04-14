@@ -11,6 +11,7 @@ import {
 	text,
 	timestamp,
 	uniqueIndex,
+	uuid,
 	varchar,
 } from 'drizzle-orm/pg-core';
 import type { CartItem } from '@/lib/cart';
@@ -55,8 +56,7 @@ export const reviewsTable = pgTable(
 			.references(() => productsTable.id, { onDelete: 'cascade' }),
 		userId: text('userId')
 			.notNull()
-			.references(() => usersTable.id, { onDelete: 'cascade' })
-			.unique(),
+			.references(() => usersTable.id, { onDelete: 'cascade' }),
 		rating: integer('rating').notNull(),
 		createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
 	},
