@@ -13,7 +13,7 @@ const { title, breadcrumb } = Astro.props;
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect('/dashboard');
+  return Astro.redirect('/login');
 }
 
 const userData = {
