@@ -6,7 +6,6 @@ import { user } from './user';
 
 export const server = {
 	cart,
-	//
 	products,
 	reviews,
 	user,
@@ -19,9 +18,7 @@ export const logSecurityEvent = (
 	userId: string,
 	details: Record<string, unknown>,
 ) => {
-	log(
-		`[SECURITY] ${event} - User: ${userId} - ${JSON.stringify(details)}`,
-	);
+	log(`[SECURITY] ${event} - User: ${userId} - ${JSON.stringify(details)}`);
 	// TODO: Implement proper logging service (e.g., Winston, Pino)
 };
 

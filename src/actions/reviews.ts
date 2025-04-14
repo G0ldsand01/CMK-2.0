@@ -117,21 +117,21 @@ export const reviews = {
 
 			await db
 				.delete(reviewsTable)
-					.where(
-						and(
-							eq(reviewsTable.userId, user.getId()),
-							eq(reviewsTable.productId, productId),
-						),
-					);
+				.where(
+					and(
+						eq(reviewsTable.userId, user.getId()),
+						eq(reviewsTable.productId, productId),
+					),
+				);
 
-				const allReviews = await db
-					.select()
-					.from(reviewsTable)
-					.where(eq(reviewsTable.productId, productId));
+			const allReviews = await db
+				.select()
+				.from(reviewsTable)
+				.where(eq(reviewsTable.productId, productId));
 
-				return {
-					productId,
-					review: null,
+			return {
+				productId,
+				review: null,
 				allReviews,
 			};
 		},

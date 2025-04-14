@@ -45,6 +45,14 @@ export default defineConfig({
 				context: 'server',
 				optional: true,
 			}),
+			CDN_URL: envField.string({
+				access: 'public',
+				context: 'server',
+			}),
+			CDN_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
 
 			/*
 			Stripe

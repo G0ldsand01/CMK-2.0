@@ -1,31 +1,23 @@
 ---
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import { CDN_URL } from 'astro:env/server';
 
 interface Props {
-	imagePath: string;
-	altText: string;
-	width: number;
-	height: number;
-	class?: string;
+  imagePath: string;
+  altText: string;
+  width: number;
+  height: number;
+  class?: string;
 }
 
 const { imagePath, altText, width, height, class: className } = Astro.props;
-const image = `/src/assets/images/${imagePath}.png`;
 
-const images = import.meta.glob<{ default: ImageMetadata }>(
-	'/src/assets/images/*.{jpeg,jpg,png,gif}',
-);
-if (!images[image])
-	throw new Error(
-		`"${image}" does not exist in glob: "/src/assets/images/*.{jpeg,jpg,png,gif}"`,
-	);
+const imageUrl = `${CDN_URL}${imagePath}`;
 ---
 
-<Image
-    src={images[image]()}
-    alt={altText}
-    width={width}
-    height={height}
-    class={className ?? ''}
+<img
+  src={imageUrl}
+  alt={altText}
+  width={width}
+  height={height}
+  class={className ?? ''}
 />

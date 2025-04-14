@@ -7,7 +7,6 @@ import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
-import { log } from '@/lib/log';
 
 export const cart = {
 	addProductIdToCart: defineAction({
@@ -201,16 +200,19 @@ export const cart = {
 
 			// Calculate total amount for metadata
 			const totalAmount = line_items.reduce((sum, item) => {
-				return sum + (item.price_data.unit_amount * item.quantity);
+				return sum + item.price_data.unit_amount * item.quantity;
 			}, 0);
 
 			// Create order first to get the order ID
-			const order = await db.insert(ordersTable).values({
-				userId: user.getId(),
-				status: 'pending',
-				cartJSON: cart,
-				stripeSessionId: 'pending', // Temporary value, will be updated after session creation
-			}).returning();
+			const order = await db
+				.insert(ordersTable)
+				.values({
+					userId: user.getId(),
+					status: 'pending',
+					cartJSON: cart,
+					stripeSessionId: 'pending', // Temporary value, will be updated after session creation
+				})
+				.returning();
 
 			if (!order || order.length === 0) {
 				throw new ActionError({
@@ -244,7 +246,7 @@ export const cart = {
 				},
 				billing_address_collection: 'required',
 				allow_promotion_codes: true,
-				expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
+				expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minutes
 			});
 
 			// Update order with Stripe session ID

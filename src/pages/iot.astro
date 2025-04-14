@@ -4,13 +4,13 @@ import ProductCard from '../components/ProductCard.astro';
 import Layout from '../layouts/Layout.astro';
 import '../styles/index.css';
 import '../styles/products.css';
-import { products as productsActions } from '../actions/products';
+import { actions } from 'astro:actions';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getProductsByType,
-  {
-    type: 'iot',
-  },
+	actions.products.getProductsByType,
+	{
+		type: 'iot',
+	},
 );
 const bestProducts = bestProductsActions.data;
 ---

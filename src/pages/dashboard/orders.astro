@@ -1,22 +1,22 @@
 ---
+import { eq } from 'drizzle-orm';
 import { ordersTable } from '@/db/schema';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
-import { eq } from 'drizzle-orm';
 
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect('/login');
+	return Astro.redirect('/login');
 }
 
 const userEmail = user.getEmail();
 
 const orders = await db
-  .select()
-  .from(ordersTable)
-  .where(eq(ordersTable.userId, user.getId()));
+	.select()
+	.from(ordersTable)
+	.where(eq(ordersTable.userId, user.getId()));
 ---
 
 <DashboardLayout

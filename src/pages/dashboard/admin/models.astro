@@ -1,19 +1,20 @@
 ---
+import { actions } from 'astro:actions';
+import { Plus } from 'lucide-react';
 import ProductCard from '@/components/ProductCard.astro';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
-import { products as productsActions } from '@/actions/products';
-import { Plus } from 'lucide-react';
+
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 const bestProductsActions = await Astro.callAction(
-  productsActions.getProductsByType,
-  {
-    type: 'models',
-  },
+	actions.products.getProductsByType,
+	{
+		type: 'models',
+	},
 );
 const bestProducts = bestProductsActions.data;
 const categories = ['mouse', 'keyboard', 'headset'];
@@ -377,7 +378,7 @@ const types = ['products', 'models', 'tech', 'iot'];
       padding: 1.5rem;
     }
     .head {
-      
+
       width: 90%;
     }
   }

@@ -2,11 +2,11 @@
 import ProductCard from '../components/ProductCard.astro';
 import Layout from '../layouts/Layout.astro';
 import '../styles/index.css';
-import { products as productsActions } from '../actions/products';
+import { actions } from 'astro:actions';
 import { Button } from '../components/ui/button';
 
 const bestProductsActions = await Astro.callAction(
-	productsActions.getBestProducts,
+	actions.products.getBestProducts,
 	{},
 );
 const bestProducts = bestProductsActions.data;
@@ -40,14 +40,16 @@ const bestProducts = bestProductsActions.data;
           ))
       }
     </div>
-      <a href="/products" class="view-all-button"><Button
+    <a href="/products" class="view-all-button"
+      ><Button
         id="view-all-products"
         className="font-bold py-2 px-4 rounded flex items-center gap-2"
         client:load
         server:defer={true}
       >
         View All Products
-      </Button></a>
+      </Button></a
+    >
   </div>
 </Layout>
 

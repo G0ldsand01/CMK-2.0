@@ -1,52 +1,52 @@
 ---
 import { Heart, ShoppingCart } from '@lucide/astro';
+import { and, eq } from 'drizzle-orm';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 } from '@/components/ui/card';
+import { productsTable, wishlistTable } from '@/db/schema';
+import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import Layout from '../../layouts/Layout.astro';
-import db from '@/lib/db';
-import { productsTable, wishlistTable } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
 
 const { id } = Astro.params;
 
 const user = await getUser(Astro.request);
 
 const { product, isInWishlist } = await db.transaction(async (tx) => {
-  const [product] = await tx
-    .select()
-    .from(productsTable)
-    .where(eq(productsTable.id, Number(id)));
+	const [product] = await tx
+		.select()
+		.from(productsTable)
+		.where(eq(productsTable.id, Number(id)));
 
-  if (user && product) {
-    const isInWishlist = await tx
-      .select()
-      .from(wishlistTable)
-      .where(
-        and(
-          eq(wishlistTable.userId, user.getId()),
-          eq(wishlistTable.productId, Number(id)),
-        ),
-      );
+	if (user && product) {
+		const isInWishlist = await tx
+			.select()
+			.from(wishlistTable)
+			.where(
+				and(
+					eq(wishlistTable.userId, user.getId()),
+					eq(wishlistTable.productId, Number(id)),
+				),
+			);
 
-    return { product, isInWishlist };
-  }
+		return { product, isInWishlist };
+	}
 
-  return { product, isInWishlist: false };
+	return { product, isInWishlist: false };
 });
 
 if (!product) {
-  return Astro.redirect('/');
+	return Astro.redirect('/');
 }
 ---
 

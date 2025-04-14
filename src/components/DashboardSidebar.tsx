@@ -1,6 +1,5 @@
 import {
 	CircuitBoard,
-	Cog,
 	HomeIcon,
 	Package,
 	ShoppingCartIcon,
@@ -185,9 +184,7 @@ export function DashboardSidebar({
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem>
-								<BreadcrumbLink href="/dashboard">
-									Dashboard
-								</BreadcrumbLink>
+								<BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
 							</BreadcrumbItem>
 							<BreadcrumbSeparator />
 							{Object.keys(breadcrumb).map((value) => (

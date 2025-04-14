@@ -1,11 +1,11 @@
 ---
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { getUser } from "@/lib/user";
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getUser } from '@/lib/user';
 
 const user = await getUser(Astro.request);
 
 if (!user) {
-  return Astro.redirect("/login");
+	return Astro.redirect('/login');
 }
 ---
 

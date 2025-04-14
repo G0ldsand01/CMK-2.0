@@ -1,15 +1,15 @@
 ---
-import { CircuitBoard, ShoppingBag } from "@lucide/astro";
-import { SignOut } from "auth-astro/components";
-import Cart from "@/components/cart/Cart.astro";
-import CartItemCount from "@/components/cart/CartItemCount.tsx";
-import { getUser } from "@/lib/user";
-import { ModeToggle } from "./ModeToggle";
-import { Button } from "./ui/button";
-import { HeaderMenu } from "@components/Header.tsx";
+import { HeaderMenu } from '@components/Header.tsx';
+import { CircuitBoard, ShoppingBag } from '@lucide/astro';
+import { SignOut } from 'auth-astro/components';
+import Cart from '@/components/cart/Cart.astro';
+import CartItemCount from '@/components/cart/CartItemCount.tsx';
+import { getUser } from '@/lib/user';
+import { ModeToggle } from './ModeToggle';
+import { Button } from './ui/button';
 
 interface Props {
-  cart?: boolean;
+	cart?: boolean;
 }
 
 const { cart } = Astro.props;

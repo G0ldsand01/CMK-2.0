@@ -1,19 +1,20 @@
 ---
+import { actions } from 'astro:actions';
+import { Plus } from 'lucide-react';
 import ProductCard from '@/components/ProductCard.astro';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
-import { products as productsActions } from '@/actions/products';
-import { Plus } from 'lucide-react';
+
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
   return Astro.redirect('/dashboard');
 }
 const bestProductsActions = await Astro.callAction(
-  productsActions.getProductsByType,
+  actions.products.getProductsByType,
   {
     type: 'products',
-  },
+  }
 );
 const bestProducts = bestProductsActions.data;
 const categories = ['mouse', 'keyboard', 'headset'];
@@ -34,24 +35,35 @@ const types = ['products', 'models', 'tech', 'iot'];
       </div>
     </div>
     <div class="products-grid">
-      {bestProducts && bestProducts.length > 0 ? (
-        <>
-          {bestProducts.map((product) => (
-            <ProductCard product={product} server:defer />
-          ))}
+      {
+        bestProducts && bestProducts.length > 0 ? (
+          <>
+            {bestProducts.map((product) => (
+              <ProductCard product={product} server:defer />
+            ))}
+            <div class="add-product">
+              <button
+                type="button"
+                class="add-product-button"
+                id="openModalButton"
+              >
+                <Plus size={60} color="#27ae60" className="glowing-plus" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <p>No products found</p>
           <div class="add-product">
-            <button
-              type="button"
-              class="add-product-button"
-              id="openModalButton"
-            >
-              <Plus size={60} color="#27ae60" class="glowing-plus" />
-            </button>
-          </div>
-        </>
-      ) : (
-        <p>No products found</p>
-      )}
+              <button
+                type="button"
+                class="add-product-button"
+                id="openModalButton"
+              >
+                <Plus size={60} color="#27ae60" className="glowing-plus" />
+              </button>
+            </div>
+        )
+      }
     </div>
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-content" id="modalContent">
@@ -60,22 +72,36 @@ const types = ['products', 'models', 'tech', 'iot'];
           <label for="name">Product Name:</label>
           <input type="text" name="name" id="name" class="inputs" required />
           <label for="price">Price:</label>
-          <input type="number" name="price" id="price" class="inputs" required />
+          <input
+            type="number"
+            name="price"
+            id="price"
+            class="inputs"
+            required
+          />
           <label for="description">Description:</label>
-          <textarea name="description" id="description" class="inputs" required></textarea>
-          <label for="image">Image URL:</label>
-          <input type="text" name="image" id="image" class="inputs" required />
+          <textarea name="description" id="description" class="inputs" required
+          ></textarea>
+          <label for="image">Image:</label>
+          <input
+            type="file"
+            name="image"
+            id="image"
+            class="inputs"
+            accept="image/*"
+            required
+          />
           <label for="type">Type:</label>
           <select name="type" id="type" class="inputs" required>
-            {types.map((type) => (
-              <option value={type}>{type}</option>
-            ))}
+            {types.map((type) => <option value={type}>{type}</option>)}
           </select>
           <label for="category">Category:</label>
           <select name="category" id="category" class="inputs" required>
-            {categories.map((category) => (
-              <option value={category}>{category}</option>
-            ))}
+            {
+              categories.map((category) => (
+                <option value={category}>{category}</option>
+              ))
+            }
           </select>
           <button type="submit">Add Product</button>
           <button type="button" class="cancel-button" id="closeModalButton">
@@ -89,61 +115,98 @@ const types = ['products', 'models', 'tech', 'iot'];
 
 <script>
   import { actions } from 'astro:actions';
+  import { toast } from 'sonner';
 
   document.addEventListener('DOMContentLoaded', () => {
     const openModalButton = document.getElementById('openModalButton');
     const closeModalButton = document.getElementById('closeModalButton');
     const modalOverlay = document.getElementById('modalOverlay');
     const addProductForm = document.getElementById('addProductForm');
-    const modalContent = document.getElementById('modalContent'); // Get modal content
+    const modalContent = document.getElementById('modalContent');
 
     openModalButton?.addEventListener('click', () => {
       modalOverlay?.classList.add('active');
-      modalContent?.classList.add('active'); // Add active class to modal content
+      modalContent?.classList.add('active');
     });
 
     closeModalButton?.addEventListener('click', () => {
       modalOverlay?.classList.remove('active');
-      modalContent?.classList.remove('active'); // Remove active class from modal content
+      modalContent?.classList.remove('active');
     });
 
     modalOverlay?.addEventListener('click', (event) => {
-      if (event.target === modalOverlay) { // Check if the click is on the overlay itself
+      if (event.target === modalOverlay) {
         modalOverlay.classList.remove('active');
-        modalContent?.classList.remove('active'); // Also remove from content
+        modalContent?.classList.remove('active');
       }
     });
 
     addProductForm?.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const formData = new FormData(addProductForm);
-      const name = formData.get('name') as string || '';
-      const price = Number(formData.get('price')) || 0;
-      const description = formData.get('description') as string || '';
-      const image = formData.get('image') as string || '';
-      const type = formData.get('type') as string || '';
-      const category = formData.get('category') as string || '';
-      const stock = 0;
 
-      const { error } = await actions.products.addProduct({
-        name,
-        price,
-        description,
-        image,
-        type,
-        category,
-        stock,
-      });
+      try {
+        const formData = new FormData(addProductForm as HTMLFormElement);
 
-      if (!error) {
-        alert('Product added successfully');
-        modalOverlay?.classList.remove('active');
-        modalContent?.classList.remove('active'); // Remove active class from modal content
-        addProductForm.reset();
-        // Optionally, reload the product list or update it in the UI
-        // window.location.reload();
-      } else {
-        alert('Error adding product');
+        // Get the image file
+        const imageFile = formData.get('image') as File;
+
+        if (!imageFile || imageFile.size === 0) {
+          toast.error('Please select an image file');
+          return;
+        }
+
+        // Show loading toast
+        const loadingToast = toast.loading('Uploading image...');
+
+        // Convert the image to base64
+        let imageBase64 = '';
+        if (imageFile) {
+          const reader = new FileReader();
+          imageBase64 = await new Promise((resolve) => {
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(imageFile);
+          });
+        }
+
+        // Hide loading toast
+        toast.dismiss(loadingToast);
+
+        // Show uploading toast
+        const uploadingToast = toast.loading('Adding product...');
+
+        const result = await actions.products.addProduct({
+          name: (formData.get('name') as string) || '',
+          price: Number(formData.get('price')) || 0,
+          description: (formData.get('description') as string) || '',
+          image: imageBase64,
+          type: (formData.get('type') as string) || '',
+          category: (formData.get('category') as string) || '',
+          stock: 0,
+        });
+
+        // Hide uploading toast
+        toast.dismiss(uploadingToast);
+
+        if (result.error) {
+          console.error('Error details:', result.error);
+
+          // Handle specific error cases
+          if (result.error.message.includes('duplicate key value')) {
+            toast.error(
+              'A product with this ID already exists. Please try again.'
+            );
+          } else {
+            toast.error('Error adding product: ' + result.error.message);
+          }
+        } else {
+          toast.success('Product added successfully');
+          modalOverlay?.classList.remove('active');
+          modalContent?.classList.remove('active');
+          window.location.reload(); // Reload to show the new product
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        toast.error('An unexpected error occurred. Please try again.');
       }
     });
   });

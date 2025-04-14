@@ -1,16 +1,21 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { eq } from 'drizzle-orm';
-import { productsTable } from '@/db/schema';
+import {
+	type ProductCategory,
+	type ProductType,
+	productsTable,
+} from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
+import { uploadToCDN } from '@/lib/cdn';
 
 export const products = {
 	getBestProducts: defineAction({
 		handler: async () => {
 			const products = await db.query.productsTable.findMany({
-				limit: 8,
+				limit: 32,
 			});
 			return products;
 		},
@@ -32,9 +37,9 @@ export const products = {
 		}),
 		handler: async (input) => {
 			const products = await db.query.productsTable.findMany({
-				// @ts-expect-error 
+				// @ts-expect-error
 				where: eq(productsTable.type, input.type),
-				limit: 8,
+				limit: 32,
 			});
 			return products;
 		},
@@ -44,7 +49,7 @@ export const products = {
 			name: z.string(),
 			price: z.number(),
 			description: z.string(),
-			image: z.string(),
+			image: z.string().startsWith('data:image/'),
 			type: z.string(),
 			category: z.string(),
 			stock: z.number(),
@@ -72,28 +77,40 @@ export const products = {
 				});
 			}
 
-			// if (!Object.values(productCategoryEnum).includes(input.category)) {
-			// 	throw new ActionError({
-			// 		code: 'BAD_REQUEST',
-			// 		message: 'Invalid category.',
-			// 	});
-			// }
+			// Validate that the image is a base64 string
+			if (!input.image || !input.image.startsWith('data:image/')) {
+				throw new ActionError({
+					code: 'BAD_REQUEST',
+					message: 'Invalid image format. Please upload a valid image.',
+				});
+			}
 
-			const newProduct = {
-				name: input.name,
-				price: input.price.toString(),
-				description: input.description,
-				image: input.image,
-				type: input.type,
-				category: input.category,
-				stock: input.stock,
-			};
+			try {
+				// Upload image to CDN
+				const cdnResponse = await uploadToCDN(input.image);
 
-			// @ts-expect-error - TODO: fix this
-			await db.insert(productsTable).values(newProduct);
+				if (!cdnResponse.success || !cdnResponse.url) {
+					throw new Error(cdnResponse.message || 'Failed to upload image to CDN');
+				}
 
-			return newProduct;
+				// Create the product with the image URL
+				const [product] = await db.insert(productsTable).values({
+					name: input.name,
+					price: input.price.toString(),
+					description: input.description,
+					image: cdnResponse.url,
+					type: input.type as ProductType,
+					category: input.category as ProductCategory,
+				}).returning();
+
+				return product;
+			} catch (error) {
+				console.error('Error creating product:', error);
+				return {
+					success: false,
+					error: error instanceof Error ? error.message : 'Failed to create product',
+				};
+			}
 		},
 	}),
-	
 };

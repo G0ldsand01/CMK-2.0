@@ -7,7 +7,7 @@ import { getUser } from '@/lib/user';
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-  throw Astro.redirect('/login');
+	throw Astro.redirect('/login');
 }
 
 const orders = await db.select().from(ordersTable);
