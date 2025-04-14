@@ -7,7 +7,6 @@ import {
 	numeric,
 	pgTable,
 	primaryKey,
-	real,
 	serial,
 	text,
 	timestamp,
@@ -18,8 +17,15 @@ import type { CartItem } from '@/lib/cart';
 
 // Base CMK
 
-export type ProductCategory = 'mouse' | 'keyboard' | 'headset' | 'model' | 'tech' | 'iot';
-export type productType = 'products' | 'models' | 'tech' | 'iot';
+export type ProductCategory =
+	| 'mouse'
+	| 'keyboard'
+	| 'headset'
+	| 'model'
+	| 'tech'
+	| 'iot';
+export type ProductType = 'products' | 'models' | 'tech' | 'iot';
+
 export const productsTable = pgTable(
 	'products',
 	{
@@ -29,10 +35,15 @@ export const productsTable = pgTable(
 		description: text().notNull(),
 		image: varchar({ length: 255 }).notNull(),
 		category: varchar({ length: 255 }).notNull().$type<ProductCategory>(),
-		type: varchar({ length: 255 }).notNull().$type<productType>().default('products'),
-		averageRating: real('average_rating').notNull().default(0),
+		type: varchar({ length: 255 })
+			.notNull()
+			.$type<ProductType>()
+			.default('products'),
 	},
-	(table) => [index('product_name_idx').on(table.name)],
+	(table) => [
+		index('product_name_idx').on(table.name),
+		uniqueIndex('product_id_unique').on(table.id),
+	],
 );
 
 export const reviewsTable = pgTable(
