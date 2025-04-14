@@ -1,8 +1,7 @@
 import { DATABASE_URL } from 'astro:env/server';
+import type { Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as baseSchema from '@/db/schema';
-import type { Logger } from 'drizzle-orm';
-import { log } from './log';
 
 export const schema = {
 	...baseSchema,

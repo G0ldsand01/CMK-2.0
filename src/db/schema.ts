@@ -11,7 +11,6 @@ import {
 	text,
 	timestamp,
 	uniqueIndex,
-	uuid,
 	varchar,
 } from 'drizzle-orm/pg-core';
 import type { CartItem } from '@/lib/cart';

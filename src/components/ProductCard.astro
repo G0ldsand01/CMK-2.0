@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import '@/styles/product-card.css';
-import { ChevronRight, ShoppingCart } from '@lucide/astro';
+import { ChevronRight, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { productsTable } from '@/db/schema';
 import ProductImage from './images/ProductImage.astro';
@@ -16,7 +16,7 @@ const { product } = Astro.props;
 <div class="product">
   <div class="product-image">
     <ProductImage
-      imagePath={product.image} 
+      imagePath={product.image}
       altText={product.name}
       width={200}
       height={200}

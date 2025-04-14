@@ -8,13 +8,13 @@ import { getUser } from '@/lib/user';
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 const bestProductsActions = await Astro.callAction(
-  actions.products.getProductsByType,
-  {
-    type: 'products',
-  }
+	actions.products.getProductsByType,
+	{
+		type: 'products',
+	},
 );
 const bestProducts = bestProductsActions.data;
 const categories = ['mouse', 'keyboard', 'headset'];

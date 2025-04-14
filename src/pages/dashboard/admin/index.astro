@@ -1,5 +1,5 @@
 ---
-import { TrendingDownIcon, TrendingUpIcon } from '@lucide/astro';
+import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
 	Card,
@@ -147,7 +147,7 @@ async function fetchStripeMetrics() {
       ].map(
         (
           { title, value, trend, icon, description, subtext, isPositive },
-          index,
+          index
         ) => (
           <Card key={index} className="@container/card">
             <CardHeader className="relative">
@@ -171,7 +171,7 @@ async function fetchStripeMetrics() {
               <div class="text-muted-foreground">{subtext}</div>
             </CardFooter>
           </Card>
-        ),
+        )
       )
     }
   </div>

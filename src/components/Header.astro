@@ -1,7 +1,7 @@
 ---
 import { HeaderMenu } from '@components/Header.tsx';
-import { CircuitBoard, ShoppingBag } from '@lucide/astro';
 import { SignOut } from 'auth-astro/components';
+import { CircuitBoard, ShoppingBag } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
 import CartItemCount from '@/components/cart/CartItemCount.tsx';
 import { getUser } from '@/lib/user';
@@ -23,7 +23,7 @@ const user = await getUser(Astro.request);
     <a href="/">CMK</a>
   </div>
   <div class="HeaderMenu">
-    <HeaderMenu  client:load/>
+    <HeaderMenu client:load />
   </div>
   <!-- Auth Buttons or Profile Section -->
 
@@ -38,7 +38,7 @@ const user = await getUser(Astro.request);
           <a href="/dashboard">
             <img
               id="profile-picture"
-              src={user.getImage() || "@assets/cdn/circle-user.svg"}
+              src={user.getImage() || '@assets/cdn/circle-user.svg'}
               alt="Profile Picture"
               width="40"
               height="40"
@@ -146,7 +146,7 @@ const user = await getUser(Astro.request);
             <a href="/dashboard">
               <img
                 id="profile-picture"
-                src={user.getImage() || "<circle-user />"}
+                src={user.getImage() || '<circle-user />'}
                 alt="Profile Picture"
                 width="40"
                 height="40"
@@ -169,22 +169,22 @@ const user = await getUser(Astro.request);
   </nav>
 </header>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const overlayNav = document.querySelector(".overlay-nav");
-    const menuToggle = document.getElementById("menu-toggle");
-    const closeMenu = document.querySelector(".close-menu");
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlayNav = document.querySelector('.overlay-nav');
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeMenu = document.querySelector('.close-menu');
 
     if (!overlayNav || !menuToggle || !closeMenu) {
-      console.warn("One or more navigation elements not found");
+      console.warn('One or more navigation elements not found');
       return;
     }
 
-    menuToggle.addEventListener("click", () => {
-      overlayNav.classList.toggle("active");
+    menuToggle.addEventListener('click', () => {
+      overlayNav.classList.toggle('active');
     });
 
-    closeMenu.addEventListener("click", () => {
-      overlayNav.classList.remove("active");
+    closeMenu.addEventListener('click', () => {
+      overlayNav.classList.remove('active');
     });
   });
 </script>
@@ -236,7 +236,7 @@ const user = await getUser(Astro.request);
 
   nav ul li a {
     font:
-      1.4rem "grandstander",
+      1.4rem 'grandstander',
       sans-serif;
     color: var(--color-foreground);
     text-decoration: none;

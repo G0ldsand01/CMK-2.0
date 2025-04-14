@@ -30,29 +30,29 @@ export const reviews = {
 			try {
 				const [review] = await db
 					.insert(reviewsTable)
-				.values({
-					productId,
-					userId: user.getId(),
-					rating,
-				})
-				.onConflictDoUpdate({
-					target: [reviewsTable.userId, reviewsTable.productId],
-					set: {
+					.values({
+						productId,
+						userId: user.getId(),
 						rating,
-					},
-				})
-				.returning();
+					})
+					.onConflictDoUpdate({
+						target: [reviewsTable.userId, reviewsTable.productId],
+						set: {
+							rating,
+						},
+					})
+					.returning();
 
-			console.log('Review created', review);
+				console.log('Review created', review);
 
-			const allReviews = await db
-				.select()
-				.from(reviewsTable)
-				.where(eq(reviewsTable.productId, productId));
+				const allReviews = await db
+					.select()
+					.from(reviewsTable)
+					.where(eq(reviewsTable.productId, productId));
 
-			console.log('All reviews', allReviews);
+				console.log('All reviews', allReviews);
 
-			return {
+				return {
 					productId,
 					review,
 					allReviews,

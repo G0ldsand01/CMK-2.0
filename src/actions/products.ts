@@ -6,10 +6,10 @@ import {
 	type ProductType,
 	productsTable,
 } from '@/db/schema';
+import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { logSecurityEvent } from './index';
-import { uploadToCDN } from '@/lib/cdn';
 
 export const products = {
 	getBestProducts: defineAction({
@@ -90,25 +90,31 @@ export const products = {
 				const cdnResponse = await uploadToCDN(input.image);
 
 				if (!cdnResponse.success || !cdnResponse.url) {
-					throw new Error(cdnResponse.message || 'Failed to upload image to CDN');
+					throw new Error(
+						cdnResponse.message || 'Failed to upload image to CDN',
+					);
 				}
 
 				// Create the product with the image URL
-				const [product] = await db.insert(productsTable).values({
-					name: input.name,
-					price: input.price.toString(),
-					description: input.description,
-					image: cdnResponse.url,
-					type: input.type as ProductType,
-					category: input.category as ProductCategory,
-				}).returning();
+				const [product] = await db
+					.insert(productsTable)
+					.values({
+						name: input.name,
+						price: input.price.toString(),
+						description: input.description,
+						image: cdnResponse.url,
+						type: input.type as ProductType,
+						category: input.category as ProductCategory,
+					})
+					.returning();
 
 				return product;
 			} catch (error) {
 				console.error('Error creating product:', error);
 				return {
 					success: false,
-					error: error instanceof Error ? error.message : 'Failed to create product',
+					error:
+						error instanceof Error ? error.message : 'Failed to create product',
 				};
 			}
 		},
