@@ -1,5 +1,4 @@
 ---
-import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
 	Card,
@@ -12,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
+import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 
 const user = await getUser(Astro.request);
 const { totalRevenue, newCustomers, activeAccounts, growthRate, latestOrders } =

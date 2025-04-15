@@ -1,3 +1,4 @@
+import type { CartItem } from '@/lib/cart';
 import type { AdapterAccount } from '@auth/core/adapters';
 import {
 	boolean,
@@ -13,7 +14,6 @@ import {
 	uniqueIndex,
 	varchar,
 } from 'drizzle-orm/pg-core';
-import type { CartItem } from '@/lib/cart';
 
 // Base CMK
 

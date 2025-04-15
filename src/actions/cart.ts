@@ -1,11 +1,11 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
 import { WEBSITE_URL } from 'astro:env/server';
-import { and, eq, sql } from 'drizzle-orm';
 import { cartTable, ordersTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { getUser } from '@/lib/user';
+import { and, eq, sql } from 'drizzle-orm';
 import { logSecurityEvent } from './index';
 
 export const cart = {

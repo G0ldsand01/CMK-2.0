@@ -1,6 +1,4 @@
 ---
-import { and, eq } from 'drizzle-orm';
-import { Heart, ShoppingCart } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
@@ -16,6 +14,8 @@ import {
 import { productsTable, wishlistTable } from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
+import { and, eq } from 'drizzle-orm';
+import { Heart, ShoppingCart } from 'lucide-react';
 import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;

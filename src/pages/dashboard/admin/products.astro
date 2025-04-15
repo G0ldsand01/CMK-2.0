@@ -1,9 +1,9 @@
 ---
 import { actions } from 'astro:actions';
-import { Plus } from 'lucide-react';
 import ProductCard from '@/components/ProductCard.astro';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getUser } from '@/lib/user';
+import { Plus } from 'lucide-react';
 
 const user = await getUser(Astro.request);
 

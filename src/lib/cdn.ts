@@ -1,7 +1,8 @@
-import { CDN_SECRET, CDN_URL } from 'astro:env/server';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { CDN_URL } from 'astro:env/client';
+import { CDN_SECRET } from 'astro:env/server';
 import axios from 'axios';
 import FormData from 'form-data';
 
@@ -36,8 +37,6 @@ export async function uploadToCDN(imageBase64: string): Promise<CDNResponse> {
 			...formData.getHeaders(),
 			Authorization: `Bearer ${CDN_SECRET}`,
 		};
-
-		console.log('Request headers:', headers);
 
 		const response = await axios.post(`${CDN_URL}/upload/`, formData, {
 			headers,

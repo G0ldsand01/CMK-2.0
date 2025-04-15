@@ -1,5 +1,3 @@
-import { Package } from 'lucide-react';
-import * as React from 'react';
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -10,6 +8,8 @@ import {
 	navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
+import { Package } from 'lucide-react';
+import * as React from 'react';
 
 const featuredItem = {
 	title: 'Products',

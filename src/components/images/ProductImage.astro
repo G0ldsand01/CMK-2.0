@@ -1,12 +1,12 @@
 ---
-import { CDN_URL } from 'astro:env/server';
+import { CDN_URL } from 'astro:env/client';
 
 interface Props {
-	imagePath: string;
-	altText: string;
-	width: number;
-	height: number;
-	class?: string;
+  imagePath: string;
+  altText: string;
+  width: number;
+  height: number;
+  class?: string;
 }
 
 const { imagePath, altText, width, height, class: className } = Astro.props;

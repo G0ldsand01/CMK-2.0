@@ -1,7 +1,5 @@
 ---
 import { actions } from 'astro:actions';
-import { eq } from 'drizzle-orm';
-import { ShoppingBag } from 'lucide-react';
 import FullPageCart from '@/components/cart/FullPageCart';
 import { Button } from '@/components/ui/button';
 import { cartTable, productsTable } from '@/db/schema';
@@ -9,6 +7,8 @@ import Layout from '@/layouts/Layout.astro';
 import db from '@/lib/db';
 // Cart.astro
 import { getUser } from '@/lib/user';
+import { eq } from 'drizzle-orm';
+import { ShoppingBag } from 'lucide-react';
 
 const user = await getUser(Astro.request);
 if (!user) return Astro.redirect('/login');

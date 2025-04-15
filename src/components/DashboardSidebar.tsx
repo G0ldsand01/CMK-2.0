@@ -1,11 +1,3 @@
-import {
-	CircuitBoard,
-	HomeIcon,
-	Package,
-	ShoppingCartIcon,
-	UserCog,
-} from 'lucide-react';
-import type * as React from 'react';
 import { UserMenu } from '@/components/UserMenu';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -24,6 +16,14 @@ import {
 	SidebarRail,
 	SidebarTrigger,
 } from '@/components/ui/sidebar';
+import {
+	CircuitBoard,
+	HomeIcon,
+	Package,
+	ShoppingCartIcon,
+	UserCog,
+} from 'lucide-react';
+import type * as React from 'react';
 import { ModeToggle } from './ModeToggle';
 import {
 	Breadcrumb,

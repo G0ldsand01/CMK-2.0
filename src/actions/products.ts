@@ -1,6 +1,5 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { eq } from 'drizzle-orm';
 import {
 	type ProductCategory,
 	type ProductType,
@@ -9,6 +8,7 @@ import {
 import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
+import { eq } from 'drizzle-orm';
 import { logSecurityEvent } from './index';
 
 export const products = {

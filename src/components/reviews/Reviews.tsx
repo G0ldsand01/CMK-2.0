@@ -1,7 +1,7 @@
+import type { reviewsTable } from '@/db/schema';
 import { useStore } from '@nanostores/react';
 import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { reviewsTable } from '@/db/schema';
 import { productReviewsAtom } from '../../store';
 
 type Review = typeof reviewsTable.$inferSelect;
@@ -40,9 +40,9 @@ function Reviews({
 		4: 0,
 		5: 0,
 	};
-	allReviews.forEach((review) => {
+	for (const review of allReviews) {
 		ratingCounts[review.rating as keyof typeof ratingCounts]++;
-	});
+	}
 
 	return (
 		<div className="space-y-4">
@@ -52,6 +52,7 @@ function Reviews({
 				<div className="flex items-center">
 					{Array.from({ length: 5 }).map((_, i) => (
 						<Star
+							key={`star-${i}-${productId}`}
 							className={
 								i < Math.round(avgRating) ? 'text-yellow-400' : 'text-gray-300'
 							}
