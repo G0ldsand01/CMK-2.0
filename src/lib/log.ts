@@ -1,6 +1,7 @@
 import { DISCORD_WEBHOOK_URL } from 'astro:env/server';
 import axios from 'redaxios';
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 async function discordLog(...args: any[]) {
 	if (DISCORD_WEBHOOK_URL && process.env.NODE_ENV === 'production') {
 		const formattedArgs = args.map((arg) => {
@@ -20,11 +21,13 @@ async function discordLog(...args: any[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function log(...args: any[]) {
 	console.log(...args);
 	discordLog(...args);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function logError(...args: any[]) {
 	console.error(...args);
 	discordLog(...args);

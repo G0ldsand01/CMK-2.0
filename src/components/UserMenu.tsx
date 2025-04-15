@@ -1,11 +1,4 @@
 import {
-	BellIcon,
-	CreditCardIcon,
-	LogOutIcon,
-	MoreVerticalIcon,
-	UserCircleIcon,
-} from 'lucide-react';
-import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
@@ -20,6 +13,13 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
+import {
+	BellIcon,
+	CreditCardIcon,
+	LogOutIcon,
+	MoreVerticalIcon,
+	UserCircleIcon,
+} from 'lucide-react';
 import type { userData } from './AdminSidebar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 

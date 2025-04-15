@@ -1,7 +1,7 @@
-import { and, eq } from 'drizzle-orm';
 import type { UserRole } from '@/db/schema';
 import { productsTable, usersTable, wishlistTable } from '@/db/schema';
 import type { CMKUser as IUser } from '@/lib/auth';
+import { and, eq } from 'drizzle-orm';
 import db from '../db';
 
 class User {

@@ -1,11 +1,11 @@
 import { actions } from 'astro:actions';
+import { Button } from '@/components/ui/button';
+import type { reviewsTable } from '@/db/schema';
+import { productReviewsAtom } from '@/store';
 import { useStore } from '@nanostores/react';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import type { reviewsTable } from '@/db/schema';
-import { productReviewsAtom } from '@/store';
 
 interface ManageReviewProps {
 	review?: typeof reviewsTable.$inferSelect;

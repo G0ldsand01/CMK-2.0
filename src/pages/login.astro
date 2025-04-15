@@ -1,10 +1,10 @@
 ---
 import '@styles/login.css';
 import { Image } from 'astro:assets';
+import Icon from '@/components/images/Icon.astro';
 import Layout from '@layouts/Layout.astro';
 import { SignIn } from 'auth-astro/components';
 import { getSession } from 'auth-astro/server';
-import Icon from '@/components/images/Icon.astro';
 
 const session = await getSession(Astro.request);
 if (session) {

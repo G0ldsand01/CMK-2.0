@@ -1,8 +1,8 @@
 ---
 import { actions } from 'astro:actions';
-import Image from 'astro/components/Image.astro';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getUser } from '@/lib/user';
+import Image from 'astro/components/Image.astro';
 
 const user = await getUser(Astro.request);
 

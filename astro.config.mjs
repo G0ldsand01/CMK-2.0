@@ -2,9 +2,9 @@
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig, envField } from 'astro/config';
 import compress from 'astro-compress';
 import critters from 'astro-critters';
+import { defineConfig, envField } from 'astro/config';
 import auth from 'auth-astro';
 import dotenv from 'dotenv';
 
@@ -47,7 +47,7 @@ export default defineConfig({
 			}),
 			CDN_URL: envField.string({
 				access: 'public',
-				context: 'server',
+				context: 'client',
 			}),
 			CDN_SECRET: envField.string({
 				access: 'secret',
