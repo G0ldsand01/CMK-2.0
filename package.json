@@ -7,13 +7,15 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"check": "pnpm biome check --write ."
+		"check": "pnpm biome check --write .",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@types/pg": "^8.11.11",
 		"@types/react": "^19.0.10",
-		"@types/react-dom": "^19.0.4"
+		"@types/react-dom": "^19.0.4",
+		"husky": "^9.1.7"
 	},
 	"dependencies": {
 		"@astrojs/react": "^4.2.4",
@@ -49,7 +51,6 @@
 		"form-data": "^4.0.2",
 		"lucide-react": "^0.487.0",
 		"nanostores": "^0.11.4",
-		"navigation-menu": "^1.0.0",
 		"next-themes": "^0.4.6",
 		"pg": "^8.14.1",
 		"purgecss": "^7.0.2",
