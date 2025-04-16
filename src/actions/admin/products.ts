@@ -2,10 +2,10 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { productsTable } from '@/db/schema';
 import type { ProductCategory, ProductType } from '@/db/schema';
+import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { count, eq } from 'drizzle-orm';
-import { uploadToCDN } from '@/lib/cdn';
 import { logSecurityEvent } from '..';
 
 export const products = {
@@ -40,8 +40,6 @@ export const products = {
 					total: totalCount[0].count,
 				};
 			});
-
-			console.log(data);
 
 			return data;
 		},

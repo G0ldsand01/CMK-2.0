@@ -1,15 +1,8 @@
-import { ActionError, defineAction } from 'astro:actions';
+import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import {
-	type ProductCategory,
-	type ProductType,
-	productsTable,
-} from '@/db/schema';
-import { uploadToCDN } from '@/lib/cdn';
+import { type ProductType, productsTable } from '@/db/schema';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
 import { eq } from 'drizzle-orm';
-import { logSecurityEvent } from './index';
 
 export const products = {
 	getBestProducts: defineAction({
@@ -37,8 +30,7 @@ export const products = {
 		}),
 		handler: async (input) => {
 			const products = await db.query.productsTable.findMany({
-				// @ts-expect-error
-				where: eq(productsTable.type, input.type),
+				where: eq(productsTable.type, input.type as ProductType),
 				limit: 32,
 			});
 			return products;
