@@ -33,7 +33,11 @@ const orders = await db.select().from(ordersTable);
             <h2>{order.id}</h2>
             <p>{order.status}</p>
             <p>{order.createdAt}</p>
+            <div class="go-to-order">
+              <a href={`/dashboard/admin/order/${order.id}`} class="go-to-order-button"><button>Go to Order</button></a>
+            </div>
           </div>
+          
         ))
       }
     </div>
@@ -99,7 +103,29 @@ const orders = await db.select().from(ordersTable);
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
   }
-  @media (max-width: 768px) {
+  .go-to-order {
+    display: flex;
+    position: relative;
+    right: 5%;
+    bottom: 40%;
+    justify-content: right;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  .go-to-order button {
+    background-color: var(--color-muted);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  .go-to-order button:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-muted);
+  }
+  @media (max-width: 1400px) {
     .content {
       width: 90%;
     }
@@ -110,6 +136,20 @@ const orders = await db.select().from(ordersTable);
       margin: auto;
       width: 90%;
     }
-
+    .order p {
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+    }
+    .go-to-order {
+      position: relative;
+      right: 0%;
+      bottom: 0%;
+      justify-content: center;
+      align-items: center;
+    }
+    .go-to-order button {
+      width: 100%;
+      padding: 0.5rem 0;
+    }
   }
 </style>
