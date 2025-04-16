@@ -1,8 +1,8 @@
 import {
-  BellIcon,
-  CreditCardIcon,
   LogOutIcon,
   MoreVerticalIcon,
+  Settings,
+  ShoppingCart,
   UserCircleIcon,
 } from 'lucide-react';
 import type { userData } from './AdminSidebar';
@@ -55,6 +55,9 @@ export function HeaderUserMenu({ userData }: { userData: userData }) {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{userData.name}</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {userData.email}
+              </span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -63,19 +66,19 @@ export function HeaderUserMenu({ userData }: { userData: userData }) {
           <a href="/dashboard">
             <DropdownMenuItem>
               <UserCircleIcon />
-              Account
+              Dashboard
             </DropdownMenuItem>
           </a>
-          <a href="/billing">
+          <a href="/cart">
             <DropdownMenuItem>
-              <CreditCardIcon />
-              Billing
+              <ShoppingCart />
+              My Cart
             </DropdownMenuItem>
           </a>
-          <a href="/notifications">
+          <a href="/dashboard/settings">
             <DropdownMenuItem>
-              <BellIcon />
-              Notifications
+              <Settings />
+              User Settings
             </DropdownMenuItem>
           </a>
         </DropdownMenuGroup>

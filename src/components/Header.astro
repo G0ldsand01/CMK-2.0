@@ -136,18 +136,16 @@ const user = await getUser(Astro.request);
       <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
       {
         user ? (
-          <div id="profile-section-nav">
-            <HeaderUserMenu
-              userData={{
-                id: user.getId(),
-                name: user.getDisplayName(),
-                email: user.getEmail(),
-                image: user.getImage(),
-                role: user.getRole(),
-              }}
-              client:load
-            />
-          </div>
+          <HeaderUserMenu
+            userData={{
+              id: user.getId(),
+              name: user.getDisplayName(),
+              email: user.getEmail(),
+              image: user.getImage(),
+              role: user.getRole(),
+            }}
+            client:load
+          />
         ) : (
           <li>
             <a href="/login">Login</a>
