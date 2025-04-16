@@ -8,7 +8,7 @@ import { getUser } from '@/lib/user';
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 
 const categories = await db.select().from(productCategoryTable);
