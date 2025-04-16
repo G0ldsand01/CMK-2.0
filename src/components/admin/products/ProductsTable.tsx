@@ -12,7 +12,6 @@ import {
 import type { productsTable } from '@/db/schema';
 import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import AddProductForm from './AddProductForm';
 import EditProductForm from './EditProductForm';
 
 type Product = typeof productsTable.$inferSelect;
@@ -20,18 +19,13 @@ type Product = typeof productsTable.$inferSelect;
 interface ProductsTableProps {
   initialProducts: Product[];
   totalProducts: number;
-  categories: { id: number; name: string }[];
+  categories: string[];
   types: string[];
-}
-
-interface GetProductsResponse {
-  data: Product[];
-  total: number;
 }
 
 export default function ProductsTable({
   initialProducts,
-  totalProducts: initialTotalProducts,
+  totalProducts,
   categories,
   types,
 }: ProductsTableProps) {
@@ -39,7 +33,6 @@ export default function ProductsTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalProducts, setTotalProducts] = useState(initialTotalProducts);
   const itemsPerPage = 10;
 
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
@@ -64,21 +57,20 @@ export default function ProductsTable({
     }
   }, [initialProducts]);
 
-  const fetchProducts = async (page: number) => {
-    if (page < 1 || page > totalPages || isLoading) return;
+  const handlePageChange = async (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || isLoading) return;
 
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await actions.admin.products.getProducts({
+      const result = await actions.admin.products.getProducts({
         limit: itemsPerPage,
-        offset: (page - 1) * itemsPerPage,
+        offset: (newPage - 1) * itemsPerPage,
       });
 
-      if (!error) {
-        setProducts(data.data);
-        setCurrentPage(page);
-        setTotalProducts(data.total);
+      if (result && 'data' in result && Array.isArray(result.data)) {
+        setProducts(result.data);
+        setCurrentPage(newPage);
       } else {
         setError('Failed to fetch products');
         setProducts([]);
@@ -95,18 +87,14 @@ export default function ProductsTable({
     }
   };
 
-  const handlePageChange = async (newPage: number) => {
-    await fetchProducts(newPage);
-  };
-
   const handleDelete = async (productId: number) => {
     // Implement delete functionality
     console.log('Delete product:', productId);
   };
 
-  const handleProductUpdated = async () => {
+  const handleProductUpdated = () => {
     // Refresh the current page to show updated data
-    await fetchProducts(currentPage);
+    handlePageChange(currentPage);
   };
 
   if (error) {
@@ -125,19 +113,7 @@ export default function ProductsTable({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground">Manage your store products</p>
-        </div>
-        <AddProductForm
-          categories={categories}
-          types={types}
-          onProductAdded={handleProductUpdated}
-        />
-      </div>
-
+    <div className="space-y-4">
       <Table>
         <TableCaption>A list of all products in your store.</TableCaption>
         <TableHeader>
