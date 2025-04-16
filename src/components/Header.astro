@@ -3,13 +3,13 @@ import Cart from '@/components/cart/Cart.astro';
 import CartItemCount from '@/components/cart/CartItemCount.tsx';
 import { getUser } from '@/lib/user';
 import { HeaderMenu } from '@components/Header.tsx';
-import { SignOut } from 'auth-astro/components';
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
+import { HeaderUserMenu } from './HeaderUserMenu';
 import { ModeToggle } from './ModeToggle';
 import { Button } from './ui/button';
 
 interface Props {
-	cart?: boolean;
+  cart?: boolean;
 }
 
 const { cart } = Astro.props;
@@ -35,22 +35,16 @@ const user = await getUser(Astro.request);
         style="display: flex; align-items: center; gap: 1rem;"
       >
         <div id="profile-section" class="profile-section">
-          <a href="/dashboard">
-            <img
-              id="profile-picture"
-              src={user.getImage() || '@assets/cdn/circle-user.svg'}
-              alt="Profile Picture"
-              width="40"
-              height="40"
-            />
-            <div class="user">
-              <a href="/dashboard">
-                {/* <UserMenu userData={userData} /> */}
-                <h1 class="user">Welcome, {user.getDisplayName()}</h1>
-              </a>
-              <SignOut>Logout</SignOut>
-            </div>
-          </a>
+          <HeaderUserMenu
+            userData={{
+              id: user.getId(),
+              name: user.getDisplayName(),
+              email: user.getEmail(),
+              image: user.getImage(),
+              role: user.getRole(),
+            }}
+            client:load
+          />
           {cart ? (
             <Cart
               classes="font-bold py-2 px-4 rounded flex items-center gap-2"
@@ -143,21 +137,16 @@ const user = await getUser(Astro.request);
       {
         user ? (
           <div id="profile-section-nav">
-            <a href="/dashboard">
-              <img
-                id="profile-picture"
-                src={user.getImage() || '<circle-user />'}
-                alt="Profile Picture"
-                width="40"
-                height="40"
-              />
-            </a>
-            <div class="user_info_logout">
-              <a href="/dashboard">
-                <h1 class="user">Welcome, {user.getDisplayName()}</h1>
-              </a>
-              <SignOut>Logout</SignOut>
-            </div>
+            <HeaderUserMenu
+              userData={{
+                id: user.getId(),
+                name: user.getDisplayName(),
+                email: user.getEmail(),
+                image: user.getImage(),
+                role: user.getRole(),
+              }}
+              client:load
+            />
           </div>
         ) : (
           <li>
