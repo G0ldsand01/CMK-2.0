@@ -1,8 +1,9 @@
 ---
 import { actions } from 'astro:actions';
-import AddProductForm from '@/components/admin/products/AddProductForm';
 import ProductsTable from '@/components/admin/products/ProductsTable';
+import { productCategoryTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 
 const user = await getUser(Astro.request);
@@ -11,7 +12,7 @@ if (!user || !user.isAdmin()) {
   return Astro.redirect('/dashboard');
 }
 
-const productsResult = await Astro.callAction(
+const { data, error } = await Astro.callAction(
   actions.admin.products.getProducts,
   {
     limit: 10,
@@ -19,11 +20,15 @@ const productsResult = await Astro.callAction(
   }
 );
 
-// Extract the data array and total from the productsResult
-const products = productsResult?.data || [];
-const totalProducts = productsResult?.total || 0;
+if (error) {
+  console.error(error);
+}
 
-const categories = ['mouse', 'keyboard', 'headset', 'model', 'tech', 'iot'];
+// Extract the data array and total from the productsResult
+const products = data?.data || [];
+const totalProducts = data?.total || 0;
+
+const categories = await db.select().from(productCategoryTable);
 const types = ['products', 'models', 'tech', 'iot'];
 ---
 
@@ -34,14 +39,6 @@ const types = ['products', 'models', 'tech', 'iot'];
   }}
 >
   <div class="space-y-6 p-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold">Products</h1>
-        <p class="text-muted-foreground">Manage your store products</p>
-      </div>
-      <AddProductForm client:load categories={categories} types={types} />
-    </div>
-
     <ProductsTable
       client:load
       initialProducts={products}
