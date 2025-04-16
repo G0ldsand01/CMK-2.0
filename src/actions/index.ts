@@ -5,6 +5,7 @@ import { products } from './products';
 import { reviews } from './reviews';
 import { user } from './user';
 
+// DO NOT TOUCH
 export const server = {
 	admin,
 	cart,
