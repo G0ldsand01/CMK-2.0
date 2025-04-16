@@ -39,8 +39,13 @@ const data = {
       title: 'Dashboard',
       items: [
         {
-          title: 'Home',
-          url: '/',
+          title: 'Dashboard',
+          url: '/dashboard', 
+          icon: HomeIcon,
+        },
+        {
+          title: 'Back to Home',
+          url: '/', // ✅ Updated from 'astro:root' to '/'
           icon: HomeIcon,
         },
       ],
@@ -50,12 +55,12 @@ const data = {
       items: [
         {
           title: 'My Orders',
-          url: '/orders',
+          url: '/dashboard/orders',
           icon: Package,
         },
         {
           title: 'My Wishlist',
-          url: '/wishlist',
+          url: '/dashboard/wishlist',
           icon: ShoppingCartIcon,
         },
       ],
@@ -65,7 +70,7 @@ const data = {
       items: [
         {
           title: 'Manage Account',
-          url: '/settings',
+          url: '/dashboard/settings',
           icon: UserCog,
         },
       ],
@@ -74,11 +79,11 @@ const data = {
   navUserSettings: [
     {
       title: 'Profile',
-      url: '/',
+      url: '/dashboard',
     },
     {
       title: 'Settings',
-      url: 'settings',
+      url: '/dashboard/settings',
     },
     {
       title: 'Logout',
@@ -104,7 +109,7 @@ const getNavData = (role: string) => {
       items: [
         {
           title: 'Admin Dashboard',
-          url: '/admin',
+          url: '/dashboard/admin',
           icon: UserCog,
         },
       ],
@@ -143,10 +148,14 @@ export function AppSidebar({
               <SidebarMenu>
                 {item.items.map((item) => {
                   const Icon = item.icon;
+                  const href = item.url.startsWith('/')
+                    ? item.url
+                    : `/dashboard${item.url}`;
+
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <a href={`/dashboard${item.url}`}>
+                        <a href={href}>
                           <Icon size={16} />
                           {item.title}
                         </a>

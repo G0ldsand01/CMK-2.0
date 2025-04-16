@@ -1,5 +1,13 @@
 ---
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+const categories = [
+    { id: 1, name: 'mouse' },
+    { id: 2, name: 'keyboard' },
+    { id: 3, name: 'headset' },
+    { id: 4, name: 'model' },
+    { id: 5, name: 'tech' },
+    { id: 6, name: 'iot' },
+];
 ---
 
 <AdminDashboardLayout title="Categories" breadcrumb={{
@@ -12,11 +20,80 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
                 <p>Manage Categories</p>
             </div>
         </div>
-        <div class="table-container">
-            <table>
-                
-            </table>
-            </table>    
-        </div>    
+        <div class="categories-container">
+            <div class="categories-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            categories.map((category) => (
+                                <tr>
+                                    <td>{category.id}</td>
+                                    <td>{category.name}</td>
+                                    <td>
+                                        <a href={`/dashboard/admin/categories/${category.id}`}>Edit</a>
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>      
 </AdminDashboardLayout>
+
+<style>
+    .categories-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .categories-table {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .categories-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .categories-table table thead tr th {
+        padding: 0.5rem;
+        text-align: left;
+        font-weight: bold;
+    }
+    .categories-table table tbody tr td {
+        padding: 0.5rem;
+        text-align: left;
+    }       
+    @media (max-width: 1400px) {
+        .categories-container {
+            width: 90%;
+        }
+        .categories-table {
+            margin: auto;
+            width: 90%;
+        }
+        .categories-table table {
+            width: 100%;
+        }
+        .categories-table table thead tr th {
+            padding: 0.5rem;
+            text-align: left;
+            font-weight: bold;
+        }
+        .categories-table table tbody tr td {
+            padding: 0.5rem;
+            text-align: left;
+        }       
+    }
+</style>

@@ -83,6 +83,15 @@ export function HeaderUserMenu({ userData }: { userData: userData }) {
           </a>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        {userData.role === 'admin' && (
+          <a href="/dashboard/admin">
+            <DropdownMenuItem>
+              <UserCircleIcon />
+              Admin Panel
+            </DropdownMenuItem>
+          </a>
+        )}
+        <DropdownMenuSeparator />
         <a href="/logout">
           <DropdownMenuItem>
             <LogOutIcon />

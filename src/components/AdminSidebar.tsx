@@ -74,21 +74,6 @@ const data = {
           icon: ShoppingCartIcon,
         },
         {
-          title: 'Manage models',
-          url: '/models',
-          icon: ShoppingCartIcon,
-        },
-        {
-          title: 'Manage Tech',
-          url: '/tech',
-          icon: ShoppingCartIcon,
-        },
-        {
-          title: 'Manage IOT',
-          url: '/iot',
-          icon: ShoppingCartIcon,
-        },
-        {
           title: 'Manage Categories',
           url: '/categories',
           icon: List,

@@ -14,11 +14,11 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import {
-  BellIcon,
-  CreditCardIcon,
+  Package,
   LogOutIcon,
   MoreVerticalIcon,
   UserCircleIcon,
+  Heart,
 } from 'lucide-react';
 import type { userData } from './AdminSidebar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -79,16 +79,16 @@ export function SidebarUserMenu({ userData }: { userData: userData }) {
                   Account
                 </DropdownMenuItem>
               </a>
-              <a href="/billing">
+              <a href="/dashboard/orders">
                 <DropdownMenuItem>
-                  <CreditCardIcon />
-                  Billing
+                  <Package />
+                  Orders
                 </DropdownMenuItem>
               </a>
-              <a href="/notifications">
+              <a href="/dashboard/wishlist">
                 <DropdownMenuItem>
-                  <BellIcon />
-                  Notifications
+                  <Heart />
+                  Whishlist
                 </DropdownMenuItem>
               </a>
             </DropdownMenuGroup>
