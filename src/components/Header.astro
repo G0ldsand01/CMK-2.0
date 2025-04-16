@@ -29,12 +29,8 @@ const user = await getUser(Astro.request);
 
   {
     user ? (
-      <div
-        id="auth-buttons"
-        class="login"
-        style="display: flex; align-items: center; gap: 1rem;"
-      >
-        <div id="profile-section" class="profile-section">
+      <div id="auth-buttons" class="login">
+        <div class="flex items-center gap-4">
           <HeaderUserMenu
             userData={{
               id: user.getId(),
