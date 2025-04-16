@@ -1,10 +1,12 @@
 import { log } from '@/lib/log';
+import { admin } from './admin';
 import { cart } from './cart';
 import { products } from './products';
 import { reviews } from './reviews';
 import { user } from './user';
 
 export const server = {
+	admin,
 	cart,
 	products,
 	reviews,
