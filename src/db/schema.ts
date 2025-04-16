@@ -17,13 +17,6 @@ import {
 
 // Base CMK
 
-export type ProductCategory =
-	| 'mouse'
-	| 'keyboard'
-	| 'headset'
-	| 'model'
-	| 'tech'
-	| 'iot';
 export type ProductType = 'products' | 'models' | 'tech' | 'iot';
 
 export const productsTable = pgTable(
@@ -34,7 +27,9 @@ export const productsTable = pgTable(
 		price: numeric().notNull(),
 		description: text().notNull(),
 		image: varchar({ length: 255 }).notNull(),
-		category: varchar({ length: 255 }).notNull().$type<ProductCategory>(),
+		category: integer('category')
+			.notNull()
+			.references(() => productCategoryTable.id),
 		type: varchar({ length: 255 })
 			.notNull()
 			.$type<ProductType>()
@@ -45,6 +40,11 @@ export const productsTable = pgTable(
 		uniqueIndex('product_id_unique').on(table.id),
 	],
 );
+
+export const productCategoryTable = pgTable('product_category', {
+	id: serial('id').primaryKey(),
+	name: varchar({ length: 255 }).notNull(),
+});
 
 export const reviewsTable = pgTable(
 	'reviews',
@@ -165,7 +165,7 @@ export const sessionsTable = pgTable('session', {
 });
 
 export const verificationTokensTable = pgTable(
-	'verificationToken',
+	'verification_token',
 	{
 		identifier: text('identifier').notNull(),
 		token: text('token').notNull(),

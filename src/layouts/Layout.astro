@@ -1,14 +1,17 @@
 ---
+import { NODE_ENV } from 'astro:env/client';
 import { Toaster } from '@/components/ui/sonner';
 import Header from '../components/Header.astro';
 import '@styles/global.css';
 interface Props {
-	title: string;
-	navbar?: boolean;
-	cart?: boolean;
+  title: string;
+  navbar?: boolean;
+  cart?: boolean;
 }
 
 const { title, navbar = true, cart = true } = Astro.props;
+
+const isDev = NODE_ENV === 'development';
 ---
 
 <!doctype html>
@@ -25,6 +28,11 @@ const { title, navbar = true, cart = true } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
       rel="stylesheet"
     />
+    {
+      isDev ? (
+        <script src="//unpkg.com/react-scan/dist/auto.global.js" is:inline />
+      ) : null
+    }
   </head>
   <body>
     {navbar ? <Header cart={cart} /> : null}
@@ -56,4 +64,3 @@ const { title, navbar = true, cart = true } = Astro.props;
     });
   }
 </script>
-

@@ -26,25 +26,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import type { productsTable } from '@/db/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  category: string;
-  type: string;
-  image: string;
-};
+type Product = typeof productsTable.$inferSelect;
 
 interface EditProductFormProps {
   product: Product;
-  categories: string[];
+  categories: { id: number; name: string }[];
   types: string[];
   onProductUpdated?: () => void;
 }
@@ -61,7 +54,7 @@ const formSchema = z.object({
     .refine((val: string) => !Number.isNaN(Number(val)) && Number(val) > 0, {
       message: 'Price must be a positive number.',
     }),
-  category: z.string({
+  category: z.number({
     required_error: 'Please select a category.',
   }),
   type: z.string({
@@ -101,7 +94,7 @@ export default function EditProductForm({
       name: product.name,
       description: product.description,
       price: product.price,
-      category: product.category,
+      category: Number(product.category),
       type: product.type,
       image: product.image,
     },
@@ -115,6 +108,7 @@ export default function EditProductForm({
       const { data, error } = await actions.admin.products.updateProduct({
         id: product.id,
         ...values,
+        category: Number(values.category),
       });
 
       if (!error) {
@@ -198,8 +192,8 @@ export default function EditProductForm({
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    defaultValue={String(field.value)}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -208,8 +202,8 @@ export default function EditProductForm({
                     </FormControl>
                     <SelectContent>
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category.charAt(0).toUpperCase() + category.slice(1)}
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

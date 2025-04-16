@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -17,23 +18,28 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import type { productCategoryTable } from '@/db/schema';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+type Category = typeof productCategoryTable.$inferSelect;
+
 interface AddProductFormProps {
-  categories: string[];
+  categories: { id: number; name: string }[];
   types: string[];
+  onProductAdded?: () => void;
 }
 
 export default function AddProductForm({
   categories,
   types,
+  onProductAdded,
 }: AddProductFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string>(types[0] || '');
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0] || ''
+  const [selectedCategory, setSelectedCategory] = useState<Category>(
+    categories[0] || { id: 0, name: '' }
   );
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -76,7 +82,7 @@ export default function AddProductForm({
         description: (formData.get('description') as string) || '',
         image: imageBase64,
         type: selectedType,
-        category: selectedCategory,
+        category: selectedCategory.id,
         stock: 0,
       });
 
@@ -97,7 +103,9 @@ export default function AddProductForm({
       } else {
         toast.success('Product added successfully');
         setIsOpen(false);
-        window.location.reload(); // Reload to show the new product
+        if (onProductAdded) {
+          onProductAdded();
+        }
       }
     } catch (error) {
       console.error('Unexpected error:', error);
@@ -113,41 +121,56 @@ export default function AddProductForm({
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
+          <DialogDescription>
+            Fill in the details to add a new product to your store.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Product Name</Label>
-            <Input type="text" id="name" name="name" required />
+            <Input
+              id="name"
+              name="name"
+              placeholder="Enter product name"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="price">Price</Label>
-            <Input type="number" id="price" name="price" required />
+            <Input
+              id="price"
+              name="price"
+              type="number"
+              step="0.01"
+              placeholder="Enter price"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" name="description" required />
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Enter product description"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="image">Image</Label>
             <Input
-              type="file"
               id="image"
               name="image"
+              type="file"
               accept="image/*"
               required
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
-            <Select
-              name="type"
-              required
-              value={selectedType}
-              onValueChange={setSelectedType}
-            >
+            <Select value={selectedType} onValueChange={setSelectedType}>
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
@@ -163,18 +186,21 @@ export default function AddProductForm({
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select
-              name="category"
-              required
-              value={selectedCategory}
-              onValueChange={setSelectedCategory}
+              value={selectedCategory.name}
+              onValueChange={(value) => {
+                const category = categories.find((c) => c.name === value);
+                if (category) {
+                  setSelectedCategory(category);
+                }
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>

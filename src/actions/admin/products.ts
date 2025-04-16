@@ -1,7 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { productsTable } from '@/db/schema';
-import type { ProductCategory, ProductType } from '@/db/schema';
+import type { ProductType } from '@/db/schema';
 import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
@@ -17,6 +17,9 @@ export const products = {
 		async handler(input, context) {
 			const user = await getUser(context.request);
 			if (!user || !user.isAdmin()) {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in.',
@@ -31,13 +34,13 @@ export const products = {
 					limit: limit,
 				});
 
-				const totalCount = await tx
+				const [totalCount] = await tx
 					.select({ count: count() })
 					.from(productsTable);
 
 				return {
 					data: products,
-					total: totalCount[0].count,
+					total: totalCount.count,
 				};
 			});
 
@@ -51,7 +54,7 @@ export const products = {
 			name: z.string().min(2),
 			description: z.string().min(10),
 			price: z.string(),
-			category: z.string(),
+			category: z.number(),
 			type: z.string(),
 			image: z.string().refine(
 				(val) => {
@@ -86,7 +89,7 @@ export const products = {
 						name: input.name,
 						description: input.description,
 						price: input.price,
-						category: input.category as ProductCategory,
+						category: input.category,
 						type: input.type as ProductType,
 						image: input.image,
 					})
@@ -111,7 +114,7 @@ export const products = {
 			description: z.string(),
 			image: z.string().startsWith('data:image/'),
 			type: z.string(),
-			category: z.string(),
+			category: z.number(),
 			stock: z.number(),
 		}),
 		handler: async (input, context) => {
@@ -164,7 +167,7 @@ export const products = {
 						description: input.description,
 						image: cdnResponse.url,
 						type: input.type as ProductType,
-						category: input.category as ProductCategory,
+						category: input.category,
 					})
 					.returning();
 
