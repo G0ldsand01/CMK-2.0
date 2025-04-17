@@ -27,6 +27,7 @@ import {
 	Tag,
 	UserRoundCog,
 	UsersIcon,
+	LayoutDashboard,
 } from 'lucide-react';
 import type * as React from 'react';
 import { ModeToggle } from './ModeToggle';
@@ -48,6 +49,11 @@ const data = {
 					url: '/',
 					icon: HomeIcon,
 				},
+				{
+					title: 'Dashboard',
+					url: '/amdin',
+					icon: LayoutDashboard,
+				},
 			],
 		},
 		{
@@ -55,12 +61,12 @@ const data = {
 			items: [
 				{
 					title: 'Manage Users',
-					url: '/users',
+					url: '/admin/users',
 					icon: UsersIcon,
 				},
 				{
 					title: 'Manage Roles',
-					url: '/roles',
+					url: '/admin/roles',
 					icon: Database,
 				},
 			],
@@ -70,27 +76,27 @@ const data = {
 			items: [
 				{
 					title: 'Manage Products',
-					url: '/products',
+					url: '/admin/products',
 					icon: ShoppingCartIcon,
 				},
 				{
 					title: 'Manage Categories',
-					url: '/categories',
+					url: '/admin/categories',
 					icon: List,
 				},
 				{
 					title: 'Manage Orders',
-					url: '/orders',
+					url: '/admin/orders',
 					icon: Package,
 				},
 				{
 					title: 'Manage Coupons',
-					url: '/coupons',
+					url: '/admin/coupons',
 					icon: Tag,
 				},
 				{
 					title: 'Manage Reviews',
-					url: '/reviews',
+					url: '/admin/reviews',
 					icon: Star,
 				},
 			],
@@ -104,24 +110,6 @@ const data = {
 					icon: UserRoundCog,
 				},
 			],
-		},
-	],
-	navUserSettings: [
-		{
-			title: 'Profile',
-			url: '#',
-		},
-		{
-			title: 'Settings',
-			url: '#',
-		},
-		{
-			title: 'Notifications',
-			url: '#',
-		},
-		{
-			title: 'Logout',
-			url: '#',
 		},
 	],
 };
@@ -162,7 +150,7 @@ export function AppSidebar({
 								{item.items.map((item) => (
 									<SidebarMenuItem key={item.title}>
 										<SidebarMenuButton asChild>
-											<a href={`/dashboard/admin${item.url}`}>
+											<a href={`/dashboard${item.url}`}>
 												<item.icon size={16} />
 												{item.title}
 											</a>

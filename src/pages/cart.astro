@@ -28,10 +28,12 @@ const cart = await db
       cart.length === 0 ? (
         <p class="text-center text-gray-500">Your cart is empty.</p>
         <div class="continue-shopping">
-          <Button variant="outline" className="w-full" href="/products">
-            <ShoppingBag />
-            <span class="ml-2"> Continue Shopping</span>
-          </Button>
+          <a href="/products">
+            <Button variant="outline" className="w-full">
+              <ShoppingBag />
+              <span class="ml-2"> Continue Shopping</span>
+            </Button>
+          </a>
         </div>
       ) : (
         <div class="space-y-6">
