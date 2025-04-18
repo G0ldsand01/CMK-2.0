@@ -20,7 +20,7 @@ export default function ProductCard({ product }: { product: Product }) {
 					alt={product.name}
 					width={200}
 					height={200}
-					className="w-full h-auto object-cover aspect-square"
+					className="w-full h-auto object-contain max-h-[180px] mx-auto"
 				/>
 			</div>
 			<div className="product-info space-y-3 px-4 pb-4">
