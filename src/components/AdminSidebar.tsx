@@ -20,6 +20,7 @@ import {
 	CircuitBoard,
 	Database,
 	HomeIcon,
+	LayoutDashboard,
 	List,
 	Package,
 	ShoppingCartIcon,
@@ -27,7 +28,6 @@ import {
 	Tag,
 	UserRoundCog,
 	UsersIcon,
-	LayoutDashboard,
 } from 'lucide-react';
 import type * as React from 'react';
 import { ModeToggle } from './ModeToggle';
