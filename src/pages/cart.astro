@@ -1,11 +1,9 @@
 ---
-import { actions } from 'astro:actions';
 import FullPageCart from '@/components/cart/FullPageCart';
 import { Button } from '@/components/ui/button';
 import { cartTable, productsTable } from '@/db/schema';
 import Layout from '@/layouts/Layout.astro';
 import db from '@/lib/db';
-// Cart.astro
 import { getUser } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { ShoppingBag } from 'lucide-react';
@@ -27,7 +25,7 @@ const cart = await db
     {
       cart.length === 0 ? (
         <p class="text-center text-gray-500">Your cart is empty.</p>
-        <div class="continue-shopping">
+        <div class="flex justify-center items-center mt-10">
           <a href="/products">
             <Button variant="outline" className="w-full">
               <ShoppingBag />
@@ -43,15 +41,3 @@ const cart = await db
     }
   </main>
 </Layout>
-
-<style>
-  .continue-shopping {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-
-  }
-</style>

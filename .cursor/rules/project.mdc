@@ -9,3 +9,12 @@ alwaysApply: true
 - Always use pnpm
 - Always use shadn/ui over radix-ui
 - Always use tailwindcss
+
+- When using astro actions do this:
+import { actions } from 'astro:actions';
+const { data, error } = await actions...
+if (!error) {
+    // data is valid
+} else {
+    // error
+}
