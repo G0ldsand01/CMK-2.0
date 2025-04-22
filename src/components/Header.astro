@@ -4,6 +4,7 @@ import CartItemCount from '@/components/cart/CartItemCount.tsx';
 import { getUser } from '@/lib/user';
 import { HeaderMenu } from '@components/Header.tsx';
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
+import cmkLogo from 'public/cmklogo.png';
 import { HeaderUserMenu } from './HeaderUserMenu';
 import { ModeToggle } from './ModeToggle';
 import { Button } from './ui/button';
@@ -19,8 +20,9 @@ const user = await getUser(Astro.request);
 
 <header>
   <div class="logo">
-    <CircuitBoard />
-    <a href="/">CMK</a>
+      
+    <a href="/" style = "display: flex; align-items: center; gap: 1rem; flex-direction: row;">
+      <CircuitBoard/> CMK</a>
   </div>
   <div class="HeaderMenu">
     <HeaderMenu client:load />
