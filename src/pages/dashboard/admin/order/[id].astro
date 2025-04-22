@@ -1,76 +1,78 @@
 ---
-import { ordersTable, productsTable } from '@/db/schema';
-import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import db from '@/lib/db';
-import { getUser } from '@/lib/user';
-import { eq, inArray } from 'drizzle-orm';
+import { CDN_URL } from 'astro:env/client';
+import type { Product } from '@/store';
+import { ordersTable, productsTable } from "@/db/schema";
+import AdminDashboardLayout from "@/layouts/AdminDashboardLayout.astro";
+import db from "@/lib/db";
+import { getUser } from "@/lib/user";
+import { eq, inArray } from "drizzle-orm";
 
 const user = await getUser(Astro.request);
 if (!user || !user.isAdmin()) {
-	throw Astro.redirect('/login');
+  throw Astro.redirect("/login");
 }
 
 const { id } = Astro.params;
 
 const [order] = await db
-	.select({
-		id: ordersTable.id,
-		status: ordersTable.status,
-		cartJSON: ordersTable.cartJSON,
-		createdAt: ordersTable.createdAt,
-	})
-	.from(ordersTable)
-	.where(eq(ordersTable.id, Number(id)));
+  .select({
+    id: ordersTable.id,
+    status: ordersTable.status,
+    cartJSON: ordersTable.cartJSON,
+    createdAt: ordersTable.createdAt,
+  })
+  .from(ordersTable)
+  .where(eq(ordersTable.id, Number(id)));
 
 if (!order) {
-	throw Astro.redirect('/dashboard/admin/orders');
+  throw Astro.redirect("/dashboard/admin/orders");
 }
 
 // Extract product IDs
 const productIds = order.cartJSON.map((item) => item.products.id);
 const products = await db
-	.select()
-	.from(productsTable)
-	.where(inArray(productsTable.id, productIds));
+  .select()
+  .from(productsTable)
+  .where(inArray(productsTable.id, productIds));
 // Combine cart and product data
 const orderItems = order.cartJSON
-	.map((item) => {
-		const product = products.find((p) => p.id === item.products.id);
-		return {
-			...item,
-			product,
-		};
-	})
-	.filter((item) => item.product); // remove items where product is undefined
+  .map((item) => {
+    const product = products.find((p) => p.id === item.products.id);
+    return {
+      ...item,
+      product,
+    };
+  })
+  .filter((item) => item.product); // remove items where product is undefined
 
 const totalPrice = orderItems.reduce((sum, item) => {
-	return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
+  return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
 }, 0);
 
 const orderData = {
-	id: order.id,
-	status: order.status,
-	createdAt: order.createdAt,
-	items: orderItems,
-	total: totalPrice,
+  id: order.id,
+  status: order.status,
+  createdAt: order.createdAt,
+  items: Array.isArray(orderItems) ? orderItems : [],
+  total: totalPrice,
 };
 const missingIds = productIds.filter(
-	(id) => !products.find((p) => p.id === id),
+  (id) => !products.find((p) => p.id === id)
 );
 if (missingIds.length) {
-	console.warn('Produits manquants dans la DB:', missingIds);
+  console.warn("Produits manquants dans la DB:", missingIds);
 }
 ---
 
 <AdminDashboardLayout
   title="Order"
   breadcrumb={{
-    '/orders': 'Manage Orders',
+    "/orders": "Manage Orders",
     [`/order/${id}`]: `Order ${id}`,
   }}
 >
   <div class="content">
-    <div class="head">
+    <div class="admin-order-head">
       <div class="welcome-message">
         <h1>Order Details</h1>
         <p>Manage your account settings</p>
@@ -99,7 +101,7 @@ if (missingIds.length) {
               orderData.items.map((item) => (
                 <div class="product-item">
                   <img
-                    src={item.product?.image}
+                    src={`${CDN_URL}${item.product?.image}`}
                     alt={item.product?.name}
                     width="50"
                   />
@@ -127,6 +129,29 @@ if (missingIds.length) {
           ${orderData.total}
         </div>
       </div>
+      <div class="order-actions">
+        <div class="back">
+          <a href={`/dashboard/admin/orders/`} class="go-to-order-list">
+            <button>Back to Order List</button>
+          </a>
+        </div>
+        <div class="actions">
+          <form
+            method="POST"
+            action={`/api/orders/${order.id}/refund`}
+            style="display:inline;"
+          >
+            <button type="submit" class="refund-button"> Refund </button>
+          </form>
+          <form
+            method="POST"
+            action={`/api/orders/${order.id}/cancel`}
+            style="display:inline;"
+          >
+            <button type="submit" class="cancel-button"> Cancel </button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </AdminDashboardLayout>
@@ -143,7 +168,7 @@ if (missingIds.length) {
     width: 50%;
   }
 
-  .head {
+  .admin-order-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -186,6 +211,7 @@ if (missingIds.length) {
     flex-direction: column;
     gap: 1rem;
     margin-top: 2rem;
+    margin-bottom: 5rem;
   }
 
   .order-details-item {
@@ -215,21 +241,155 @@ if (missingIds.length) {
     border-radius: 0.5rem;
   }
 
+  .order-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: right;
+  }
+  .go-to-order {
+    display: flex;
+    position: relative;
+  }
+  .back button {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center;
+    padding: 0.5rem 1rem; /* Normal button padding */
+    border-radius: 0.5rem;
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    width: 100%; /* Optional: make it full width */
+  }
+
+  .back button:hover {
+    background-color: var(--color-foreground-hover);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-foreground);
+  }
+  .order-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: space-between;
+    
+  }
+
+  .order-actions button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  .go-to-order-button {
+    background-color: var(--button-background);
+    color: var(--button-text);
+  }
+  .go-to-order-button:hover {
+    background-color: var(--color-foreground-hover);
+    color: var(--color-background);
+  }
+
+  .action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    
+  }
+  .refund-button {
+    background-color: #ffc107;
+    color: var(--color-background);
+    border: solid 1px #ffc107;
+    margin-left: 2rem;
+  }
+
+  .refund-button:hover {
+    background-color: #e0a800c4;
+    color: var(--color-foreground);
+    border: solid 1px #e0a800;
+  }
+
+  .cancel-button {
+    background-color: #dc3545;
+    color: var(--color-foreground);
+    margin-left: 2rem;
+  }
+
+  .cancel-button:hover {
+    background-color: #c82333b9;
+    color: var(--color-foreground);
+    border: solid 1px #c82333;
+  }
   @media (max-width: 1400px) {
     .content {
       width: 90%;
     }
-    .head {
+    .admin-order-head {
       width: 90%;
       margin-bottom: 5rem;
     }
+
     .order-details {
       margin: auto;
       width: 90%;
+      margin-bottom: 5rem;
     }
     .order-details-item {
       margin-bottom: 1rem;
       font-size: 0.8rem;
+    }
+    .order-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .order-actions button {
+      width: 100%;
+    }
+    .go-to-order-button {
+      width: 100%;
+    }
+
+    .refund-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      margin-left: 0;
+    }
+    .cancel-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+      margin-left: 0;
+    }
+  }
+  /* Responsive Breakpoints */
+  @media (max-width: 900px) {
+    .content {
+      width: 90%;
+    }
+    .admin-order-head {
+      flex-direction: column;
+      padding: 20px;
+    }
+    .product-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .order-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .order-actions button {
+      width: 100%;
+    }
+    .cancel-button {
+      margin-left: 0;
+    }
+    .refund-button {
+      margin-left: 0;
     }
   }
   @media (max-width: 600px) {
@@ -243,10 +403,35 @@ if (missingIds.length) {
     .order-details {
       margin: auto;
       width: 90%;
+      margin-bottom: 5rem;
     }
     .order-details-item {
       margin-bottom: 1rem;
       font-size: 0.8rem;
+    }
+    .order-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .order-actions button {
+      width: 100%;
+    }
+    .go-to-order-button {
+      width: 100%;
+    }
+
+    .refund-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      margin-left: 0;
+    }
+    .cancel-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+      margin-left: 0;
     }
   }
   @media (max-width: 400px) {
@@ -260,10 +445,35 @@ if (missingIds.length) {
     .order-details {
       margin: auto;
       width: 90%;
+      margin-bottom: 5rem;
     }
     .order-details-item {
       margin-bottom: 1rem;
       font-size: 0.8rem;
+    }
+    .order-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .order-actions button {
+      width: 100%;
+    }
+    .go-to-order-button {
+      width: 100%;
+    }
+
+    .refund-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      margin-left: 0;
+    }
+    .cancel-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+      margin-left: 0;
     }
   }
 </style>

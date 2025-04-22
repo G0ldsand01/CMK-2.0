@@ -1,13 +1,13 @@
 ---
-import { ordersTable } from '@/db/schema';
-import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { ordersTable } from "@/db/schema";
+import AdminDashboardLayout from "@/layouts/AdminDashboardLayout.astro";
+import db from "@/lib/db";
+import { getUser } from "@/lib/user";
 
 const user = await getUser(Astro.request);
 
 if (!user || !user.isAdmin()) {
-	throw Astro.redirect('/login');
+  throw Astro.redirect("/login");
 }
 
 const orders = await db.select().from(ordersTable);
@@ -16,7 +16,7 @@ const orders = await db.select().from(ordersTable);
 <AdminDashboardLayout
   title="Orders"
   breadcrumb={{
-    '/orders': 'Manage Orders',
+    "/orders": "Manage Orders",
   }}
 >
   <div class="content">
@@ -33,11 +33,38 @@ const orders = await db.select().from(ordersTable);
             <h2>{order.id}</h2>
             <p>{order.status}</p>
             <p>{order.createdAt}</p>
-            <div class="go-to-order">
-              <a href={`/dashboard/admin/order/${order.id}`} class="go-to-order-button"><button>Go to Order</button></a>
+
+            <div class="order-actions">
+              <div class="back">
+                <a
+                  href={`/dashboard/admin/order/${order.id}`}
+                  class="go-to-order-button"
+                >
+                  <button>Go to Order</button>
+                </a>
+              </div>
+              <div class="actions">
+                <form
+                  method="POST"
+                  action={`/api/orders/${order.id}/refund`}
+                  style="display:inline;"
+                >
+                  <button type="submit" class="refund-button">
+                    Refund
+                  </button>
+                </form>
+                <form
+                  method="POST"
+                  action={`/api/orders/${order.id}/cancel`}
+                  style="display:inline;"
+                >
+                  <button type="submit" class="cancel-button">
+                    Cancel
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-          
         ))
       }
     </div>
@@ -54,7 +81,6 @@ const orders = await db.select().from(ordersTable);
     margin-left: auto;
     margin-right: auto;
     width: 50%;
-
   }
   .head {
     display: flex;
@@ -91,6 +117,7 @@ const orders = await db.select().from(ordersTable);
     flex-direction: column;
     gap: 1rem;
     margin-top: 2rem;
+    margin-bottom: 5rem;
   }
   .order {
     display: flex;
@@ -106,26 +133,69 @@ const orders = await db.select().from(ordersTable);
   .go-to-order {
     display: flex;
     position: relative;
-    right: 5%;
-    bottom: 40%;
-    justify-content: right;
-    align-items: center;
-    margin-top: 1rem;
   }
-  .go-to-order button {
+  .back button {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center;
+    padding: 0.5rem 1rem; /* Normal button padding */
+    border-radius: 0.5rem;
     background-color: var(--color-foreground);
     color: var(--color-background);
-    border: 1px solid transparent;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    width: 100%; /* Optional: make it full width */
   }
-  .go-to-order button:hover {
+  .back button:hover {
     background-color: var(--color-foreground-hover);
     color: var(--color-foreground);
     border: 1px solid var(--color-foreground);
   }
+  .order-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: space-between;
+  }
+
+  .order-actions button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+  }
+  .go-to-order {
+    display: flex;
+    position: relative;
+    text-align: center;
+  }
+
+  .go-to-order-button {
+    background-color: var(button-background);
+    color: var(button-text);
+  }
+  .go-to-order-button:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-foreground);
+  }
+  .refund-button {
+    background-color: #ffc107;
+    color: black;
+  }
+
+  .refund-button:hover {
+    background-color: #e0a800;
+  }
+
+  .cancel-button {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .cancel-button:hover {
+    background-color: #c82333;
+  }
+
   @media (max-width: 1400px) {
     .content {
       width: 90%;
@@ -141,16 +211,31 @@ const orders = await db.select().from(ordersTable);
       margin-bottom: 1rem;
       font-size: 0.8rem;
     }
-    .go-to-order {
-      position: relative;
-      right: 0%;
-      bottom: 0%;
-      justify-content: center;
-      align-items: center;
+    .order-actions {
+      flex-direction: column;
+      gap: 0.5rem;
     }
-    .go-to-order button {
+    .order-actions button {
+      width: 100%;
+    }
+    .go-to-order-button {
+      width: 100%;
+    }
+
+    .refund-button {
       width: 100%;
       padding: 0.5rem 0;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    .cancel-button {
+      width: 100%;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+    }
+    .order-actions {
+      flex-direction: column;
+      gap: 0.5rem;
     }
   }
 </style>
