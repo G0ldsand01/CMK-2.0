@@ -232,12 +232,12 @@ if (!user) {
       }
 
       .welcome-message h1 {
-        color: #27ae60;
+        color: var(--color-foreground);
         font-size: 28px;
       }
 
       .welcome-message p {
-        color: #666;
+        color: var(--color-muted-foreground);
         font-size: 16px;
       }
       /* Settings Section */
@@ -302,7 +302,7 @@ if (!user) {
       .inputs {
         width: 100%;
         padding: 12px;
-        border: 2px solid #27ae60;
+        border: 2px solid var(--color-primary);
         border-radius: 8px;
         background-color: var(--color-background);
         color: var(--color-foreground);
@@ -311,13 +311,13 @@ if (!user) {
       }
 
       .inputs:focus {
-        border-color: #20c464;
-        box-shadow: 0 0 8px rgba(39, 174, 96, 0.7);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 8px var(--color-primary);
       }
 
       button[type="submit"] {
         margin-top: 1.5rem;
-        background-color: #27ae60;
+        background-color: var(--color-primary);
         color: var(--color-foreground);
         padding: 12px 24px;
         border: none;
@@ -328,7 +328,7 @@ if (!user) {
       }
 
       button[type="submit"]:hover {
-        background-color: #20c464;
+        background-color: var(--color-destructive);
       }
       * {
         margin: 0;

@@ -91,12 +91,12 @@ const orders = await db
   }
 
   .welcome-message h1 {
-    color: #27ae60;
+    color: var(--color-foreground);
     font-size: 28px;
   }
 
   .welcome-message p {
-    color: var(--color-foreground);
+    color: var(--color-muted-foreground);
     font-size: 16px;
   }
   .orders {
@@ -121,7 +121,7 @@ const orders = await db
     grid-template-columns: 1fr;
     gap: 1rem;
     background-color: var(--color-background);
-    border: #27ae60 solid 1px;
+    border: var(--color-border) solid 1px;
     margin: 1rem;
     padding: 1rem;
     border-radius: 1rem;

@@ -71,12 +71,15 @@
 	"pnpm": {
 		"onlyBuiltDependencies": [
 			"@biomejs/biome",
+			"@prisma/client",
 			"esbuild",
 			"protobufjs",
 			"sharp"
 		]
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,astro}": ["pnpm biome check --write ."]
+		"*.{js,jsx,ts,tsx,astro}": [
+			"pnpm biome check --write ."
+		]
 	}
 }

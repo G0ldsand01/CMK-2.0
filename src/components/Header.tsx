@@ -70,7 +70,10 @@ export function HeaderMenu() {
 							{/* Featured card */}
 							<li className="row-span-4">
 								<a
-									className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
+									className="flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline outline-none hover:shadow-md"
+									style={{
+										background: 'var(--accent)',
+									}}
 									href={featuredItem.href}
 								>
 									{React.createElement(featuredItem.image, {
@@ -79,7 +82,7 @@ export function HeaderMenu() {
 									<div className="mb-2 mt-4 text-lg font-medium">
 										{featuredItem.title}
 									</div>
-									<p className="text-sm leading-tight text-muted-foreground">
+									<p className="text-sm leading-tight text-foreground">
 										{featuredItem.description}
 									</p>
 								</a>

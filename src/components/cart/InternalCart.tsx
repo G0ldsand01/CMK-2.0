@@ -78,7 +78,10 @@ export default function InternalCart({
 							</div>
 						) : (
 							<>
-								<div className="text-sm text-gray-500 mb-4">
+								<div
+									className="text-sm mb-4"
+									style={{ color: 'var(--foreground)' }}
+								>
 									{Object.values($cart).length} items in your cart
 								</div>
 								<div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-2">
@@ -87,7 +90,10 @@ export default function InternalCart({
 											key={item.products.id}
 											className="flex items-center gap-4 p-4 bg-card rounded-lg shadow-sm"
 										>
-											<div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100">
+											<div
+												className="w-20 h-20 rounded-md overflow-hidden"
+												style={{ color: 'var(--foreground)' }}
+											>
 												<img
 													src={`${CDN_URL}${item.products.image}`}
 													alt={item.products.name}
@@ -96,7 +102,10 @@ export default function InternalCart({
 											</div>
 											<div className="flex-1">
 												<h3 className="font-medium">{item.products.name}</h3>
-												<p className="text-sm text-gray-500">
+												<p
+													className="text-sm"
+													style={{ color: 'var(--foreground)' }}
+												>
 													${item.products.price}
 												</p>
 												<div className="flex items-center gap-2 mt-2">
@@ -169,8 +178,13 @@ export default function InternalCart({
 					<SheetFooter className="mt-auto pt-4 border-t">
 						<div className="w-full">
 							<div className="flex justify-between mb-4">
-								<span className="text-gray-500">Subtotal</span>
-								<span className="font-medium">${calculateTotal()}</span>
+								<span className="text-foreground">Subtotal</span>
+								<span
+									className="font-medium"
+									style={{ color: 'var(--foreground)' }}
+								>
+									${calculateTotal()}
+								</span>
 							</div>
 							<Button className="w-full" asChild>
 								<a href="/cart">

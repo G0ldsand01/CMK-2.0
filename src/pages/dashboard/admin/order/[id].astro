@@ -1,66 +1,66 @@
 ---
 import { CDN_URL } from 'astro:env/client';
+import { ordersTable, productsTable } from '@/db/schema';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import db from '@/lib/db';
+import { getUser } from '@/lib/user';
 import type { Product } from '@/store';
-import { ordersTable, productsTable } from "@/db/schema";
-import AdminDashboardLayout from "@/layouts/AdminDashboardLayout.astro";
-import db from "@/lib/db";
-import { getUser } from "@/lib/user";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray } from 'drizzle-orm';
 
 const user = await getUser(Astro.request);
 if (!user || !user.isAdmin()) {
-  throw Astro.redirect("/login");
+	throw Astro.redirect('/login');
 }
 
 const { id } = Astro.params;
 
 const [order] = await db
-  .select({
-    id: ordersTable.id,
-    status: ordersTable.status,
-    cartJSON: ordersTable.cartJSON,
-    createdAt: ordersTable.createdAt,
-  })
-  .from(ordersTable)
-  .where(eq(ordersTable.id, Number(id)));
+	.select({
+		id: ordersTable.id,
+		status: ordersTable.status,
+		cartJSON: ordersTable.cartJSON,
+		createdAt: ordersTable.createdAt,
+	})
+	.from(ordersTable)
+	.where(eq(ordersTable.id, Number(id)));
 
 if (!order) {
-  throw Astro.redirect("/dashboard/admin/orders");
+	throw Astro.redirect('/dashboard/admin/orders');
 }
 
 // Extract product IDs
 const productIds = order.cartJSON.map((item) => item.products.id);
 const products = await db
-  .select()
-  .from(productsTable)
-  .where(inArray(productsTable.id, productIds));
+	.select()
+	.from(productsTable)
+	.where(inArray(productsTable.id, productIds));
 // Combine cart and product data
 const orderItems = order.cartJSON
-  .map((item) => {
-    const product = products.find((p) => p.id === item.products.id);
-    return {
-      ...item,
-      product,
-    };
-  })
-  .filter((item) => item.product); // remove items where product is undefined
+	.map((item) => {
+		const product = products.find((p) => p.id === item.products.id);
+		return {
+			...item,
+			product,
+		};
+	})
+	.filter((item) => item.product); // remove items where product is undefined
 
 const totalPrice = orderItems.reduce((sum, item) => {
-  return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
+	return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
 }, 0);
 
 const orderData = {
-  id: order.id,
-  status: order.status,
-  createdAt: order.createdAt,
-  items: Array.isArray(orderItems) ? orderItems : [],
-  total: totalPrice,
+	id: order.id,
+	status: order.status,
+	createdAt: order.createdAt,
+	items: Array.isArray(orderItems) ? orderItems : [],
+	total: totalPrice,
 };
 const missingIds = productIds.filter(
-  (id) => !products.find((p) => p.id === id)
+	(id) => !products.find((p) => p.id === id),
 );
 if (missingIds.length) {
-  console.warn("Produits manquants dans la DB:", missingIds);
+	console.warn('Produits manquants dans la DB:', missingIds);
 }
 ---
 
@@ -258,8 +258,8 @@ if (missingIds.length) {
     text-align: center;
     padding: 0.5rem 1rem; /* Normal button padding */
     border-radius: 0.5rem;
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    background-color: var(--color-primary);
+    color: var(--mutted-foreground);
     width: 100%; /* Optional: make it full width */
   }
 

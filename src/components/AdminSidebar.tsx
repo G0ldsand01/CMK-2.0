@@ -51,7 +51,7 @@ const data = {
 				},
 				{
 					title: 'Dashboard',
-					url: '/amdin',
+					url: '/admin',
 					icon: LayoutDashboard,
 				},
 			],

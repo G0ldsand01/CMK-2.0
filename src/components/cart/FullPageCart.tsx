@@ -45,14 +45,24 @@ function FullPageCart({
 						<img
 							src={`${CDN_URL}${item.products.image}`}
 							alt={item.products.name}
-							className="w-20 h-20 rounded-md overflow-hidden bg-gray-100"
+							className="w-20 h-20 rounded-md overflow-hidden"
+							style={{ color: 'var(--foreground)' }}
 						/>
-						<div className="flex-1">
+						<div
+							className="flex-1"
+							style={{ color: 'var(--muted-foreground)' }}
+						>
 							<h2 className="text-lg font-semibold">{item.products.name}</h2>
-							<p className="text-foreground">
+							<p
+								className="text-foreground"
+								style={{ color: 'var(--card-foreground)' }}
+							>
 								${Number(item.products.price).toFixed(2)}
 							</p>
-							<p className="text-sm text-foreground">
+							<p
+								className="text-sm"
+								style={{ color: 'var(--card-foreground)' }}
+							>
 								Total: $
 								{(item.cart.quantity * Number(item.products.price)).toFixed(2)}
 							</p>
@@ -77,7 +87,12 @@ function FullPageCart({
 						>
 							<Minus className="h-4 w-4" />
 						</Button>
-						<span className="w-8 text-center">{item.cart.quantity}</span>
+						<span
+							className="w-8 text-center"
+							style={{ color: 'var(--card-foreground)' }}
+						>
+							{item.cart.quantity}
+						</span>
 						<Button
 							variant="outline"
 							size="icon"
@@ -118,8 +133,13 @@ function FullPageCart({
 			{Object.values($cart).length > 0 && (
 				<div className="w-full">
 					<div className="flex justify-between mb-4">
-						<span className="text-gray-500">Subtotal</span>
-						<span className="font-medium">${calculateTotal()}</span>
+						<span style={{ color: 'var(--foreground)' }}>Subtotal</span>
+						<span
+							className="font-medium"
+							style={{ color: 'var(--foreground)' }}
+						>
+							${calculateTotal()}
+						</span>
 					</div>
 					<Button
 						className="w-full"
