@@ -78,8 +78,6 @@
 		]
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,astro}": [
-			"pnpm biome check --write ."
-		]
+		"*.{js,jsx,ts,tsx,astro}": ["pnpm biome check --write ."]
 	}
 }
