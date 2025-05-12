@@ -207,32 +207,6 @@ const user = await getUser(Astro.request);
     font-size: 16px;
   }
 
-  nav ul {
-    /* center the list items in the middle of the screen */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  nav ul li {
-    list-style: none;
-  }
-
-  nav ul li a {
-    font:
-      1.4rem 'grandstander',
-      sans-serif;
-    color: var(--color-foreground);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  nav ul li a:hover {
-    color: #27ae60;
-    text-decoration: underline;
-  }
-
   #menu-toggle {
     position: absolute;
     right: 1rem;
