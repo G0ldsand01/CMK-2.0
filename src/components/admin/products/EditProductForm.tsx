@@ -94,7 +94,7 @@ export default function EditProductForm({
 			name: product.name,
 			description: product.description,
 			price: product.price,
-			category: Number(product.category),
+			category: product.category,
 			type: product.type,
 			image: product.image,
 		},

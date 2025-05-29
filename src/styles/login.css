@@ -89,13 +89,13 @@ main {
 .login-with-social button {
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-primary);
-	color: var(--color-primary-foreground);
+	background-color: #e7dcdc;
+	color: #000;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
 	padding: 0.5rem;
-	border: solid 2px var(--color-primary);
+	border: solid 2px #e7dcdc;
 	border-radius: 0.5rem;
 	cursor: pointer;
 	transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease,
