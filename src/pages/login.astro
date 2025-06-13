@@ -1,26 +1,30 @@
 ---
 import '@styles/login.css';
 import '@styles/global.css';
-import { Image } from 'astro:assets';
 import Icon from '@/components/images/Icon.astro';
 import Layout from '@layouts/Layout.astro';
 import { SignIn } from 'auth-astro/components';
 import { getSession } from 'auth-astro/server';
 
 const session = await getSession(Astro.request);
+
+const url = new URL(Astro.request.url);
+const redirectTo = url.searchParams.get('redirect') || '/';
+
 if (session) {
-	return Astro.redirect('/dashboard');
+	return Astro.redirect(redirectTo);
 }
 ---
 
 <Layout title="Login" navbar={false}>
   <div class="container">
     <h1>Welcome Back</h1>
+    <p>Please login to continue</p>
     <div class="login-with-social">
-      <SignIn provider="github">
+      <SignIn provider="github" options={{ callbackUrl: redirectTo }}>
         <Icon
-          imagePath={'github'}
-          altText={'Github'}
+          imagePath="github"
+          altText="Github"
           width={128}
           height={128}
           class="icon"
@@ -28,10 +32,11 @@ if (session) {
         />
         Login with Github
       </SignIn>
-      <SignIn provider="discord">
+
+      <SignIn provider="discord" options={{ callbackUrl: redirectTo }}>
         <Icon
-          imagePath={'discord'}
-          altText={'Discord'}
+          imagePath="discord"
+          altText="Discord"
           width={64}
           height={64}
           class="icon"
@@ -39,10 +44,11 @@ if (session) {
         />
         Login with Discord
       </SignIn>
-      <SignIn provider="google">
+
+      <SignIn provider="google" options={{ callbackUrl: redirectTo }}>
         <Icon
-          imagePath={'google'}
-          altText={'Google'}
+          imagePath="google"
+          altText="Google"
           width={64}
           height={64}
           class="icon"
@@ -51,6 +57,9 @@ if (session) {
         Login with Google
       </SignIn>
     </div>
-    <p><a href="/"> Back to Home</a></p>
+
+    <a class="back-to-home" href="/">
+      Back to Home
+    </a>
   </div>
 </Layout>
