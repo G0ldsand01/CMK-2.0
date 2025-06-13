@@ -60,22 +60,6 @@ const formSchema = z.object({
 	type: z.string({
 		required_error: 'Please select a type.',
 	}),
-	image: z.string().refine(
-		(val) => {
-			// Accept both standard URLs and our internal image paths
-			if (val.startsWith('http://') || val.startsWith('https://')) {
-				return true;
-			}
-			// Accept paths like /view/product-{id}-{hash}.png
-			if (val.startsWith('/view/product-') && val.endsWith('.png')) {
-				return true;
-			}
-			return false;
-		},
-		{
-			message: 'Please enter a valid image URL or path.',
-		},
-	),
 });
 
 export default function EditProductForm({
@@ -96,7 +80,6 @@ export default function EditProductForm({
 			price: product.price,
 			category: product.category,
 			type: product.type,
-			image: product.image,
 		},
 	});
 
@@ -235,22 +218,6 @@ export default function EditProductForm({
 											))}
 										</SelectContent>
 									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="image"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Image URL</FormLabel>
-									<FormControl>
-										<Input
-											placeholder="/view/product-{id}-{hash}.png"
-											{...field}
-										/>
-									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}

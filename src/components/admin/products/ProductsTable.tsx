@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AddProductForm from './AddProductForm';
 import EditProductForm from './EditProductForm';
+import EditProductImageForm from './EditProductImageForm';
 
 type Product = typeof productsTable.$inferSelect;
 
@@ -22,11 +23,6 @@ interface ProductsTableProps {
 	totalProducts: number;
 	categories: { id: number; name: string }[];
 	types: string[];
-}
-
-interface GetProductsResponse {
-	data: Product[];
-	total: number;
 }
 
 export default function ProductsTable({
@@ -175,6 +171,7 @@ export default function ProductsTable({
 								</TableCell>
 								<TableCell className="text-right">
 									<div className="flex justify-end gap-2">
+										<EditProductImageForm product={product} />
 										<EditProductForm
 											product={product}
 											categories={categories}

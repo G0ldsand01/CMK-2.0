@@ -1,4 +1,5 @@
 ---
+import { CDN_URL } from 'astro:env/client';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
@@ -11,7 +12,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { productsTable, wishlistTable } from '@/db/schema';
+import {
+	imageTable,
+	productImageTable,
+	productsTable,
+	wishlistTable,
+} from '@/db/schema';
 import db from '@/lib/db';
 import { getUser } from '@/lib/user';
 import { and, eq } from 'drizzle-orm';
@@ -22,11 +28,21 @@ const { id } = Astro.params;
 
 const user = await getUser(Astro.request);
 
-const { product, isInWishlist } = await db.transaction(async (tx) => {
+const { product, images, isInWishlist } = await db.transaction(async (tx) => {
 	const [product] = await tx
 		.select()
 		.from(productsTable)
 		.where(eq(productsTable.id, Number(id)));
+
+	const images = await tx
+		.select({
+			product_image: productImageTable,
+			image: imageTable,
+		})
+		.from(productImageTable)
+		.where(eq(productImageTable.productId, Number(id)))
+		.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+		.orderBy(productImageTable.priority);
 
 	if (user && product) {
 		const isInWishlist = await tx
@@ -39,15 +55,17 @@ const { product, isInWishlist } = await db.transaction(async (tx) => {
 				),
 			);
 
-		return { product, isInWishlist };
+		return { product, images, isInWishlist };
 	}
 
-	return { product, isInWishlist: false };
+	return { product, images, isInWishlist: false };
 });
 
 if (!product) {
 	return Astro.redirect('/');
 }
+
+const mainImage = images[0]?.image?.image;
 ---
 
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
@@ -75,13 +93,49 @@ if (!product) {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left column - Image */}
                 <div class="relative">
-                  <ProductImage
-                    imagePath={product.image}
-                    width={600}
-                    height={600}
-                    altText={product.name}
-                    class="rounded-lg w-full h-auto object-cover"
-                  />
+                  {images.length > 0 ? (
+                    <img
+                      src={`${CDN_URL}/${mainImage}`}
+                      alt={product.name}
+                      class="rounded-lg w-full h-auto object-cover"
+                      id="main-product-image"
+                    />
+                  ) : (
+                    <div class="rounded-lg w-full aspect-square bg-muted flex items-center justify-center">
+                      <span class="text-muted-foreground">
+                        No image available
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Image Carousel */}
+                  {images.length > 0 && (
+                    <div class="mt-4">
+                      <div class="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory image-carousel">
+                        {images.map(
+                          (image) =>
+                            image.image && (
+                              <button
+                                type="button"
+                                class={`snap-start shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                                  image.image.image === mainImage
+                                    ? 'border-primary'
+                                    : 'border-transparent hover:border-primary'
+                                } transition-colors`}
+                                data-image-path={image.image.image}
+                              >
+                                <img
+                                  src={`${CDN_URL}/${image.image.image}`}
+                                  alt={product.name}
+                                  class="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                              </button>
+                            )
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Right column - Content */}
@@ -162,6 +216,50 @@ if (!product) {
   import { actions } from 'astro:actions';
   import { toast } from 'sonner';
   import { setCart } from '@/lib/cart';
+  import { CDN_URL } from 'astro:env/client';
+
+  function changeMainImage(imagePath: string) {
+    const mainImage = document.getElementById(
+      'main-product-image'
+    ) as HTMLImageElement | null;
+    if (mainImage) {
+      mainImage.src = `${CDN_URL}/${imagePath}`;
+
+      // Update active state of thumbnails
+      const thumbnails = document.querySelectorAll('.image-carousel button');
+      thumbnails.forEach((thumb) => {
+        if (thumb.getAttribute('data-image-path') === imagePath) {
+          thumb.classList.add('border-primary');
+          thumb.classList.remove('border-transparent');
+        } else {
+          thumb.classList.remove('border-primary');
+          thumb.classList.add('border-transparent');
+        }
+      });
+    }
+  }
+
+  // Add click event listeners to thumbnails
+  document.addEventListener('DOMContentLoaded', () => {
+    const thumbnails = document.querySelectorAll('.image-carousel button');
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const imagePath = thumb.getAttribute('data-image-path');
+        if (imagePath) {
+          changeMainImage(imagePath);
+        }
+      });
+    });
+
+    // Set initial active state
+    const firstThumbnail = thumbnails[0];
+    if (firstThumbnail) {
+      const imagePath = firstThumbnail.getAttribute('data-image-path');
+      if (imagePath) {
+        changeMainImage(imagePath);
+      }
+    }
+  });
 
   /*
     Product ID

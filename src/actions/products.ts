@@ -1,15 +1,27 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { type ProductType, productsTable } from '@/db/schema';
+import {
+	type ProductType,
+	imageTable,
+	productCategoryTable,
+	productImageTable,
+	productsTable,
+} from '@/db/schema';
 import db from '@/lib/db';
 import { eq, like } from 'drizzle-orm';
 
 export const products = {
 	getBestProducts: defineAction({
 		handler: async () => {
-			const products = await db.query.productsTable.findMany({
-				limit: 32,
-			});
+			const products = await db
+				.select()
+				.from(productsTable)
+				.limit(32)
+				.leftJoin(
+					productImageTable,
+					eq(productsTable.id, productImageTable.productId),
+				)
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id));
 			return products;
 		},
 	}),
@@ -19,10 +31,17 @@ export const products = {
 		}),
 		handler: async (input) => {
 			const searchPattern = `%${input.search}%`;
-			const products = await db.query.productsTable.findMany({
-				where: like(productsTable.name, searchPattern),
-				limit: 32,
-			});
+
+			const products = await db
+				.select()
+				.from(productsTable)
+				.where(like(productsTable.name, searchPattern))
+				.leftJoin(
+					productImageTable,
+					eq(productsTable.id, productImageTable.productId),
+				)
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.limit(32);
 			return products;
 		},
 	}),
@@ -31,10 +50,16 @@ export const products = {
 			type: z.string(),
 		}),
 		handler: async (input) => {
-			const products = await db.query.productsTable.findMany({
-				where: eq(productsTable.type, input.type as ProductType),
-				limit: 32,
-			});
+			const products = await db
+				.select()
+				.from(productsTable)
+				.where(eq(productsTable.type, input.type as ProductType))
+				.leftJoin(
+					productImageTable,
+					eq(productsTable.id, productImageTable.productId),
+				)
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.limit(32);
 			return products;
 		},
 	}),
@@ -43,17 +68,37 @@ export const products = {
 			categoryId: z.number(),
 		}),
 		handler: async (input) => {
-			const products = await db.query.productsTable.findMany({
-				where: eq(productsTable.category, input.categoryId),
-				limit: 32,
-			});
+			const products = await db
+				.select()
+				.from(productsTable)
+				.where(eq(productsTable.category, input.categoryId))
+				.leftJoin(
+					productImageTable,
+					eq(productsTable.id, productImageTable.productId),
+				)
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.limit(32);
 			return products;
 		},
 	}),
 	getCategories: defineAction({
 		handler: async () => {
-			const categories = await db.query.productCategoryTable.findMany();
+			const categories = await db.select().from(productCategoryTable);
 			return categories;
+		},
+	}),
+
+	getProductImage: defineAction({
+		input: z.object({
+			productId: z.number(),
+		}),
+		handler: async (input) => {
+			const image = await db
+				.select()
+				.from(productImageTable)
+				.where(eq(productImageTable.productId, input.productId))
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id));
+			return image;
 		},
 	}),
 };

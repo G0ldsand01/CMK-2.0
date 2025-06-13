@@ -6,6 +6,10 @@ import ProductCard from './ProductCard';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
+interface ProductWithImage extends Product {
+	image: string;
+}
+
 interface ProductGridProps {
 	type?: ProductType;
 }
@@ -21,7 +25,7 @@ export const ProductsContext = createContext<{
 export default function ProductGrid({ type: initialType }: ProductGridProps) {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-	const [productList, setProductList] = useState<Product[]>([]);
+	const [productList, setProductList] = useState<ProductWithImage[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
 
 	const handleSearch = useCallback(async () => {
@@ -30,12 +34,22 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 				search: searchQuery,
 			});
 			if (result.data) {
-				setProductList(result.data);
+				setProductList(
+					result.data.map((item) => ({
+						...item.products,
+						image: item.image?.image || '',
+					})),
+				);
 			}
 		} else {
 			const result = await actions.products.getBestProducts();
 			if (result.data) {
-				setProductList(result.data);
+				setProductList(
+					result.data.map((item) => ({
+						...item.products,
+						image: item.image?.image || '',
+					})),
+				);
 			}
 		}
 	}, [searchQuery]);
@@ -48,12 +62,22 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 					categoryId,
 				});
 				if (result.data) {
-					setProductList(result.data);
+					setProductList(
+						result.data.map((item) => ({
+							...item.products,
+							image: item.image?.image || '',
+						})),
+					);
 				}
 			} else {
 				const result = await actions.products.getBestProducts();
 				if (result.data) {
-					setProductList(result.data);
+					setProductList(
+						result.data.map((item) => ({
+							...item.products,
+							image: item.image?.image || '',
+						})),
+					);
 				}
 			}
 		},
@@ -79,7 +103,12 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 					type: initialType,
 				});
 				if (result.data) {
-					setProductList(result.data);
+					setProductList(
+						result.data.map((item) => ({
+							...item.products,
+							image: item.image?.image || '',
+						})),
+					);
 				}
 			} else {
 				handleSearch();

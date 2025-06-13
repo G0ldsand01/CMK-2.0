@@ -26,7 +26,6 @@ export const productsTable = pgTable(
 		name: varchar({ length: 255 }).notNull(),
 		price: numeric().notNull(),
 		description: text().notNull(),
-		image: varchar({ length: 255 }).notNull(),
 		category: integer('category')
 			.notNull()
 			.references(() => productCategoryTable.id),
@@ -40,6 +39,22 @@ export const productsTable = pgTable(
 		uniqueIndex('product_id_unique').on(table.id),
 	],
 );
+
+export const productImageTable = pgTable('product_image', {
+	id: serial('id').primaryKey(),
+	productId: integer('productId')
+		.notNull()
+		.references(() => productsTable.id, { onDelete: 'cascade' }),
+	priority: integer('priority').notNull().default(0),
+	image: integer('image')
+		.notNull()
+		.references(() => imageTable.id, { onDelete: 'cascade' }),
+});
+
+export const imageTable = pgTable('image', {
+	id: serial('id').primaryKey(),
+	image: varchar({ length: 255 }).notNull(),
+});
 
 export const productCategoryTable = pgTable('product_category', {
 	id: serial('id').primaryKey(),

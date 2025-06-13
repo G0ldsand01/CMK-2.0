@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { productsTable } from '@/db/schema';
+import { imageTable, productImageTable, productsTable } from '@/db/schema';
 import type { ProductType } from '@/db/schema';
 import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
@@ -56,22 +56,6 @@ export const products = {
 			price: z.string(),
 			category: z.number(),
 			type: z.string(),
-			image: z.string().refine(
-				(val) => {
-					// Accept both standard URLs and our internal image paths
-					if (val.startsWith('http://') || val.startsWith('https://')) {
-						return true;
-					}
-					// Accept paths like /view/product-{id}-{hash}.png
-					if (val.startsWith('/view/product-') && val.endsWith('.png')) {
-						return true;
-					}
-					return false;
-				},
-				{
-					message: 'Please enter a valid image URL or path.',
-				},
-			),
 		}),
 		async handler(input, context) {
 			const user = await getUser(context.request);
@@ -91,7 +75,6 @@ export const products = {
 						price: input.price,
 						category: input.category,
 						type: input.type as ProductType,
-						image: input.image,
 					})
 					.where(eq(productsTable.id, input.id));
 
@@ -150,13 +133,13 @@ export const products = {
 
 			try {
 				// Upload image to CDN
-				const cdnResponse = await uploadToCDN(input.image);
+				// const cdnResponse = await uploadToCDN(input.image);
 
-				if (!cdnResponse.success || !cdnResponse.url) {
-					throw new Error(
-						cdnResponse.message || 'Failed to upload image to CDN',
-					);
-				}
+				// if (!cdnResponse.success || !cdnResponse.url) {
+				// 	throw new Error(
+				// 		cdnResponse.message || 'Failed to upload image to CDN',
+				// 	);
+				// }
 
 				// Create the product with the image URL
 				const [product] = await db
@@ -165,7 +148,6 @@ export const products = {
 						name: input.name,
 						price: input.price.toString(),
 						description: input.description,
-						image: cdnResponse.url,
 						type: input.type as ProductType,
 						category: input.category,
 					})
@@ -179,6 +161,137 @@ export const products = {
 					error:
 						error instanceof Error ? error.message : 'Failed to create product',
 				};
+			}
+		},
+	}),
+
+	getProductImages: defineAction({
+		input: z.object({
+			productId: z.number(),
+		}),
+		handler: async (input, context) => {
+			const user = await getUser(context.request);
+			if (!user || !user.isAdmin()) {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			const images = await db
+				.select()
+				.from(productImageTable)
+				.where(eq(productImageTable.productId, input.productId))
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id));
+
+			return images;
+		},
+	}),
+
+	addProductImage: defineAction({
+		input: z.object({
+			productId: z.number(),
+			image: z.string(),
+			priority: z.number(),
+		}),
+		handler: async (input, context) => {
+			const user = await getUser(context.request);
+			if (!user || !user.isAdmin()) {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				const cdnResponse = await uploadToCDN(input.image);
+
+				if (!cdnResponse.success || !cdnResponse.url) {
+					throw new Error(
+						cdnResponse.message || 'Failed to upload image to CDN',
+					);
+				}
+
+				const [image] = await db
+					.insert(imageTable)
+					.values({
+						image: cdnResponse.url,
+					})
+					.returning();
+
+				const [productImage] = await db
+					.insert(productImageTable)
+					.values({
+						productId: input.productId,
+						image: image.id,
+						priority: input.priority,
+					})
+					.returning();
+
+				return { productImage, image };
+			} catch (error) {
+				console.error('Error adding product image:', error);
+				return {
+					success: false,
+					error:
+						error instanceof Error
+							? error.message
+							: 'Failed to add product image',
+				};
+			}
+		},
+	}),
+
+	deleteProductImage: defineAction({
+		input: z.object({
+			imageId: z.number(),
+		}),
+		handler: async (input, context) => {
+			const user = await getUser(context.request);
+			if (!user || !user.isAdmin()) {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				await db
+					.delete(productImageTable)
+					.where(eq(productImageTable.image, input.imageId));
+				await db.delete(imageTable).where(eq(imageTable.id, input.imageId));
+				return { success: true };
+			} catch (error) {
+				console.error('Error deleting product image:', error);
+				return { success: false, error: 'Failed to delete product image' };
+			}
+		},
+	}),
+
+	updateProductImage: defineAction({
+		input: z.object({
+			imageId: z.number(),
+			priority: z.number(),
+		}),
+		handler: async (input, context) => {
+			const user = await getUser(context.request);
+			if (!user || !user.isAdmin()) {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				await db
+					.update(productImageTable)
+					.set({
+						priority: input.priority,
+					})
+					.where(eq(productImageTable.image, input.imageId));
+			} catch (error) {
+				console.error('Error updating product image:', error);
+				return { success: false, error: 'Failed to update product image' };
 			}
 		},
 	}),
