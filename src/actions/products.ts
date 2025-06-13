@@ -17,11 +17,11 @@ export const products = {
 				.select()
 				.from(productsTable)
 				.limit(32)
-				.leftJoin(
+				.innerJoin(
 					productImageTable,
 					eq(productsTable.id, productImageTable.productId),
 				)
-				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id));
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id));
 			return products;
 		},
 	}),
@@ -36,11 +36,11 @@ export const products = {
 				.select()
 				.from(productsTable)
 				.where(like(productsTable.name, searchPattern))
-				.leftJoin(
+				.innerJoin(
 					productImageTable,
 					eq(productsTable.id, productImageTable.productId),
 				)
-				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
 			return products;
 		},
@@ -54,11 +54,11 @@ export const products = {
 				.select()
 				.from(productsTable)
 				.where(eq(productsTable.type, input.type as ProductType))
-				.leftJoin(
+				.innerJoin(
 					productImageTable,
 					eq(productsTable.id, productImageTable.productId),
 				)
-				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
 			return products;
 		},
@@ -72,11 +72,11 @@ export const products = {
 				.select()
 				.from(productsTable)
 				.where(eq(productsTable.category, input.categoryId))
-				.leftJoin(
+				.innerJoin(
 					productImageTable,
 					eq(productsTable.id, productImageTable.productId),
 				)
-				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
 			return products;
 		},
@@ -85,20 +85,6 @@ export const products = {
 		handler: async () => {
 			const categories = await db.select().from(productCategoryTable);
 			return categories;
-		},
-	}),
-
-	getProductImage: defineAction({
-		input: z.object({
-			productId: z.number(),
-		}),
-		handler: async (input) => {
-			const image = await db
-				.select()
-				.from(productImageTable)
-				.where(eq(productImageTable.productId, input.productId))
-				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id));
-			return image;
 		},
 	}),
 };

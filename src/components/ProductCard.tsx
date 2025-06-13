@@ -1,8 +1,7 @@
-import { actions } from 'astro:actions';
 import { CDN_URL } from 'astro:env/client';
 import type { Product } from '@/store';
 import { ChevronRight, ShoppingCart, Tag } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { ProductsContext } from './ProductGrid';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -17,23 +16,11 @@ export default function ProductCard({
 }: {
 	product: ProductWithImage;
 }) {
-	const [image, setImage] = useState<string | null>(null);
 	const { categories } = useContext(ProductsContext);
 	const category = categories.find(
 		(category) => category.id === product.category,
 	);
 
-	useEffect(() => {
-		const loadImage = async () => {
-			const result = await actions.products.getProductImage({
-				productId: product.id,
-			});
-			if (result.data?.[0]?.image?.image) {
-				setImage(result.data[0].image.image);
-			}
-		};
-		loadImage();
-	}, [product.id]);
 	return (
 		<Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
 			<div className="product-image pb-4 p-4 overflow-hidden rounded-md">
