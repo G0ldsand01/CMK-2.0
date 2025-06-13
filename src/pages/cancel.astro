@@ -39,7 +39,7 @@ import { CircleX, Home, ReceiptText } from 'lucide-react';
     margin: 0;
     overflow-y: auto;
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: var(--color-background);
   }
 
   .container {
@@ -54,7 +54,8 @@ import { CircleX, Home, ReceiptText } from 'lucide-react';
   }
 
   .cancel-message {
-    background: white;
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -85,7 +86,7 @@ import { CircleX, Home, ReceiptText } from 'lucide-react';
 
   p {
     font-size: 1.1em;
-    color: #333;
+    color: var(--color-foreground);
   }
   .button {
     display: flex;

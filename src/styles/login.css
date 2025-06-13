@@ -54,7 +54,7 @@ h1 {
 }
 p {
 	font-size: 1.1rem;
-	margin-top: 2rem;
+	margin-top: 1rem;
 	margin-bottom: 1rem;
 	display: block;
 	color: var(--color-foreground);
@@ -112,4 +112,19 @@ main {
 .login-with-social button:hover {
 	/* Added a hover effect */
 	transform: translateY(-4px);
+}
+
+.back-to-home {
+	margin-top: 1rem;
+	padding: 0.5rem 1rem;
+	background-color: #e7dcdc;
+	color: #000;
+	border: none;
+	border-radius: 0.25rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+.back-to-home:hover {
+	background-color: #d4c9c9;
+	transform: translateY(-2px);
 }
