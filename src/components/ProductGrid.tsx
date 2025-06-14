@@ -1,14 +1,15 @@
 import { actions } from 'astro:actions';
-import type { Category, Product, ProductType } from '@/store';
+import type {
+	Category,
+	Product,
+	ProductType,
+	ProductWithImages,
+} from '@/store';
 import { Search } from 'lucide-react';
 import { createContext, useCallback, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-
-interface ProductWithImage extends Product {
-	image: string;
-}
 
 interface ProductGridProps {
 	type?: ProductType;
@@ -25,7 +26,7 @@ export const ProductsContext = createContext<{
 export default function ProductGrid({ type: initialType }: ProductGridProps) {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-	const [productList, setProductList] = useState<ProductWithImage[]>([]);
+	const [productList, setProductList] = useState<ProductWithImages[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
 
 	const handleSearch = useCallback(async () => {
@@ -33,24 +34,10 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 			const result = await actions.products.getProductsBySearch({
 				search: searchQuery,
 			});
-			if (result.data) {
-				setProductList(
-					result.data.map((item) => ({
-						...item.products,
-						image: item.image?.image || '',
-					})),
-				);
-			}
+			setProductList(result.data || []);
 		} else {
 			const result = await actions.products.getBestProducts();
-			if (result.data) {
-				setProductList(
-					result.data.map((item) => ({
-						...item.products,
-						image: item.image?.image || '',
-					})),
-				);
-			}
+			setProductList(result.data || []);
 		}
 	}, [searchQuery]);
 
@@ -61,24 +48,10 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 				const result = await actions.products.getProductsByCategory({
 					categoryId,
 				});
-				if (result.data) {
-					setProductList(
-						result.data.map((item) => ({
-							...item.products,
-							image: item.image?.image || '',
-						})),
-					);
-				}
+				setProductList(result.data || []);
 			} else {
 				const result = await actions.products.getBestProducts();
-				if (result.data) {
-					setProductList(
-						result.data.map((item) => ({
-							...item.products,
-							image: item.image?.image || '',
-						})),
-					);
-				}
+				setProductList(result.data || []);
 			}
 		},
 		[],
@@ -88,9 +61,7 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 	useEffect(() => {
 		const loadCategories = async () => {
 			const result = await actions.products.getCategories();
-			if (result.data) {
-				setCategories(result.data);
-			}
+			setCategories(result.data || []);
 		};
 		loadCategories();
 	}, []);
@@ -102,14 +73,7 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 				const result = await actions.products.getProductsByType({
 					type: initialType,
 				});
-				if (result.data) {
-					setProductList(
-						result.data.map((item) => ({
-							...item.products,
-							image: item.image?.image || '',
-						})),
-					);
-				}
+				setProductList(result.data || []);
 			} else {
 				handleSearch();
 			}

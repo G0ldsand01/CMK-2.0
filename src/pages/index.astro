@@ -9,11 +9,7 @@ const bestProductsActions = await Astro.callAction(
 	actions.products.getBestProducts,
 	{},
 );
-const bestProducts =
-	bestProductsActions.data?.map((item) => ({
-		...item.products,
-		image: item.image?.image || '',
-	})) || [];
+const bestProducts = bestProductsActions.data || [];
 ---
 
 <Layout title="Home" navbar={true}>

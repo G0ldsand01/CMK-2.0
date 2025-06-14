@@ -1,5 +1,5 @@
 import { CDN_URL } from 'astro:env/client';
-import type { Product } from '@/store';
+import type { ProductWithImages } from '@/store';
 import { ChevronRight, ShoppingCart, Tag } from 'lucide-react';
 import { useContext } from 'react';
 import { ProductsContext } from './ProductGrid';
@@ -7,14 +7,10 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 
-interface ProductWithImage extends Product {
-	image: string;
-}
-
 export default function ProductCard({
 	product,
 }: {
-	product: ProductWithImage;
+	product: ProductWithImages;
 }) {
 	const { categories } = useContext(ProductsContext);
 	const category = categories.find(
@@ -25,7 +21,11 @@ export default function ProductCard({
 		<Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
 			<div className="product-image pb-4 p-4 overflow-hidden rounded-md">
 				<img
-					src={`${CDN_URL}${product.image}`}
+					src={
+						product.images?.[0]?.image
+							? `${CDN_URL}${product.images[0].image}`
+							: ''
+					}
 					alt={product.name}
 					width={200}
 					height={200}

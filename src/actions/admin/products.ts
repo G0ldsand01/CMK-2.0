@@ -8,6 +8,25 @@ import { getUser } from '@/lib/user';
 import { count, eq } from 'drizzle-orm';
 import { logSecurityEvent } from '..';
 
+async function updateProductThumbnail(productId: number) {
+	const images = await db
+		.select()
+		.from(productImageTable)
+		.where(eq(productImageTable.productId, productId))
+		.leftJoin(imageTable, eq(productImageTable.image, imageTable.id));
+
+	const thumbnailImage = images.sort(
+		(a, b) => a.product_image.priority - b.product_image.priority,
+	)[0];
+
+	if (thumbnailImage?.image) {
+		await db
+			.update(productsTable)
+			.set({ thumbnail: thumbnailImage.image.image })
+			.where(eq(productsTable.id, productId));
+	}
+}
+
 export const products = {
 	getProducts: defineAction({
 		input: z.object({
@@ -184,6 +203,8 @@ export const products = {
 				.where(eq(productImageTable.productId, input.productId))
 				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id));
 
+			await updateProductThumbnail(input.productId);
+
 			return images;
 		},
 	}),
@@ -228,6 +249,8 @@ export const products = {
 					})
 					.returning();
 
+				await updateProductThumbnail(input.productId);
+
 				return { productImage, image };
 			} catch (error) {
 				console.error('Error adding product image:', error);
@@ -256,10 +279,11 @@ export const products = {
 			}
 
 			try {
-				await db
+				const [productImage] = await db
 					.delete(productImageTable)
-					.where(eq(productImageTable.image, input.imageId));
-				await db.delete(imageTable).where(eq(imageTable.id, input.imageId));
+					.where(eq(productImageTable.image, input.imageId))
+					.returning();
+				await updateProductThumbnail(productImage.productId);
 				return { success: true };
 			} catch (error) {
 				console.error('Error deleting product image:', error);
@@ -283,12 +307,17 @@ export const products = {
 			}
 
 			try {
-				await db
+				const [productImage] = await db
 					.update(productImageTable)
 					.set({
 						priority: input.priority,
 					})
-					.where(eq(productImageTable.image, input.imageId));
+					.where(eq(productImageTable.image, input.imageId))
+					.returning();
+
+				await updateProductThumbnail(productImage.productId);
+
+				return { success: true };
 			} catch (error) {
 				console.error('Error updating product image:', error);
 				return { success: false, error: 'Failed to update product image' };

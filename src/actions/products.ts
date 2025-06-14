@@ -8,21 +8,44 @@ import {
 	productsTable,
 } from '@/db/schema';
 import db from '@/lib/db';
+import type { ProductWithImages } from '@/store';
 import { eq, like } from 'drizzle-orm';
 
 export const products = {
 	getBestProducts: defineAction({
 		handler: async () => {
 			const products = await db
-				.select()
+				.select({
+					id: productsTable.id,
+					name: productsTable.name,
+					description: productsTable.description,
+					price: productsTable.price,
+					type: productsTable.type,
+					category: productsTable.category,
+					images: imageTable,
+				})
 				.from(productsTable)
-				.limit(32)
 				.innerJoin(
 					productImageTable,
 					eq(productsTable.id, productImageTable.productId),
 				)
-				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id));
-			return products;
+				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.limit(32);
+
+			const groupedProducts = products.reduce((acc, curr) => {
+				const existingProduct = acc.find((p) => p.id === curr.id);
+				if (existingProduct) {
+					existingProduct.images.push(curr.images);
+				} else {
+					acc.push({
+						...curr,
+						images: [curr.images],
+					});
+				}
+				return acc;
+			}, [] as ProductWithImages[]);
+
+			return groupedProducts;
 		},
 	}),
 	getProductsBySearch: defineAction({
@@ -33,7 +56,15 @@ export const products = {
 			const searchPattern = `%${input.search}%`;
 
 			const products = await db
-				.select()
+				.select({
+					id: productsTable.id,
+					name: productsTable.name,
+					description: productsTable.description,
+					price: productsTable.price,
+					type: productsTable.type,
+					category: productsTable.category,
+					images: imageTable,
+				})
 				.from(productsTable)
 				.where(like(productsTable.name, searchPattern))
 				.innerJoin(
@@ -42,7 +73,21 @@ export const products = {
 				)
 				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
-			return products;
+
+			const groupedProducts = products.reduce((acc, curr) => {
+				const existingProduct = acc.find((p) => p.id === curr.id);
+				if (existingProduct) {
+					existingProduct.images.push(curr.images);
+				} else {
+					acc.push({
+						...curr,
+						images: [curr.images],
+					});
+				}
+				return acc;
+			}, [] as ProductWithImages[]);
+
+			return groupedProducts;
 		},
 	}),
 	getProductsByType: defineAction({
@@ -51,7 +96,15 @@ export const products = {
 		}),
 		handler: async (input) => {
 			const products = await db
-				.select()
+				.select({
+					id: productsTable.id,
+					name: productsTable.name,
+					description: productsTable.description,
+					price: productsTable.price,
+					type: productsTable.type,
+					category: productsTable.category,
+					images: imageTable,
+				})
 				.from(productsTable)
 				.where(eq(productsTable.type, input.type as ProductType))
 				.innerJoin(
@@ -60,7 +113,21 @@ export const products = {
 				)
 				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
-			return products;
+
+			const groupedProducts = products.reduce((acc, curr) => {
+				const existingProduct = acc.find((p) => p.id === curr.id);
+				if (existingProduct) {
+					existingProduct.images.push(curr.images);
+				} else {
+					acc.push({
+						...curr,
+						images: [curr.images],
+					});
+				}
+				return acc;
+			}, [] as ProductWithImages[]);
+
+			return groupedProducts;
 		},
 	}),
 	getProductsByCategory: defineAction({
@@ -69,7 +136,15 @@ export const products = {
 		}),
 		handler: async (input) => {
 			const products = await db
-				.select()
+				.select({
+					id: productsTable.id,
+					name: productsTable.name,
+					description: productsTable.description,
+					price: productsTable.price,
+					type: productsTable.type,
+					category: productsTable.category,
+					images: imageTable,
+				})
 				.from(productsTable)
 				.where(eq(productsTable.category, input.categoryId))
 				.innerJoin(
@@ -78,7 +153,21 @@ export const products = {
 				)
 				.innerJoin(imageTable, eq(productImageTable.image, imageTable.id))
 				.limit(32);
-			return products;
+
+			const groupedProducts = products.reduce((acc, curr) => {
+				const existingProduct = acc.find((p) => p.id === curr.id);
+				if (existingProduct) {
+					existingProduct.images.push(curr.images);
+				} else {
+					acc.push({
+						...curr,
+						images: [curr.images],
+					});
+				}
+				return acc;
+			}, [] as ProductWithImages[]);
+
+			return groupedProducts;
 		},
 	}),
 	getCategories: defineAction({
