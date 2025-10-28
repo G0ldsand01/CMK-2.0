@@ -7,10 +7,10 @@ import '../styles/products.css';
 import { actions } from 'astro:actions';
 
 const bestProductsActions = await Astro.callAction(
-	actions.products.getProductsByType,
-	{
-		type: 'iot',
-	},
+  actions.products.getProductsByType,
+  {
+    type: 'iot',
+  }
 );
 const bestProducts = bestProductsActions.data;
 ---

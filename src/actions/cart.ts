@@ -1,11 +1,11 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
 import { WEBSITE_URL } from 'astro:env/server';
+import { and, eq, sql } from 'drizzle-orm';
 import { cartTable, ordersTable, productsTable } from '@/db/schema';
+import { authServer } from '@/lib/auth-server';
 import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
-import { getUser } from '@/lib/user';
-import { and, eq, sql } from 'drizzle-orm';
 import { logSecurityEvent } from './index';
 
 export const cart = {
@@ -14,7 +14,11 @@ export const cart = {
 			productId: z.string(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -31,7 +35,7 @@ export const cart = {
 			const cart = await db
 				.select()
 				.from(cartTable)
-				.where(eq(cartTable.userId, user.getId()))
+				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
 			if (cart.some((item) => item.products.id === Number(productId))) {
@@ -44,7 +48,7 @@ export const cart = {
 			await db
 				.insert(cartTable)
 				.values({
-					userId: user.getId(),
+					userId: user.id,
 					productId: Number(productId),
 					quantity: 1,
 				})
@@ -54,7 +58,7 @@ export const cart = {
 			const newCart = await db
 				.select()
 				.from(cartTable)
-				.where(eq(cartTable.userId, user.getId()))
+				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
 			return {
@@ -70,7 +74,11 @@ export const cart = {
 			decrement: z.boolean().optional(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -98,7 +106,7 @@ export const cart = {
 					.set(set)
 					.where(
 						and(
-							eq(cartTable.userId, user.getId()),
+							eq(cartTable.userId, user.id),
 							eq(cartTable.productId, Number(productId)),
 						),
 					);
@@ -106,7 +114,7 @@ export const cart = {
 				const cart = await tx
 					.select()
 					.from(cartTable)
-					.where(eq(cartTable.userId, user.getId()))
+					.where(eq(cartTable.userId, user.id))
 					.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
 				return {
@@ -121,7 +129,11 @@ export const cart = {
 			productId: z.string(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -140,7 +152,7 @@ export const cart = {
 					.delete(cartTable)
 					.where(
 						and(
-							eq(cartTable.userId, user.getId()),
+							eq(cartTable.userId, user.id),
 							eq(cartTable.productId, Number(productId)),
 						),
 					);
@@ -148,7 +160,7 @@ export const cart = {
 				const cart = await tx
 					.select()
 					.from(cartTable)
-					.where(eq(cartTable.userId, user.getId()))
+					.where(eq(cartTable.userId, user.id))
 					.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
 				return {
@@ -160,7 +172,11 @@ export const cart = {
 	}),
 	checkout: defineAction({
 		handler: async (_input, context) => {
-			const user = await getUser(context.request);
+			const ssession = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = ssession?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -175,7 +191,7 @@ export const cart = {
 			const cart = await db
 				.select()
 				.from(cartTable)
-				.where(eq(cartTable.userId, user.getId()))
+				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
 			if (cart.length === 0) {
@@ -191,15 +207,15 @@ export const cart = {
 					product_data: {
 						name: products.name,
 						description: products.description,
-						images: [`${WEBSITE_URL}/api/image/${products.image}.png`],
+						images: [`${WEBSITE_URL}/api/image/${products.thumbnail}.png`],
 					},
-					unit_amount: Number.parseInt(products.price) * 100,
+					unit_amount: Number.parseInt(products.price, 10) * 100,
 				},
 				quantity: cart.quantity,
 			}));
 
 			// Calculate total amount for metadata
-			const totalAmount = line_items.reduce((sum, item) => {
+			line_items.reduce((sum, item) => {
 				return sum + item.price_data.unit_amount * item.quantity;
 			}, 0);
 
@@ -207,7 +223,7 @@ export const cart = {
 			const order = await db
 				.insert(ordersTable)
 				.values({
-					userId: user.getId(),
+					userId: user.id,
 					status: 'pending',
 					cartJSON: cart,
 					stripeSessionId: 'pending', // Temporary value, will be updated after session creation
@@ -230,15 +246,15 @@ export const cart = {
 				line_items,
 				success_url: `${WEBSITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
 				cancel_url: `${WEBSITE_URL}/cancel`,
-				customer_email: user.getEmail(),
+				customer_email: user.email,
 				metadata: {
 					orderId: orderId.toString(),
-					userId: user.getId().toString(),
+					userId: user.id,
 				},
 				payment_intent_data: {
 					metadata: {
 						orderId: orderId.toString(),
-						userId: user.getId().toString(),
+						userId: user.id,
 					},
 				},
 				shipping_address_collection: {

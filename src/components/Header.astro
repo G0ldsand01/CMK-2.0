@@ -1,28 +1,31 @@
 ---
-import Cart from '@/components/cart/Cart.astro';
-import CartItemCount from '@/components/cart/CartItemCount.tsx';
-import { getUser } from '@/lib/user';
 import { HeaderMenu } from '@components/Header.tsx';
 import { CircuitBoard, ShoppingBag } from 'lucide-react';
 import cmkLogo from 'public/cmklogo.png';
+import Cart from '@/components/cart/Cart.astro';
+import CartItemCount from '@/components/cart/CartItemCount.tsx';
 import { HeaderUserMenu } from './HeaderUserMenu';
 import { ModeToggle } from './ModeToggle';
 import { Button } from './ui/button';
+import { getCurrentUser } from '@/lib/auth-server';
 
 interface Props {
-	cart?: boolean;
+  cart?: boolean;
 }
 
 const { cart } = Astro.props;
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 ---
 
 <header>
   <div class="logo">
-      
-    <a href="/" style = "display: flex; align-items: center; gap: 1rem; flex-direction: row;">
-      <CircuitBoard/> CMK</a>
+    <a
+      href="/"
+      style="display: flex; align-items: center; gap: 1rem; flex-direction: row;"
+    >
+      <CircuitBoard /> CMK</a
+    >
   </div>
   <div class="HeaderMenu">
     <HeaderMenu client:load />
@@ -35,11 +38,11 @@ const user = await getUser(Astro.request);
         <div class="flex items-center gap-4">
           <HeaderUserMenu
             userData={{
-              id: user.getId(),
-              name: user.getDisplayName(),
-              email: user.getEmail(),
-              image: user.getImage(),
-              role: user.getRole(),
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image || '',
+              role: user.role,
             }}
             client:load
           />
@@ -136,11 +139,11 @@ const user = await getUser(Astro.request);
         user ? (
           <HeaderUserMenu
             userData={{
-              id: user.getId(),
-              name: user.getDisplayName(),
-              email: user.getEmail(),
-              image: user.getImage(),
-              role: user.getRole(),
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image || '',
+              role: user.role,
             }}
             client:load
           />
@@ -248,7 +251,6 @@ const user = await getUser(Astro.request);
   }
   .button {
     text-decoration: none;
-    display: inline-block;
     margin-top: 1rem;
     display: flex;
     justify-content: center;
@@ -342,7 +344,7 @@ const user = await getUser(Astro.request);
     }
 
     #auth-buttons {
-      display: none !important;
+      display: none;
     }
     #profile-section {
       display: none;

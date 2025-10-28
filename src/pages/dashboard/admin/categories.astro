@@ -3,12 +3,12 @@ import { CategoriesTable } from '@/components/admin/categories/CategoriesTable';
 import { productCategoryTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
-if (!user || !user.isAdmin()) {
-	return Astro.redirect('/dashboard');
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
 }
 
 const categories = await db.select().from(productCategoryTable);

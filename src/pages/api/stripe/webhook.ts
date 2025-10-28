@@ -1,11 +1,11 @@
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
+import type { APIRoute } from 'astro';
+import { eq } from 'drizzle-orm';
+import type Stripe from 'stripe';
 import { ordersTable } from '@/db/schema';
 import db from '@/lib/db';
 import { log, logError } from '@/lib/log';
 import { stripe } from '@/lib/stripe';
-import type { APIRoute } from 'astro';
-import { eq } from 'drizzle-orm';
-import type Stripe from 'stripe';
 
 export const POST: APIRoute = async ({ request }) => {
 	log('Stripe webhook received');

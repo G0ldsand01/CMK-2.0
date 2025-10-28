@@ -1,16 +1,19 @@
-import { defineAction } from 'astro:actions';
-import { ActionError } from 'astro:actions';
+import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { productCategoryTable } from '@/db/schema';
-import db from '@/lib/db';
-import { getUser } from '@/lib/user';
 import { eq } from 'drizzle-orm';
+import { productCategoryTable } from '@/db/schema';
+import { authServer } from '@/lib/auth-server';
+import db from '@/lib/db';
 
 export const category = {
 	getCategories: defineAction({
-		async handler(input, context) {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+		async handler(_input, context) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -30,8 +33,12 @@ export const category = {
 			}),
 		}),
 		async handler(input, context) {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -48,6 +55,7 @@ export const category = {
 
 				return { success: true, category: newCategory };
 			} catch (error) {
+				console.error('Error creating category:', error);
 				throw new ActionError({
 					code: 'INTERNAL_SERVER_ERROR',
 					message: 'Failed to create category.',
@@ -64,8 +72,12 @@ export const category = {
 			}),
 		}),
 		async handler(input, context) {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -83,6 +95,7 @@ export const category = {
 
 				return { success: true, category: updatedCategory };
 			} catch (error) {
+				console.error('Error updating category:', error);
 				throw new ActionError({
 					code: 'INTERNAL_SERVER_ERROR',
 					message: 'Failed to update category.',

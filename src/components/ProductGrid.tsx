@@ -1,12 +1,12 @@
 import { actions } from 'astro:actions';
+import { Search } from 'lucide-react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import type {
 	Category,
 	Product,
 	ProductType,
 	ProductWithImages,
 } from '@/store';
-import { Search } from 'lucide-react';
-import { createContext, useCallback, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Button } from './ui/button';
 import { Input } from './ui/input';

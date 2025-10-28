@@ -1,8 +1,8 @@
+import { CDN_URL } from 'astro:env/client';
+import { CDN_SECRET } from 'astro:env/server';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { CDN_URL } from 'astro:env/client';
-import { CDN_SECRET } from 'astro:env/server';
 import axios from 'axios';
 import FormData from 'form-data';
 

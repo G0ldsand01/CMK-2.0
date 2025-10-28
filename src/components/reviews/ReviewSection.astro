@@ -1,41 +1,41 @@
 ---
 import { type productsTable, reviewsTable } from '@/db/schema';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import { and, eq } from 'drizzle-orm';
 import { Star } from 'lucide-react';
 import ManageReview from './ManageReview';
 import Reviews from './Reviews';
 
 interface Props {
-	product: typeof productsTable.$inferSelect;
+  product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
 const productId = product.id;
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
 let userReview: typeof reviewsTable.$inferSelect | null = null;
 if (user) {
-	const userReviewTx = await db
-		.select()
-		.from(reviewsTable)
-		.where(
-			and(
-				eq(reviewsTable.userId, user.getId()),
-				eq(reviewsTable.productId, productId),
-			),
-		);
-	if (userReviewTx[0]) {
-		userReview = userReviewTx[0];
-	}
+  const userReviewTx = await db
+    .select()
+    .from(reviewsTable)
+    .where(
+      and(
+        eq(reviewsTable.userId, user.id),
+        eq(reviewsTable.productId, productId)
+      )
+    );
+  if (userReviewTx[0]) {
+    userReview = userReviewTx[0];
+  }
 }
 
 const allReviews = await db
-	.select()
-	.from(reviewsTable)
-	.where(eq(reviewsTable.productId, productId));
+  .select()
+  .from(reviewsTable)
+  .where(eq(reviewsTable.productId, productId));
 ---
 
 <div class="space-y-8">

@@ -1,4 +1,9 @@
 import { actions } from 'astro:actions';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Edit } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -27,11 +32,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { productsTable } from '@/db/schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Edit } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 type Product = typeof productsTable.$inferSelect;
 
@@ -102,7 +102,7 @@ export default function EditProductForm({
 			} else {
 				setError(error.message || 'Failed to update product');
 			}
-		} catch (error) {
+		} catch (_error) {
 			setError('An error occurred while updating the product');
 		} finally {
 			setIsLoading(false);

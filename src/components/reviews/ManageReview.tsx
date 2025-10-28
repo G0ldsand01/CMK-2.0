@@ -1,11 +1,10 @@
 import { actions } from 'astro:actions';
-import { Button } from '@/components/ui/button';
-import type { reviewsTable } from '@/db/schema';
-import { productReviewsAtom } from '@/store';
-import { useStore } from '@nanostores/react';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import type { reviewsTable } from '@/db/schema';
+import { productReviewsAtom } from '@/store';
 
 interface ManageReviewProps {
 	review?: typeof reviewsTable.$inferSelect;
@@ -22,7 +21,7 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 	const [rating, setRating] = useState(initialReview?.rating || 0);
 	const [hoveredRating, setHoveredRating] = useState(0);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const $reviews = useStore(productReviewsAtom);
+	// const _$reviews = useStore(productReviewsAtom);
 
 	const handleSubmit = async () => {
 		if (!rating) {

@@ -1,7 +1,7 @@
 import { CDN_URL } from 'astro:env/client';
-import type { ProductWithImages } from '@/store';
 import { ChevronRight, ShoppingCart, Tag } from 'lucide-react';
 import { useContext } from 'react';
+import type { ProductWithImages } from '@/store';
 import { ProductsContext } from './ProductGrid';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';

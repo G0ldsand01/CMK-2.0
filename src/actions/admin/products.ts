@@ -1,11 +1,11 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { imageTable, productImageTable, productsTable } from '@/db/schema';
+import { count, eq } from 'drizzle-orm';
 import type { ProductType } from '@/db/schema';
+import { imageTable, productImageTable, productsTable } from '@/db/schema';
+import { authServer } from '@/lib/auth-server';
 import { uploadToCDN } from '@/lib/cdn';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
-import { count, eq } from 'drizzle-orm';
 import { logSecurityEvent } from '..';
 
 async function updateProductThumbnail(productId: number) {
@@ -34,8 +34,12 @@ export const products = {
 			offset: z.number().optional(),
 		}),
 		async handler(input, context) {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
 					ip: context.request.headers.get('x-forwarded-for'),
 				});
@@ -77,8 +81,12 @@ export const products = {
 			type: z.string(),
 		}),
 		async handler(input, context) {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -120,7 +128,11 @@ export const products = {
 			stock: z.number(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -132,8 +144,8 @@ export const products = {
 				});
 			}
 
-			if (!user.isAdmin()) {
-				logSecurityEvent('UNAUTHORIZED_ACCESS', user.getId(), {
+			if (!user || user.role !== 'admin') {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', user.id, {
 					ip: context.request.headers.get('x-forwarded-for'),
 				});
 				throw new ActionError({
@@ -189,8 +201,12 @@ export const products = {
 			productId: z.number(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -216,8 +232,12 @@ export const products = {
 			priority: z.number(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -270,8 +290,12 @@ export const products = {
 			imageId: z.number(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',
@@ -298,8 +322,12 @@ export const products = {
 			priority: z.number(),
 		}),
 		handler: async (input, context) => {
-			const user = await getUser(context.request);
-			if (!user || !user.isAdmin()) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
 					message: 'User must be logged in and be an admin.',

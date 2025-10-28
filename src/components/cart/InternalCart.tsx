@@ -1,11 +1,11 @@
 import { actions } from 'astro:actions';
 import { CDN_URL } from 'astro:env/client';
-import { type CartItem, setCart } from '@/lib/cart';
-import { cn } from '@/lib/utils';
-import { cartAtom } from '@/store';
 import { useStore } from '@nanostores/react';
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { type CartItem, setCart } from '@/lib/cart';
+import { cn } from '@/lib/utils';
+import { cartAtom } from '@/store';
 import { Button } from '../ui/button';
 import {
 	Sheet,

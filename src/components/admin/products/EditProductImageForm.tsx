@@ -1,5 +1,8 @@
 import { actions } from 'astro:actions';
 import { CDN_URL } from 'astro:env/client';
+import { Image, Trash2, Upload } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -13,9 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Product } from '@/store';
-import { Image, Trash2, Upload } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 export default function EditProductImageForm({
 	product,

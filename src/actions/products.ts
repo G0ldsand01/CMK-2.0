@@ -1,15 +1,15 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
+import { eq, like } from 'drizzle-orm';
 import {
-	type ProductType,
 	imageTable,
+	type ProductType,
 	productCategoryTable,
 	productImageTable,
 	productsTable,
 } from '@/db/schema';
 import db from '@/lib/db';
 import type { ProductWithImages } from '@/store';
-import { eq, like } from 'drizzle-orm';
 
 export const products = {
 	getBestProducts: defineAction({

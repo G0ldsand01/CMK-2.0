@@ -1,4 +1,9 @@
 import { actions } from 'astro:actions';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Edit } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -19,11 +24,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import type { productCategoryTable } from '@/db/schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Edit } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 type Category = typeof productCategoryTable.$inferSelect;
 
@@ -58,7 +58,7 @@ export function EditCategoryForm({
 		setError(null);
 
 		try {
-			const { data, error } = await actions.admin.category.updateCategory({
+			const { error } = await actions.admin.category.updateCategory({
 				id: category.id,
 				...values,
 			});
@@ -71,7 +71,7 @@ export function EditCategoryForm({
 			} else {
 				setError(error.message || 'Failed to update category');
 			}
-		} catch (error) {
+		} catch (_error) {
 			setError('An error occurred while updating the category');
 		} finally {
 			setIsLoading(false);

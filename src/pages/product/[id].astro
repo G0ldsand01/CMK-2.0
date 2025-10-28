@@ -5,64 +5,64 @@ import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import {
-	imageTable,
-	productImageTable,
-	productsTable,
-	wishlistTable,
+  imageTable,
+  productImageTable,
+  productsTable,
+  wishlistTable,
 } from '@/db/schema';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import { and, eq } from 'drizzle-orm';
 import { Heart, ShoppingCart } from 'lucide-react';
 import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
 const { product, images, isInWishlist } = await db.transaction(async (tx) => {
-	const [product] = await tx
-		.select()
-		.from(productsTable)
-		.where(eq(productsTable.id, Number(id)));
+  const [product] = await tx
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.id, Number(id)));
 
-	const images = await tx
-		.select({
-			product_image: productImageTable,
-			image: imageTable,
-		})
-		.from(productImageTable)
-		.where(eq(productImageTable.productId, Number(id)))
-		.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
-		.orderBy(productImageTable.priority);
+  const images = await tx
+    .select({
+      product_image: productImageTable,
+      image: imageTable,
+    })
+    .from(productImageTable)
+    .where(eq(productImageTable.productId, Number(id)))
+    .leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+    .orderBy(productImageTable.priority);
 
-	if (user && product) {
-		const isInWishlist = await tx
-			.select()
-			.from(wishlistTable)
-			.where(
-				and(
-					eq(wishlistTable.userId, user.getId()),
-					eq(wishlistTable.productId, Number(id)),
-				),
-			);
+  if (user && product) {
+    const isInWishlist = await tx
+      .select()
+      .from(wishlistTable)
+      .where(
+        and(
+          eq(wishlistTable.userId, user.id),
+          eq(wishlistTable.productId, Number(id))
+        )
+      );
 
-		return { product, images, isInWishlist };
-	}
+    return { product, images, isInWishlist };
+  }
 
-	return { product, images, isInWishlist: false };
+  return { product, images, isInWishlist: false };
 });
 
 if (!product) {
-	return Astro.redirect('/');
+  return Astro.redirect('/');
 }
 
 const mainImage = images[0]?.image?.image;
@@ -95,7 +95,7 @@ const mainImage = images[0]?.image?.image;
                 <div class="relative">
                   {images.length > 0 ? (
                     <img
-                      src={`${CDN_URL}/${mainImage}`}
+                      src={`${CDN_URL}/${mainImage || ''}`}
                       alt={product.name}
                       class="rounded-lg w-full h-auto object-cover"
                       id="main-product-image"

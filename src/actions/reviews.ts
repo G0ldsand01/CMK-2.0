@@ -1,9 +1,9 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { reviewsTable } from '@/db/schema';
-import db from '@/lib/db';
-import { getUser } from '@/lib/user';
 import { and, eq } from 'drizzle-orm';
+import { reviewsTable } from '@/db/schema';
+import { authServer } from '@/lib/auth-server';
+import db from '@/lib/db';
 import { logSecurityEvent } from '.';
 
 export const reviews = {
@@ -14,7 +14,11 @@ export const reviews = {
 		}),
 		handler: async (input, context) => {
 			const { productId, rating } = input;
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -32,7 +36,7 @@ export const reviews = {
 					.insert(reviewsTable)
 					.values({
 						productId,
-						userId: user.getId(),
+						userId: user.id,
 						rating,
 					})
 					.onConflictDoUpdate({
@@ -73,7 +77,11 @@ export const reviews = {
 		}),
 		handler: async (input, context) => {
 			const { productId, rating } = input;
-			const user = await getUser(context.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -92,7 +100,7 @@ export const reviews = {
 				})
 				.where(
 					and(
-						eq(reviewsTable.userId, user.getId()),
+						eq(reviewsTable.userId, user.id),
 						eq(reviewsTable.productId, productId),
 					),
 				)
@@ -114,13 +122,17 @@ export const reviews = {
 		input: z.object({
 			productId: z.number(),
 		}),
-		handler: async (input, ctx) => {
+		handler: async (input, context) => {
 			const { productId } = input;
-			const user = await getUser(ctx.request);
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
 
 			if (!user) {
 				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
-					ip: ctx.request.headers.get('x-forwarded-for'),
+					ip: context.request.headers.get('x-forwarded-for'),
 				});
 				throw new ActionError({
 					code: 'UNAUTHORIZED',
@@ -132,7 +144,7 @@ export const reviews = {
 				.delete(reviewsTable)
 				.where(
 					and(
-						eq(reviewsTable.userId, user.getId()),
+						eq(reviewsTable.userId, user.id),
 						eq(reviewsTable.productId, productId),
 					),
 				);

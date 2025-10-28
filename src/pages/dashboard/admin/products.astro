@@ -4,24 +4,24 @@ import ProductsTable from '@/components/admin/products/ProductsTable';
 import { productCategoryTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
-if (!user || !user.isAdmin()) {
-	return Astro.redirect('/dashboard');
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
 }
 
 const { data, error } = await Astro.callAction(
-	actions.admin.products.getProducts,
-	{
-		limit: 10,
-		offset: 0,
-	},
+  actions.admin.products.getProducts,
+  {
+    limit: 10,
+    offset: 0,
+  }
 );
 
 if (error) {
-	console.error(error);
+  console.error(error);
 }
 
 // Extract the data array and total from the productsResult

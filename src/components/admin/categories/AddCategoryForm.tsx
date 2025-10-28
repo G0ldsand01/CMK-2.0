@@ -1,4 +1,9 @@
 import { actions } from 'astro:actions';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -18,11 +23,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 const formSchema = z.object({
 	name: z.string().min(2, {
@@ -63,7 +63,7 @@ export function AddCategoryForm({ onCategoryAdded }: AddCategoryFormProps) {
 			} else {
 				setError(error.message || 'Failed to create category');
 			}
-		} catch (error) {
+		} catch (_error) {
 			setError('An error occurred while creating the category');
 		} finally {
 			setIsLoading(false);

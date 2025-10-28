@@ -34,7 +34,6 @@
 	color: var(--color-foreground);
 	font-size: 1.5rem;
 	font-family: "Atkinson Hyperlegible", sans-serif;
-	font-size: 1.5rem;
 	font-weight: 600;
 	margin-bottom: 0.5rem;
 }
@@ -49,7 +48,6 @@
 	text-align: left;
 	margin-top: 1em;
 	color: var(--color-foreground);
-	font-size: 1.5rem;
 	font-family: "Atkinson Hyperlegible", sans-serif;
 	font-size: 1.2rem;
 	font-weight: bold;

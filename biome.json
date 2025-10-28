@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.1/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,15 +7,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"includes": ["**"]
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
 	},
-	"organizeImports": {
-		"enabled": true
-	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
@@ -24,7 +22,7 @@
 				"noUnusedImports": "error"
 			}
 		},
-		"ignore": ["src/components/ui/*.tsx"]
+		"includes": ["**", "!**/src/components/ui/**/*.tsx"]
 	},
 	"javascript": {
 		"formatter": {
@@ -34,7 +32,7 @@
 	},
 	"overrides": [
 		{
-			"include": ["*.svelte", "*.astro", "*.vue"],
+			"includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -47,5 +45,13 @@
 				}
 			}
 		}
-	]
+	],
+	"html": {
+		"experimentalFullSupportEnabled": true
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	}
 }

@@ -2,21 +2,21 @@
 import { ordersTable } from '@/db/schema';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import { eq } from 'drizzle-orm';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 
-const userEmail = user.getEmail();
+const userEmail = user.email;
 
 const orders = await db
-	.select()
-	.from(ordersTable)
-	.where(eq(ordersTable.userId, user.getId()));
+  .select()
+  .from(ordersTable)
+  .where(eq(ordersTable.userId, user.id));
 ---
 
 <DashboardLayout
@@ -29,7 +29,7 @@ const orders = await db
     <div class="head">
       <div class="welcome-message">
         <h1>
-          {`${user.getDisplayName()}'s Orders`}
+          {`${user.name}'s Orders`}
         </h1>
         <p>
           Check the history of all your orders associated with: {userEmail}
@@ -57,7 +57,7 @@ const orders = await db
                   {order.cartJSON.reduce(
                     (acc, item) =>
                       acc + Number(item.products.price) * item.cart.quantity,
-                    0,
+                    0
                   )}
                 </p>
                 <p>Order Status: {order.status}</p>

@@ -1,12 +1,10 @@
 import { actions } from 'astro:actions';
 import { CDN_URL } from 'astro:env/client';
+import { useStore } from '@nanostores/react';
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { type CartItem, setCart } from '@/lib/cart';
 import { cartAtom } from '@/store';
-import { useStore } from '@nanostores/react';
-import { ShoppingBag, Trash2 } from 'lucide-react';
-import { Plus } from 'lucide-react';
-import { Minus } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '../ui/button';
 
 function FullPageCart({

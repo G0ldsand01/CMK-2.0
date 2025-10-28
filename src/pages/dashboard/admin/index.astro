@@ -1,92 +1,92 @@
 ---
 import { Badge } from '@/components/ui/badge';
 import {
-	Card,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { stripe } from '@/lib/stripe';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 const { totalRevenue, newCustomers, activeAccounts, growthRate, latestOrders } =
-	await fetchStripeMetrics();
+  await fetchStripeMetrics();
 
-if (!user || !user.isAdmin()) {
-	return Astro.redirect('/dashboard');
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
 }
 
 async function fetchStripeMetrics() {
-	try {
-		const balance = await stripe.balance.retrieve();
-		const customers = await stripe.customers.list({ limit: 100 });
-		const activeSubscriptions = await stripe.subscriptions.list({ limit: 100 });
+  try {
+    const balance = await stripe.balance.retrieve();
+    const customers = await stripe.customers.list({ limit: 100 });
+    const activeSubscriptions = await stripe.subscriptions.list({ limit: 100 });
 
-		// Simuler la récupération des revenus des 3 derniers mois
-		const revenueData = await stripe.balanceTransactions.list({
-			type: 'charge',
-			created: { gte: Math.floor(Date.now() / 1000) - 3 * 30 * 24 * 60 * 60 }, // Derniers 3 mois
-			limit: 100,
-		});
+    // Simuler la récupération des revenus des 3 derniers mois
+    const revenueData = await stripe.balanceTransactions.list({
+      type: 'charge',
+      created: { gte: Math.floor(Date.now() / 1000) - 3 * 30 * 24 * 60 * 60 }, // Derniers 3 mois
+      limit: 100,
+    });
 
-		const monthlyRevenue: Record<number, number> = revenueData.data.reduce(
-			(acc, txn) => {
-				const month = new Date(txn.created * 1000).getMonth();
-				acc[month] = (acc[month] || 0) + txn.amount;
-				return acc;
-			},
-			{} as Record<number, number>,
-		);
+    const monthlyRevenue: Record<number, number> = revenueData.data.reduce(
+      (acc, txn) => {
+        const month = new Date(txn.created * 1000).getMonth();
+        acc[month] = (acc[month] || 0) + txn.amount;
+        return acc;
+      },
+      {} as Record<number, number>
+    );
 
-		const revenueValues = Object.values(monthlyRevenue).map((v) => v / 100); // Convert cents to dollars
-		const revenueTrend =
-			revenueValues.length > 1
-				? `${(
-						((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
-							((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
-								revenueValues[0])) *
-							100
-					).toFixed(2)}%`
-				: '0%';
+    const revenueValues = Object.values(monthlyRevenue).map((v) => v / 100); // Convert cents to dollars
+    const revenueTrend =
+      revenueValues.length > 1
+        ? `${(
+            ((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
+              ((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
+                revenueValues[0])) *
+            100
+          ).toFixed(2)}%`
+        : '0%';
 
-		const latestOrders = await stripe.paymentIntents.list({
-			limit: 10,
-		});
+    const latestOrders = await stripe.paymentIntents.list({
+      limit: 10,
+    });
 
-		return {
-			totalRevenue: (balance.available[0]?.amount || 0) / 100,
-			newCustomers: customers.data.length,
-			activeAccounts: activeSubscriptions.data.length,
-			growthRate: '4.5%', // Placeholder
-			revenueTrend: revenueTrend || '0%',
-			customerTrend: '0%',
-			accountTrend: '0%',
-			latestOrders: latestOrders.data.map((order) => ({
-				id: order.id,
-				amount: order.amount / 100,
-				currency: order.currency.toUpperCase(),
-				status: order.status,
-				created: new Date(order.created * 1000).toLocaleDateString(),
-			})),
-		};
-	} catch (error) {
-		console.error('Error fetching Stripe metrics:', error);
-		return {
-			totalRevenue: 0,
-			newCustomers: 0,
-			activeAccounts: 0,
-			growthRate: '0%',
-			revenueTrend: '0%',
-			customerTrend: '0%',
-			accountTrend: '0%',
-			latestOrders: [],
-		};
-	}
+    return {
+      totalRevenue: (balance.available[0]?.amount || 0) / 100,
+      newCustomers: customers.data.length,
+      activeAccounts: activeSubscriptions.data.length,
+      growthRate: '4.5%', // Placeholder
+      revenueTrend: revenueTrend || '0%',
+      customerTrend: '0%',
+      accountTrend: '0%',
+      latestOrders: latestOrders.data.map((order) => ({
+        id: order.id,
+        amount: order.amount / 100,
+        currency: order.currency.toUpperCase(),
+        status: order.status,
+        created: new Date(order.created * 1000).toLocaleDateString(),
+      })),
+    };
+  } catch (error) {
+    console.error('Error fetching Stripe metrics:', error);
+    return {
+      totalRevenue: 0,
+      newCustomers: 0,
+      activeAccounts: 0,
+      growthRate: '0%',
+      revenueTrend: '0%',
+      customerTrend: '0%',
+      accountTrend: '0%',
+      latestOrders: [],
+    };
+  }
 }
 ---
 
@@ -99,7 +99,7 @@ async function fetchStripeMetrics() {
   <div class="head">
     <h1 class="text-2xl font-bold">Admin Dashboard</h1>
     <p>
-      Welcome to the admin dashboard, {user.getDisplayName()}!
+      Welcome to the admin dashboard, {user.name}!
     </p>
   </div>
   <Separator />
@@ -112,7 +112,7 @@ async function fetchStripeMetrics() {
           title: 'Total Revenue',
           value: `${totalRevenue}$`,
           trend: '+12.5%',
-          icon: <TrendingUpIcon class="size-3" />,
+          icon: <TrendingUpIcon className="size-3" />,
           description: 'Trending up this month',
           subtext: 'Visitors for the last 6 months',
           isPositive: true,
@@ -121,7 +121,7 @@ async function fetchStripeMetrics() {
           title: 'New Customers',
           value: newCustomers,
           trend: '-20%',
-          icon: <TrendingDownIcon class="size-3" />,
+          icon: <TrendingDownIcon className="size-3" />,
           description: 'Down 20% this period',
           subtext: 'Acquisition needs attention',
           isPositive: false,
@@ -130,7 +130,7 @@ async function fetchStripeMetrics() {
           title: 'Active Accounts',
           value: activeAccounts,
           trend: '+12.5%',
-          icon: <TrendingUpIcon class="size-3" />,
+          icon: <TrendingUpIcon className="size-3" />,
           description: 'Strong user retention',
           subtext: 'Engagement exceed targets',
           isPositive: true,
@@ -139,7 +139,7 @@ async function fetchStripeMetrics() {
           title: 'Growth Rate',
           value: `${growthRate}`,
           trend: '+4.5%',
-          icon: <TrendingUpIcon class="size-3" />,
+          icon: <TrendingUpIcon className="size-3" />,
           description: 'Steady performance',
           subtext: 'Meets growth projections',
           isPositive: true,

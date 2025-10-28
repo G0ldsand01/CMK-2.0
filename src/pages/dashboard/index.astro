@@ -1,13 +1,16 @@
 ---
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { getUser } from '@/lib/user';
 import { Heart, ShoppingBag } from 'lucide-react';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { authServer } from '@/lib/auth-server';
 
-const user = await getUser(Astro.request);
-
-if (!user) {
-	return Astro.redirect('/login');
-}
+const user = () => {
+  if (Astro.locals.user) {
+    return Astro.locals.user;
+  } else {
+    // Redirect to login page if the user is not authenticated
+    return Astro.redirect('/login');
+  }
+};
 ---
 
 <DashboardLayout
@@ -19,7 +22,7 @@ if (!user) {
   <div class="content">
     <div class="head">
       <div class="welcome-message">
-        <h1>Welcome Back, {user.getDisplayName()}</h1>
+        <h1>Welcome Back, {user.name}</h1>
         <p>Here's your dashboard</p>
       </div>
     </div>

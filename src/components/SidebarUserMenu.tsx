@@ -1,4 +1,11 @@
 import {
+	Heart,
+	LogOutIcon,
+	MoreVerticalIcon,
+	Package,
+	UserCircleIcon,
+} from 'lucide-react';
+import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
@@ -13,13 +20,6 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
-import {
-	Heart,
-	LogOutIcon,
-	MoreVerticalIcon,
-	Package,
-	UserCircleIcon,
-} from 'lucide-react';
 import type { userData } from './AdminSidebar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 

@@ -1,8 +1,8 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
 if (!user) {
 	return Astro.redirect('/login');
@@ -34,7 +34,7 @@ if (!user) {
                 id="name"
                 name="displayName"
                 class="inputs"
-                value={user.getDisplayName()}
+                value={user.name}
                 minlength={2}
                 maxlength={50}
                 required
@@ -48,7 +48,7 @@ if (!user) {
                   id="firstName"
                   name="firstName"
                   class="inputs"
-                  value={user.getFirstName()}
+                  value={user.firstName}
                   minlength={2}
                   maxlength={50}
                   required
@@ -61,7 +61,7 @@ if (!user) {
                   id="lastName"
                   name="lastName"
                   class="inputs"
-                  value={user.getLastName()}
+                  value={user.lastName}
                   minlength={2}
                   maxlength={50}
                   required
@@ -74,7 +74,7 @@ if (!user) {
                   id="phone"
                   name="phone"
                   class="inputs"
-                  value={user.getPhone()}
+                  value={user.phone}
                   minlength={10}
                   maxlength={20}
                   required
@@ -89,7 +89,7 @@ if (!user) {
                 id="address"
                 name="address"
                 class="inputs"
-                value={user.getAddress()}
+                value={user.address}
                 minlength={5}
                 maxlength={200}
                 required
@@ -104,7 +104,7 @@ if (!user) {
                   id="city"
                   name="city"
                   class="inputs"
-                  value={user.getCity()}
+                  value={user.city}
                   minlength={2}
                   maxlength={100}
                   required
@@ -117,7 +117,7 @@ if (!user) {
                   id="state"
                   name="state"
                   class="inputs"
-                  value={user.getState()}
+                  value={user.state}
                   minlength={2}
                   maxlength={100}
                   required
@@ -133,7 +133,7 @@ if (!user) {
                   id="zip"
                   name="zip"
                   class="inputs"
-                  value={user.getZip()}
+                  value={user.zip}
                   minlength={5}
                   maxlength={10}
                   required
@@ -146,7 +146,7 @@ if (!user) {
                   id="country"
                   name="country"
                   class="inputs"
-                  value={user.getCountry()}
+                  value={user.country}
                   minlength={2}
                   maxlength={100}
                   required
@@ -161,7 +161,7 @@ if (!user) {
                 id="email"
                 name="email"
                 class="inputs"
-                value={user.getEmail()}
+                value={user.email}
                 required
               />
             </div>

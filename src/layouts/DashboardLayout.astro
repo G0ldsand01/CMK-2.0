@@ -1,27 +1,31 @@
 ---
-import { getUser } from '@/lib/user';
 import Layout from './Layout.astro';
 import '@/styles/global.css';
 import { DashboardSidebar } from '@/components/DashboardSidebar';
+import { authServer } from '@/lib/auth-server';
 
 interface Props {
-	title: string;
-	breadcrumb: Record<string, string>;
+  title: string;
+  breadcrumb: Record<string, string>;
 }
 
 const { title, breadcrumb } = Astro.props;
-const user = await getUser(Astro.request);
+const session = await authServer.api.getSession({
+  headers: Astro.request.headers,
+});
+
+const user = session?.user;
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 
 const userData = {
-	id: user.getId(),
-	name: user.getDisplayName(),
-	email: user.getEmail(),
-	image: user.getImage(),
-	role: user.getRole(),
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  image: user.image || '',
+  role: user.role,
 };
 ---
 

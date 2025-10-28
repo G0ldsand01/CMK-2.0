@@ -1,4 +1,6 @@
 import { actions } from 'astro:actions';
+import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Table,
@@ -10,8 +12,6 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import type { productsTable } from '@/db/schema';
-import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import AddProductForm from './AddProductForm';
 import EditProductForm from './EditProductForm';
 import EditProductImageForm from './EditProductImageForm';

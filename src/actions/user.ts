@@ -1,6 +1,12 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { getUser } from '@/lib/user';
+import { authServer } from '@/lib/auth-server';
+import {
+	addToUserWishlist,
+	getUserWishlist,
+	removeFromUserWishlist,
+	setUserDetails,
+} from '@/lib/user-manager';
 import { containsDangerousPattern, logSecurityEvent } from './index';
 
 const sanitizeString = (str: string) => str.trim().replace(/[<>]/g, '');
@@ -87,7 +93,11 @@ export const user = {
 		}),
 		handler: async (input, context) => {
 			try {
-				const user = await getUser(context.request);
+				const session = await authServer.api.getSession({
+					headers: context.request.headers,
+				});
+
+				const user = session?.user;
 
 				if (!user) {
 					logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -99,7 +109,7 @@ export const user = {
 					});
 				}
 
-				const existingId = user.getId();
+				const existingId = user.id;
 
 				const {
 					displayName,
@@ -111,7 +121,6 @@ export const user = {
 					state,
 					zip,
 					country,
-					email,
 				} = input;
 
 				logSecurityEvent('USER_DETAILS_UPDATE', existingId, {
@@ -129,7 +138,7 @@ export const user = {
 					],
 				});
 
-				await user.setDetails({
+				await setUserDetails(existingId, {
 					name: displayName,
 					firstName,
 					lastName,
@@ -139,8 +148,6 @@ export const user = {
 					state,
 					zip,
 					country,
-					email,
-					role: user.getRole(),
 				});
 
 				return {
@@ -166,7 +173,11 @@ export const user = {
 	getWishlist: defineAction({
 		handler: async (_input, context) => {
 			try {
-				const user = await getUser(context.request);
+				const session = await authServer.api.getSession({
+					headers: context.request.headers,
+				});
+
+				const user = session?.user;
 
 				if (!user) {
 					logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -178,7 +189,7 @@ export const user = {
 					});
 				}
 
-				const wishlist = await user.getWishlist();
+				const wishlist = await getUserWishlist(user.id);
 
 				return {
 					success: true,
@@ -206,7 +217,11 @@ export const user = {
 		}),
 		handler: async (input, context) => {
 			try {
-				const user = await getUser(context.request);
+				const session = await authServer.api.getSession({
+					headers: context.request.headers,
+				});
+
+				const user = session?.user;
 
 				if (!user) {
 					logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
@@ -220,7 +235,7 @@ export const user = {
 
 				const { productId } = input;
 
-				const existingWishlist = await user.getWishlist();
+				const existingWishlist = await getUserWishlist(user.id);
 
 				if (
 					existingWishlist.some(
@@ -230,7 +245,7 @@ export const user = {
 						}) => wish.products.id === Number(productId),
 					)
 				) {
-					await user.removeFromWishlist(Number(productId));
+					await removeFromUserWishlist(user.id, Number(productId));
 
 					return {
 						success: true,
@@ -242,7 +257,7 @@ export const user = {
 					};
 				}
 
-				await user.addToWishlist(Number(productId));
+				await addToUserWishlist(user.id, Number(productId));
 
 				const newWishlist = [
 					...existingWishlist.map((wish) => wish.products.id),

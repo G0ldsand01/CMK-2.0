@@ -2,12 +2,12 @@
 import { ordersTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
-if (!user || !user.isAdmin()) {
-	throw Astro.redirect('/login');
+if (!user || user.role !== 'admin') {
+  throw Astro.redirect('/login');
 }
 
 const orders = await db.select().from(ordersTable);
@@ -16,7 +16,7 @@ const orders = await db.select().from(ordersTable);
 <AdminDashboardLayout
   title="Orders"
   breadcrumb={{
-    "/orders": "Manage Orders",
+    '/orders': 'Manage Orders',
   }}
 >
   <div class="content">

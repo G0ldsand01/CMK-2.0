@@ -3,71 +3,71 @@ import { CDN_URL } from 'astro:env/client';
 import { ordersTable, productsTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import db from '@/lib/db';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import type { Product } from '@/store';
 import { eq, inArray } from 'drizzle-orm';
 
-const user = await getUser(Astro.request);
-if (!user || !user.isAdmin()) {
-	throw Astro.redirect('/login');
+const user = await getCurrentUser(Astro.request as Request);
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/login');
 }
 
 const { id } = Astro.params;
 
 const [order] = await db
-	.select({
-		id: ordersTable.id,
-		status: ordersTable.status,
-		cartJSON: ordersTable.cartJSON,
-		createdAt: ordersTable.createdAt,
-	})
-	.from(ordersTable)
-	.where(eq(ordersTable.id, Number(id)));
+  .select({
+    id: ordersTable.id,
+    status: ordersTable.status,
+    cartJSON: ordersTable.cartJSON,
+    createdAt: ordersTable.createdAt,
+  })
+  .from(ordersTable)
+  .where(eq(ordersTable.id, Number(id)));
 
 if (!order) {
-	throw Astro.redirect('/dashboard/admin/orders');
+  throw Astro.redirect('/dashboard/admin/orders');
 }
 
 // Extract product IDs
 const productIds = order.cartJSON.map((item) => item.products.id);
 const products = await db
-	.select()
-	.from(productsTable)
-	.where(inArray(productsTable.id, productIds));
+  .select()
+  .from(productsTable)
+  .where(inArray(productsTable.id, productIds));
 // Combine cart and product data
 const orderItems = order.cartJSON
-	.map((item) => {
-		const product = products.find((p) => p.id === item.products.id);
-		return {
-			...item,
-			product,
-		};
-	})
-	.filter((item) => item.product); // remove items where product is undefined
+  .map((item) => {
+    const product = products.find((p) => p.id === item.products.id);
+    return {
+      ...item,
+      product,
+    };
+  })
+  .filter((item) => item.product); // remove items where product is undefined
 
 const totalPrice = orderItems.reduce((sum, item) => {
-	return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
+  return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
 }, 0);
 
 const orderData = {
-	id: order.id,
-	status: order.status,
-	createdAt: order.createdAt,
-	items: Array.isArray(orderItems) ? orderItems : [],
-	total: totalPrice,
+  id: order.id,
+  status: order.status,
+  createdAt: order.createdAt,
+  items: Array.isArray(orderItems) ? orderItems : [],
+  total: totalPrice,
 };
 const missingIds = productIds.filter(
-	(id) => !products.find((p) => p.id === id),
+  (id) => !products.find((p) => p.id === id)
 );
 if (missingIds.length) {
-	console.warn('Produits manquants dans la DB:', missingIds);
+  console.warn('Produits manquants dans la DB:', missingIds);
 }
 ---
 
 <AdminDashboardLayout
   title="Order"
   breadcrumb={{
-    "/orders": "Manage Orders",
+    '/orders': 'Manage Orders',
     [`/order/${id}`]: `Order ${id}`,
   }}
 >
@@ -101,7 +101,7 @@ if (missingIds.length) {
               orderData.items.map((item) => (
                 <div class="product-item">
                   <img
-                    src={`${CDN_URL}${item.product?.image}`}
+                    src={`${CDN_URL}${item.product?.thumbnail}`}
                     alt={item.product?.name}
                     width="50"
                   />
@@ -273,7 +273,6 @@ if (missingIds.length) {
     gap: 0.5rem;
     margin-top: 1rem;
     justify-content: space-between;
-    
   }
 
   .order-actions button {
@@ -296,7 +295,6 @@ if (missingIds.length) {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    
   }
   .refund-button {
     background-color: #ffc107;

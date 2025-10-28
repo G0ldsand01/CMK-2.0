@@ -1,10 +1,10 @@
 ---
 import { actions } from 'astro:actions';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { getUser } from '@/lib/user';
+import { getCurrentUser } from '@/lib/auth-server';
 import Image from 'astro/components/Image.astro';
 
-const user = await getUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
 
 if (!user) {
 	return Astro.redirect('/login');
@@ -26,7 +26,7 @@ const wishlist = data.wishlist ?? [];
   <div class="content">
     <div class="head">
       <div class="welcome-message">
-        <h1>{user.getDisplayName()}'s Wishlist</h1>
+        <h1>{user.name}'s Wishlist</h1>
         <p>Save your favorite products</p>
       </div>
     </div>
@@ -39,8 +39,8 @@ const wishlist = data.wishlist ?? [];
                 <a href={`/product/${product.products.id}`}>
                   <Image
                     src={
-                      product.products.image
-                        ? '/api/image/' + product.products.image + '.png'
+                      product.products.thumbnail
+                        ? '/api/image/' + product.products.thumbnail + '.png'
                         : '/api/image/placeholder.png'
                     }
                     alt={product.products.name || 'Product image'}

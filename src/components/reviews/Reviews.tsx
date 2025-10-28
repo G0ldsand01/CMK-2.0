@@ -1,7 +1,7 @@
-import type { reviewsTable } from '@/db/schema';
 import { useStore } from '@nanostores/react';
 import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type { reviewsTable } from '@/db/schema';
 import { productReviewsAtom } from '../../store';
 
 type Review = typeof reviewsTable.$inferSelect;

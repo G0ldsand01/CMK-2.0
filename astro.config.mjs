@@ -2,10 +2,9 @@
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, envField } from 'astro/config';
 import compress from 'astro-compress';
 import critters from 'astro-critters';
-import { defineConfig, envField } from 'astro/config';
-import auth from 'auth-astro';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,7 +12,7 @@ dotenv.config();
 // https://astro.build/config
 export default defineConfig({
 	// prefetch: true,
-	integrations: [react(), auth(), critters(), compress()],
+	integrations: [react(), critters(), compress()],
 
 	output: 'server',
 
@@ -31,6 +30,12 @@ export default defineConfig({
 				access: 'public',
 				context: 'client',
 				optional: true,
+			}),
+			DEV_MODE: envField.boolean({
+				access: 'public',
+				context: 'client',
+				optional: true,
+				default: false,
 			}),
 
 			WEBSITE_URL: envField.string({
@@ -80,6 +85,15 @@ export default defineConfig({
 			/*
        Auth
       */
+			BETTER_AUTH_URL: envField.string({
+				access: 'public',
+				context: 'server',
+			}),
+			BETTER_AUTH_SECRET: envField.string({
+				access: 'secret',
+				context: 'server',
+			}),
+
 			GITHUB_CLIENT_ID: envField.string({
 				access: 'secret',
 				context: 'server',

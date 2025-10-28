@@ -1,5 +1,5 @@
-import { cartAtom } from '@/store';
 import { useStore } from '@nanostores/react';
+import { cartAtom } from '@/store';
 
 function CartItemCount() {
 	const cart = useStore(cartAtom);

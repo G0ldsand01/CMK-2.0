@@ -1,4 +1,6 @@
 import { actions } from 'astro:actions';
+import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Table,
@@ -9,8 +11,6 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import type { productCategoryTable } from '@/db/schema';
-import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { AddCategoryForm } from './AddCategoryForm';
 import { EditCategoryForm } from './EditCategoryForm';
 
@@ -22,7 +22,7 @@ interface CategoriesTableProps {
 
 export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 	const [categories, setCategories] = useState<Category[]>(initialCategories);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, _setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const handleDelete = async (categoryId: number) => {

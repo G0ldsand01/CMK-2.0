@@ -1,26 +1,14 @@
 ---
-import { SignOut } from 'auth-astro/components';
+import Layout from '@layouts/Layout.astro';
+import { LogoutPage } from '@/components/LogoutPage';
+
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect('/');
+}
 ---
 
-<SignOut />
-<div class="flex items-center justify-center min-h-screen">
-  <div
-    class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"
-  >
-  </div>
-</div>
-
-<script>
-  const { signOut } = await import('auth-astro/client');
-  const signOutFunction = async () => {
-    await signOut();
-    window.location.href = '/';
-  };
-  signOutFunction();
-</script>
-
-<style>
-  body {
-    background-color: #000;
-  }
-</style>
+<Layout title="Logout" navbar={false}>
+  <LogoutPage client:load />
+</Layout>

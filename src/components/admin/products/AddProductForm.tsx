@@ -1,4 +1,7 @@
 import { actions } from 'astro:actions';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -19,9 +22,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { productCategoryTable } from '@/db/schema';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
 
 type Category = typeof productCategoryTable.$inferSelect;
 
