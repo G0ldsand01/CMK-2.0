@@ -17,11 +17,11 @@
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
 		"husky": "^9.1.7",
-		"lint-staged": "^15.5.2"
+		"lint-staged": "^16.2.6"
 	},
 	"dependencies": {
 		"@astrojs/react": "^4.4.0",
-		"@astrojs/vercel": "^8.2.11",
+		"@astrojs/vercel": "^9.0.0",
 		"@hookform/resolvers": "^5.2.2",
 		"@nanostores/react": "^1.0.0",
 		"@radix-ui/react-avatar": "^1.1.10",
@@ -45,11 +45,11 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cssnano": "^7.1.1",
-		"dotenv": "^16.6.1",
-		"drizzle-kit": "^0.31.5",
-		"drizzle-orm": "^0.42.0",
+		"dotenv": "^17.2.3",
+		"drizzle-kit": "^0.31.6",
+		"drizzle-orm": "^0.44.7",
 		"form-data": "^4.0.4",
-		"lucide-react": "^0.488.0",
+		"lucide-react": "^0.548.0",
 		"nanostores": "^1.0.1",
 		"next-themes": "^0.4.6",
 		"pg": "^8.16.3",
@@ -57,15 +57,15 @@
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"react-hook-form": "^7.65.0",
-		"recharts": "^2.15.4",
+		"recharts": "^3.3.0",
 		"redaxios": "^0.5.1",
 		"sonner": "^2.0.7",
-		"stripe": "^18.5.0",
+		"stripe": "^19.1.0",
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss": "^4.1.15",
 		"tailwindcss-animate": "^1.0.7",
-		"three": "^0.175.0",
-		"zod": "^3.25.76"
+		"three": "^0.180.0",
+		"zod": "^4.1.12"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
