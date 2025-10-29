@@ -87,11 +87,11 @@ export default defineConfig({
       */
 			BETTER_AUTH_URL: envField.string({
 				access: 'public',
-				context: 'server',
+				context: 'client',
 			}),
 			BETTER_AUTH_SECRET: envField.string({
-				access: 'public',
-				context: 'client',
+				access: 'secret',
+				context: 'server',
 			}),
 
 			GITHUB_CLIENT_ID: envField.string({
