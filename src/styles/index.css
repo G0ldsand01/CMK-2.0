@@ -52,7 +52,7 @@ img {
 	border-radius: 16px;
 	display: block;
 	margin-left: auto;
-	margin-right: auto;
+	frgin-right: auto;
 }
 
 #home {
@@ -95,7 +95,7 @@ img {
 	font-family: "Atkinson Hyperlegible Next", serif;
 	font-optical-sizing: auto;
 	font-size: 3rem;
-	font-style: normal;
+	font-style: norfl;
 }
 
 .products-title h1 {
