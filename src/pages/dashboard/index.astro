@@ -1,22 +1,19 @@
 ---
-import { Heart, ShoppingBag } from 'lucide-react';
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { authServer } from '@/lib/auth-server';
+import { Heart, ShoppingBag } from "lucide-react";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import { getCurrentUser } from "@/lib/auth-server";
 
-const user = () => {
-  if (Astro.locals.user) {
-    return Astro.locals.user;
-  } else {
-    // Redirect to login page if the user is not authenticated
-    return Astro.redirect('/login');
-  }
-};
+const user = await getCurrentUser(Astro.request as Request);
+
+if (!user) {
+  return Astro.redirect("/login");
+}
 ---
 
 <DashboardLayout
   title="Dashboard"
   breadcrumb={{
-    '/': 'Home',
+    "/": "Home",
   }}
 >
   <div class="content">
