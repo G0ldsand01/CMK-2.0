@@ -1,12 +1,12 @@
 ![favicon](https://github.com/user-attachments/assets/ab9ec8f6-a8bd-40ec-8745-84d702807ee6)
-# CMK-2.0 - Customizable Mouse & Keyboard E-commerce
+# CMK-2.0 - E-commerce
 
 
-This repository contains the source code for CMK-2.0, an Astro-powered e-commerce website specializing in customizable mice and keyboards.
+This repository contains the source code for CMK-2.0, an Astro-powered e-commerce website
 
 ## Description
 
-CMK-2.0 is a modern, fast, and user-friendly web application built with Astro. It allows users to design and purchase personalized mice and keyboards, offering a wide range of customization options.
+CMK-2.0 is a modern, fast, and user-friendly web application built with Astro. It allows users to order a product that our team have designed and print. It also allows the user to request a custom design.
 
 Key features include:
 
@@ -18,5 +18,4 @@ Key features include:
 
 
 [Link to live demo](https://cmk-2-0-tau.vercel.app/)
-
-If you have a video demo you can insert that also.
+
