@@ -90,8 +90,8 @@ export default defineConfig({
 				context: 'server',
 			}),
 			BETTER_AUTH_SECRET: envField.string({
-				access: 'secret',
-				context: 'server',
+				access: 'public',
+				context: 'client',
 			}),
 
 			GITHUB_CLIENT_ID: envField.string({
