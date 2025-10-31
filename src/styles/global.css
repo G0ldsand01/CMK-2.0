@@ -93,13 +93,13 @@
 	--chart-4: #76c4ff;
 	--chart-5: #93d4ff;
 
-	--sidebar: #0b1e2b;
-	--sidebar-foreground: #eaf6ff;
+	--sidebar: #141414;
+	--sidebar-foreground: #ebf6ff;
 	--sidebar-primary: #4cabfa;
 	--sidebar-primary-foreground: #061118;
 	--sidebar-accent: #14384e;
 	--sidebar-accent-foreground: #cdebff;
-	--sidebar-border: #244f69;
+	--sidebar-border: #1f2021;
 	--sidebar-ring: #4cabfa;
 
 	--color-translucent: rgba(15, 16, 17, 0.35);

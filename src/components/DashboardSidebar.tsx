@@ -126,7 +126,7 @@ export function AppSidebar({
 	const navData = getNavData(userData?.role);
 
 	return (
-		<Sidebar {...props}>
+		<Sidebar {...props} className="bg-sidebar">
 			<SidebarHeader className="flex items-center justify-center">
 				<div className="flex items-center">
 					<a
