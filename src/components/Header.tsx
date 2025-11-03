@@ -62,8 +62,22 @@ export function HeaderMenu() {
 						</ul>
 					</NavigationMenuContent>
 				</NavigationMenuItem>
-				<MenuLink href="/about" label="About" />
-				<MenuLink href="/contact" label="Contact" />
+				<NavigationMenuLink asChild>
+					<a
+						href="/about"
+						data-astro-prefetch
+						className={navigationMenuTriggerStyle()}>
+						About
+					</a>
+				</NavigationMenuLink>
+				<NavigationMenuLink asChild>
+					<a
+						href="/contact"
+						data-astro-prefetch
+						className={navigationMenuTriggerStyle()}>
+						Contact
+					</a>
+				</NavigationMenuLink>
 			</NavigationMenuList>
 		</NavigationMenu>
 	);
