@@ -1,179 +1,517 @@
 ---
-import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="3D Print Quote Service" navbar={true}>
-  <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-background">
-    <div class="w-full max-w-2xl bg-muted p-8 rounded-2xl shadow-xl">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-foreground">3D Print Quote Service</h1>
-        <p class="text-sm md:text-base text-muted-foreground mt-2">Send us your files and we will print them for you</p>
-      </div>
+  <main class="min-h-screen flex items-center justify-center bg-[#0a0b0d] py-16 px-4">
+    <div
+      class="w-full max-w-3xl bg-[#131419]/70 border border-white/5 rounded-2xl shadow-xl backdrop-blur-md"
+      id="quote-root"
+    >
+      <header class="px-6 pt-6 pb-3 border-b border-white/5 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-white">3D Print Quote Service</h1>
+        <p class="text-sm text-white/60 mt-2">
+          Send us your file, pick material, get a price, and go to checkout.
+        </p>
+        <p id="error-box" class="text-sm text-red-400 mt-3 hidden"></p>
+      </header>
 
-      <form class="space-y-8" id="quote-form">
-        <!-- Page 1 -->
-        <div class="form-step page1 space-y-4">
-          <div class="flex flex-col md:flex-row gap-4">
-            <input type="text" name="firstName" placeholder="First Name" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
-            <input type="text" name="lastName" placeholder="Last Name" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
-          </div>
-
-          <input type="email" name="email" placeholder="Email" class="w-full px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
-
-          <div class="flex flex-col md:flex-row gap-4">
-            <input type="text" name="address" placeholder="Address" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-            <input type="text" name="city" placeholder="City" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-          </div>
-
-          <div class="flex flex-col md:flex-row gap-4">
-            <input type="text" name="state" placeholder="State" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-            <input type="text" name="zip" placeholder="Zip" class="flex-1 px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-          </div>
-
-          <div class="flex justify-end">
-            <Button type="button" className="next-page-button">Next</Button>
-          </div>
+      <form id="quote-form" class="p-6 space-y-6">
+        <!-- STEP INDICATOR -->
+        <div class="flex items-center justify-center gap-2 text-xs text-white/50">
+          <span id="step-label">Step 1 of 3 — Customer info</span>
         </div>
 
-        <!-- Page 2 -->
-        <div class="form-step page2 hidden space-y-4">
-          <input type="file" name="file" accept=".stl" class="w-full px-4 py-2 border border-border rounded-md bg-background text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:var (--color-foreground) hover:file:bg-primary/80" />
-
-          <select name="material" class="w-full px-4 py-2 border border-border rounded-md bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
-            <option value="PLA">PLA</option>
-            <option value="ABS">ABS</option>
-            <option value="PETG">PETG</option>
-            <option value="TPU">TPU</option>
-          </select>
-
-          <label class="text-sm text-foreground">Size / Printer:</label>
-          <select name="size-printer" class="w-full px-4 py-2 border border-border rounded-md bg-muted text-foreground focus:outline-none">
-            <option value="small">Small / A1 mini / 180mm</option>
-            <option value="ender3">Ender 3 / 220mm</option>
-            <option value="large">Large / A1 / 256mm</option>
-          </select>
-
-          <label class="text-sm text-foreground">Color:</label>
-          <select name="color"  class="w-full px-4 py-2 border border-border rounded-md bg-muted text-foreground focus:outline-none">
-            <option value="#000000">Black</option>
-            <option value="#ffffff">White</option>
-            <option value="#808080">Grey</option>
-            <option value="#0000ff">Blue</option>
-          </select>
-
-          <input type="text" name="notes" placeholder="Anything we should know?" class="w-full px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-
-          <div class="flex justify-between">
-            <Button type="button" className="prev-page-button">Previous</Button>
-            <Button type="button" className="next-page-button">Next</Button>
+        <!-- STEP 1 -->
+        <section class="step step-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="firstName">First name *</label>
+            <input
+              id="firstName"
+              name="firstName"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
           </div>
-        </div>
-
-        <!-- Page 3 -->
-        <div class="form-step page3 hidden space-y-6">
-          <h2 class="text-xl font-semibold text-center text-foreground">Here's a preview of your model</h2>
-          <div class="three-viewer flex justify-center items-center">
-            <canvas id="3d-canvas" width="300" height="300" class="rounded-lg border border-border"></canvas>
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="lastName">Last name *</label>
+            <input
+              id="lastName"
+              name="lastName"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
           </div>
-          <p class="text-center text-lg text-muted-foreground">
-            Estimated Cost: <span id="cost-estimate" class="text-green-600 dark:text-green-400 font-bold">0.00 $</span>
+          <div class="md:col-span-2">
+            <label class="block text-white/80 text-sm mb-1" for="email">Email *</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-white/80 text-sm mb-1" for="address">Address *</label>
+            <input
+              id="address"
+              name="address"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="city">City *</label>
+            <input
+              id="city"
+              name="city"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="state">Province / State *</label>
+            <input
+              id="state"
+              name="state"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="zip">Postal / ZIP *</label>
+            <input
+              id="zip"
+              name="zip"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="country">Country *</label>
+            <input
+              id="country"
+              name="country"
+              value="Canada"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              required
+            />
+          </div>
+        </section>
+
+        <!-- STEP 2 -->
+        <section class="step step-2 hidden space-y-4">
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="stlFile">Upload STL *</label>
+            <input
+              id="stlFile"
+              name="stlFile"
+              type="file"
+              accept=".stl"
+              class="block w-full text-sm text-white file:mr-4 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2e8adb] file:text-white hover:file:bg-[#2872b1] cursor-pointer"
+              required
+            />
+            <p id="file-hint" class="text-xs text-white/40 mt-1">Choose a valid .stl (binary or ascii).</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-white/80 text-sm mb-1" for="material">Material *</label>
+              <select
+                id="material"
+                name="material"
+                class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+                required
+              >
+                <option value="PLA">PLA</option>
+                <option value="PETG">PETG</option>
+                <option value="ABS">ABS</option>
+                <option value="TPU">TPU</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white/80 text-sm mb-1" for="printer">Size / Printer *</label>
+              <select
+                id="printer"
+                name="printer"
+                class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+                required
+              >
+                <option value="180">Small / 180mm</option>
+                <option value="220">Ender 3 / 220mm</option>
+                <option value="256">A1 / 256mm</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white/80 text-sm mb-1" for="color">Color *</label>
+              <select
+                id="color"
+                name="color"
+                class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+                required
+              >
+                <option value="#000000">Black</option>
+                <option value="#ffffff">White</option>
+                <option value="#808080">Grey</option>
+                <option value="#0000ff">Blue</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white/80 text-sm mb-1" for="infill">Infill (%)</label>
+              <input
+                id="infill"
+                name="infill"
+                type="number"
+                min="0"
+                max="100"
+                value="15"
+                class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-white/80 text-sm mb-1" for="notes">Notes / special instructions</label>
+            <textarea
+              id="notes"
+              name="notes"
+              rows="3"
+              class="w-full bg-[#1a1b1e] border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#2e8adb]"
+              placeholder="Ex: priority print, orientation, color brand, etc."
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section class="step step-3 hidden space-y-4">
+          <h2 class="text-white font-semibold text-lg text-center">Model preview</h2>
+          <div class="flex justify-center">
+            <canvas
+              id="stl-canvas"
+              width="420"
+              height="420"
+              class="rounded-xl border border-white/5 bg-[#0f1012]"
+            ></canvas>
+          </div>
+          <p id="viewer-status" class="text-center text-xs text-white/40">
+            Load an STL on step 2 to see it here.
           </p>
-          <div class="flex justify-between">
-            <Button type="button" className="prev-page-button">Previous</Button>
-            <Button type="submit" className="checkout-button">
-              <ShoppingCart />
-              Go to Checkout
-            </Button>
-          </div>
+          <p class="text-center text-sm text-white/70">
+            Estimated cost:
+            <span id="cost" class="text-green-400 font-semibold">0.00 $</span>
+          </p>
+        </section>
+
+        <!-- ACTIONS -->
+        <div class="flex justify-between pt-2">
+          <button
+            id="prev-btn"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-white/5 text-white text-sm hover:bg-white/10 disabled:opacity-30"
+            disabled
+          >
+            Previous
+          </button>
+          <button
+            id="next-btn"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-[#2e8adb] text-white text-sm hover:bg-[#2774ba]"
+          >
+            Next
+          </button>
+          <button
+            id="checkout-btn"
+            type="button"
+            class="hidden px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm hover:bg-emerald-600"
+          >
+            Go to Checkout
+          </button>
         </div>
       </form>
     </div>
-  </div>
-</Layout>
+  </main>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const steps = document.querySelectorAll('.form-step');
+  <!-- ==================== SCRIPT ==================== -->
+  <script type="module">
+    // import from esm.sh -> CORS-friendly
+    import * as THREE from 'https://esm.sh/three@0.160.0?target=es2020';
+    import { STLLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/STLLoader.js?target=es2020';
+    import { OrbitControls } from 'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js?target=es2020';
+
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const stepLabel = document.getElementById('step-label');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const errorBox = document.getElementById('error-box');
+
+    const fileInput = document.getElementById('stlFile');
+    const costEl = document.getElementById('cost');
+    const viewerStatus = document.getElementById('viewer-status');
+    const canvas = document.getElementById('stl-canvas');
+
     let currentStep = 0;
+    let currentFile = null;
+    let renderer, scene, camera, controls, currentMesh;
+    let lastComputedVolume = 0;
 
-    const showStep = (index: number) => {
-      steps.forEach((step, i) => {
-        step.classList.toggle('hidden', i !== index);
-      });
-    };
+    // show step
+    function showStep(i) {
+      steps.forEach((s, idx) => s.classList.toggle('hidden', idx !== i));
+      currentStep = i;
+      stepLabel.textContent =
+        i === 0
+          ? 'Step 1 of 3 — Customer info'
+          : i === 1
+            ? 'Step 2 of 3 — Print details'
+            : 'Step 3 of 3 — Preview & checkout';
 
-    document.querySelectorAll('.next-page-button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (currentStep < steps.length - 1) {
-          currentStep++;
-          showStep(currentStep);
-        }
-      });
-    });
+      prevBtn.disabled = i === 0;
+      nextBtn.classList.toggle('hidden', i === steps.length - 1);
+      checkoutBtn.classList.toggle('hidden', i !== steps.length - 1);
+      errorBox.classList.add('hidden');
 
-    document.querySelectorAll('.prev-page-button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (currentStep > 0) {
-          currentStep--;
-          showStep(currentStep);
-        }
-      });
-    });
-
-    showStep(currentStep); // initialize
-    // Enable color/printer selects only after material is selected
-    const materialSelect = document.querySelector('select[name="material"]');
-    const printerSelect = document.querySelector('select[name="size-printer"]');
-    const colorSelect = document.querySelector('select[name="color"]');
-
-    materialSelect.addEventListener('change', () => {
-      printerSelect.disabled = false;
-      colorSelect.disabled = false;
-    });
-
-    // === STL PREVIEW ===
-    function renderSTLPreview() {
-      const fileInput = document.querySelector('input[type="file"]');
-      const canvas = document.getElementById('3d-canvas');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-      renderer.setSize(300, 300);
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-      camera.position.set(0, 0, 70);
-
-      const light = new THREE.DirectionalLight(0xffffff, 1);
-      light.position.set(0, 0, 100).normalize();
-      scene.add(light);
-
-      const loader = new STLLoader();
-
-      const file = fileInput.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const contents = e.target.result;
-
-        const geometry = loader.parse(contents);
-        const material = new THREE.MeshStandardMaterial({ color: 0x2194ce });
-        const mesh = new THREE.Mesh(geometry, material);
-
-        geometry.center();
-        mesh.rotation.x = -0.5 * Math.PI;
-        scene.add(mesh);
-
-        animate();
-      };
-      reader.readAsArrayBuffer(file);
-
-      function animate() {
-        requestAnimationFrame(animate);
-        scene.rotation.y += 0.005;
-        renderer.render(scene, camera);
+      // if step 3 & a file was already uploaded, re-render
+      if (i === 2 && currentFile) {
+        loadSTL(currentFile);
       }
     }
-  });
-</script>
+
+    // validation for steps
+    function validateStep(i) {
+      errorBox.classList.add('hidden');
+
+      if (i === 0) {
+        const req = ['firstName', 'lastName', 'email', 'address', 'city', 'state', 'zip', 'country'];
+        for (const id of req) {
+          const el = document.getElementById(id);
+          if (!el || !el.value.trim()) {
+            errorBox.textContent = 'Please fill all required customer fields.';
+            errorBox.classList.remove('hidden');
+            return false;
+          }
+        }
+      }
+
+      if (i === 1) {
+        if (!fileInput.files || fileInput.files.length === 0) {
+          errorBox.textContent = 'Please upload a valid STL file.';
+          errorBox.classList.remove('hidden');
+          return false;
+        }
+        const material = document.getElementById('material');
+        const printer = document.getElementById('printer');
+        const color = document.getElementById('color');
+        if (!material.value || !printer.value || !color.value) {
+          errorBox.textContent = 'Please select material, printer and color.';
+          errorBox.classList.remove('hidden');
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 0) showStep(currentStep - 1);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (!validateStep(currentStep)) return;
+      if (currentStep < steps.length - 1) {
+        showStep(currentStep + 1);
+      }
+    });
+
+    // file change -> load
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      currentFile = f;
+      // if already on preview step, render now
+      if (currentStep === 2) {
+        loadSTL(f);
+      }
+    });
+
+    // three.js viewer
+    function initThree() {
+      if (renderer) return; // already
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(canvas.width, canvas.height);
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f1012);
+
+      camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 0.1, 1000);
+      camera.position.set(0, 0, 120);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+      const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+      dir.position.set(1, 1, 2);
+      scene.add(ambient, dir);
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.enablePan = true;
+      controls.enableZoom = true;
+      controls.target.set(0, 0, 0);
+
+      // animate loop
+      const animate = () => {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      animate();
+    }
+
+    async function loadSTL(file) {
+      initThree();
+      viewerStatus.textContent = 'Loading STL...';
+
+      // remove old mesh
+      if (currentMesh) {
+        scene.remove(currentMesh);
+        currentMesh.geometry.dispose();
+        currentMesh.material.dispose();
+        currentMesh = null;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const loader = new STLLoader();
+          const arrayBuffer = ev.target.result;
+          const geometry = loader.parse(arrayBuffer);
+
+          geometry.computeVertexNormals();
+          geometry.computeBoundingBox();
+          geometry.center();
+
+          const material = new THREE.MeshStandardMaterial({
+            color: 0x2194ce,
+            roughness: 0.65,
+            metalness: 0.1,
+          });
+
+          const mesh = new THREE.Mesh(geometry, material);
+          scene.add(mesh);
+          currentMesh = mesh;
+
+          // fit camera
+          const bbox = geometry.boundingBox;
+          const size = bbox.getSize(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const dist = maxDim * 1.8;
+          camera.position.set(dist, dist, dist);
+          controls.target.set(0, 0, 0);
+          controls.update();
+
+          // cost
+          const vol = calculateVolume(geometry);
+          lastComputedVolume = vol;
+          const price = vol * 0.02; // 0.02 $ / cm³
+          costEl.textContent = price.toFixed(2) + ' $';
+          viewerStatus.textContent = 'Model loaded.';
+        } catch (err) {
+          console.error('STL load error', err);
+          viewerStatus.textContent = 'Error: invalid STL.';
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // volume (same as before)
+    function calculateVolume(geometry) {
+      const pos = geometry.attributes.position.array;
+      let volume = 0;
+      for (let i = 0; i < pos.length; i += 9) {
+        const ax = pos[i], ay = pos[i + 1], az = pos[i + 2];
+        const bx = pos[i + 3], by = pos[i + 4], bz = pos[i + 5];
+        const cx = pos[i + 6], cy = pos[i + 7], cz = pos[i + 8];
+        volume +=
+          (ax * (by * cz - bz * cy) -
+            ay * (bx * cz - bz * cx) +
+            az * (bx * cy - by * cx)) /
+          6;
+      }
+      // mm³ → cm³
+      return Math.abs(volume) / 1000;
+    }
+
+    // checkout
+    checkoutBtn.addEventListener('click', async () => {
+      if (!validateStep(0) || !validateStep(1)) {
+        // force user to fill missing fields
+        showStep(0);
+        return;
+      }
+
+      if (!currentFile) {
+        errorBox.textContent = 'Please upload an STL before checkout.';
+        errorBox.classList.remove('hidden');
+        showStep(1);
+        return;
+      }
+
+      const body = {
+        // customer
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        state: document.getElementById('state').value.trim(),
+        zip: document.getElementById('zip').value.trim(),
+        country: document.getElementById('country').value.trim(),
+        // print
+        material: document.getElementById('material').value,
+        printer: document.getElementById('printer').value,
+        color: document.getElementById('color').value,
+        infill: document.getElementById('infill').value,
+        notes: document.getElementById('notes').value,
+        // stl
+        filename: currentFile.name,
+        filesize: currentFile.size,
+        volumeCm3: lastComputedVolume,
+        price: parseFloat(costEl.textContent.replace('$', '')),
+      };
+
+      try {
+        // this should be your real endpoint:
+        const res = await fetch('/api/stripe/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          console.error('Stripe create-session failed', errJson);
+          errorBox.textContent =
+            errJson?.error || 'Stripe session failed. Check /api/stripe/create-session.';
+          errorBox.classList.remove('hidden');
+          return;
+        }
+
+        const json = await res.json();
+        if (json.url) {
+          window.location.href = json.url;
+        } else {
+          errorBox.textContent = 'Stripe did not return a URL.';
+          errorBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error(err);
+        errorBox.textContent = 'Network error while creating Stripe session.';
+        errorBox.classList.remove('hidden');
+      }
+    });
+
+    // init
+    showStep(0);
+  </script>
+</Layout>
