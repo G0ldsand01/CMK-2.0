@@ -176,8 +176,7 @@ export default function EditProductForm({
 									<FormLabel>Category</FormLabel>
 									<Select
 										onValueChange={(value) => field.onChange(Number(value))}
-										defaultValue={String(field.value)}
-									>
+										defaultValue={String(field.value)}>
 										<FormControl>
 											<SelectTrigger>
 												<SelectValue placeholder="Select a category" />
@@ -203,8 +202,7 @@ export default function EditProductForm({
 									<FormLabel>Type</FormLabel>
 									<Select
 										onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
+										defaultValue={field.value}>
 										<FormControl>
 											<SelectTrigger>
 												<SelectValue placeholder="Select a type" />

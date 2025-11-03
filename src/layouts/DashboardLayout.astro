@@ -5,40 +5,39 @@ import { DashboardSidebar } from '@/components/DashboardSidebar';
 import { authServer } from '@/lib/auth-server';
 
 interface Props {
-  title: string;
-  breadcrumb: Record<string, string>;
+	title: string;
+	breadcrumb: Record<string, string>;
 }
 
 const { title, breadcrumb } = Astro.props;
 const session = await authServer.api.getSession({
-  headers: Astro.request.headers,
+	headers: Astro.request.headers,
 });
 
 const user = session?.user;
 
 if (!user) {
-  return Astro.redirect('/login');
+	return Astro.redirect('/login');
 }
 
 const userData = {
-  id: user.id,
-  name: user.name,
-  email: user.email,
-  image: user.image || '',
-  role: user.role,
+	id: user.id,
+	name: user.name,
+	email: user.email,
+	image: user.image || '',
+	role: user.role,
 };
 ---
-
 <Layout title={title} navbar={false}>
-  <DashboardSidebar userData={userData} breadcrumb={breadcrumb} client:load>
-    <slot />
-  </DashboardSidebar>
+	<DashboardSidebar userData={userData} breadcrumb={breadcrumb} client:load>
+		<slot/>
+	</DashboardSidebar>
 </Layout>
 
 <style>
-  html,
-  body {
-    min-height: 100vh;
-    font-family: 'Arial', sans-serif;
-  }
+html,
+body {
+	min-height: 100vh;
+	font-family: "Arial", sans-serif;
+}
 </style>

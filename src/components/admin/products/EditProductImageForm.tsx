@@ -225,8 +225,7 @@ export default function EditProductImageForm({
 						{images.map((image) => (
 							<Card
 								key={image.product_image.id}
-								className="relative group w-full"
-							>
+								className="relative group w-full">
 								<div className="aspect-square relative overflow-hidden rounded-t-lg">
 									<img
 										src={`${CDN_URL}/${image.image.image}`}
@@ -238,8 +237,7 @@ export default function EditProductImageForm({
 											variant="destructive"
 											size="icon"
 											onClick={() => handleDeleteImage(image.product_image.id)}
-											disabled={isLoading}
-										>
+											disabled={isLoading}>
 											<Trash2 className="h-4 w-4" />
 										</Button>
 									</div>
@@ -252,13 +250,11 @@ export default function EditProductImageForm({
 											const priority = Number(form.priority.value);
 											handleUpdatePriority(image.product_image.id, priority);
 										}}
-										className="space-y-2"
-									>
+										className="space-y-2">
 										<div className="flex items-center gap-2">
 											<Label
 												htmlFor={`priority-${image.product_image.id}`}
-												className="text-sm font-medium text-muted-foreground shrink-0"
-											>
+												className="text-sm font-medium text-muted-foreground shrink-0">
 												Priority
 											</Label>
 											<Input
@@ -276,8 +272,7 @@ export default function EditProductImageForm({
 											size="sm"
 											variant="secondary"
 											disabled={isLoading}
-											className="w-full h-8"
-										>
+											className="w-full h-8">
 											Save
 										</Button>
 									</form>

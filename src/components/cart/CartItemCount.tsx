@@ -12,8 +12,7 @@ function CartItemCount() {
 	return (
 		<span
 			id="cart-count"
-			className="bg-muted text-foreground text-xs w-5 h-5 flex items-center justify-center rounded-full ml-2"
-		>
+			className="bg-muted text-foreground text-xs w-5 h-5 flex items-center justify-center rounded-full ml-2">
 			{itemCount}
 		</span>
 	);

@@ -1,11 +1,11 @@
 ---
 import { Badge } from '@/components/ui/badge';
 import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
@@ -15,98 +15,95 @@ import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 
 const user = await getCurrentUser(Astro.request as Request);
 const { totalRevenue, newCustomers, activeAccounts, growthRate, latestOrders } =
-  await fetchStripeMetrics();
+	await fetchStripeMetrics();
 
 if (!user || user.role !== 'admin') {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 
 async function fetchStripeMetrics() {
-  try {
-    const balance = await stripe.balance.retrieve();
-    const customers = await stripe.customers.list({ limit: 100 });
-    const activeSubscriptions = await stripe.subscriptions.list({ limit: 100 });
+	try {
+		const balance = await stripe.balance.retrieve();
+		const customers = await stripe.customers.list({ limit: 100 });
+		const activeSubscriptions = await stripe.subscriptions.list({ limit: 100 });
 
-    // Simuler la récupération des revenus des 3 derniers mois
-    const revenueData = await stripe.balanceTransactions.list({
-      type: 'charge',
-      created: { gte: Math.floor(Date.now() / 1000) - 3 * 30 * 24 * 60 * 60 }, // Derniers 3 mois
-      limit: 100,
-    });
+		// Simuler la récupération des revenus des 3 derniers mois
+		const revenueData = await stripe.balanceTransactions.list({
+			type: 'charge',
+			created: { gte: Math.floor(Date.now() / 1000) - 3 * 30 * 24 * 60 * 60 }, // Derniers 3 mois
+			limit: 100,
+		});
 
-    const monthlyRevenue: Record<number, number> = revenueData.data.reduce(
-      (acc, txn) => {
-        const month = new Date(txn.created * 1000).getMonth();
-        acc[month] = (acc[month] || 0) + txn.amount;
-        return acc;
-      },
-      {} as Record<number, number>
-    );
+		const monthlyRevenue: Record<number, number> = revenueData.data.reduce(
+			(acc, txn) => {
+				const month = new Date(txn.created * 1000).getMonth();
+				acc[month] = (acc[month] || 0) + txn.amount;
+				return acc;
+			},
+			{} as Record<number, number>,
+		);
 
-    const revenueValues = Object.values(monthlyRevenue).map((v) => v / 100); // Convert cents to dollars
-    const revenueTrend =
-      revenueValues.length > 1
-        ? `${(
-            ((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
-              ((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
-                revenueValues[0])) *
-            100
-          ).toFixed(2)}%`
-        : '0%';
+		const revenueValues = Object.values(monthlyRevenue).map((v) => v / 100); // Convert cents to dollars
+		const revenueTrend =
+			revenueValues.length > 1
+				? `${(
+						((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
+							((revenueValues[revenueValues.length - 1] - revenueValues[0]) /
+								revenueValues[0])) *
+							100
+					).toFixed(2)}%`
+				: '0%';
 
-    const latestOrders = await stripe.paymentIntents.list({
-      limit: 10,
-    });
+		const latestOrders = await stripe.paymentIntents.list({
+			limit: 10,
+		});
 
-    return {
-      totalRevenue: (balance.available[0]?.amount || 0) / 100,
-      newCustomers: customers.data.length,
-      activeAccounts: activeSubscriptions.data.length,
-      growthRate: '4.5%', // Placeholder
-      revenueTrend: revenueTrend || '0%',
-      customerTrend: '0%',
-      accountTrend: '0%',
-      latestOrders: latestOrders.data.map((order) => ({
-        id: order.id,
-        amount: order.amount / 100,
-        currency: order.currency.toUpperCase(),
-        status: order.status,
-        created: new Date(order.created * 1000).toLocaleDateString(),
-      })),
-    };
-  } catch (error) {
-    console.error('Error fetching Stripe metrics:', error);
-    return {
-      totalRevenue: 0,
-      newCustomers: 0,
-      activeAccounts: 0,
-      growthRate: '0%',
-      revenueTrend: '0%',
-      customerTrend: '0%',
-      accountTrend: '0%',
-      latestOrders: [],
-    };
-  }
+		return {
+			totalRevenue: (balance.available[0]?.amount || 0) / 100,
+			newCustomers: customers.data.length,
+			activeAccounts: activeSubscriptions.data.length,
+			growthRate: '4.5%', // Placeholder
+			revenueTrend: revenueTrend || '0%',
+			customerTrend: '0%',
+			accountTrend: '0%',
+			latestOrders: latestOrders.data.map((order) => ({
+				id: order.id,
+				amount: order.amount / 100,
+				currency: order.currency.toUpperCase(),
+				status: order.status,
+				created: new Date(order.created * 1000).toLocaleDateString(),
+			})),
+		};
+	} catch (error) {
+		console.error('Error fetching Stripe metrics:', error);
+		return {
+			totalRevenue: 0,
+			newCustomers: 0,
+			activeAccounts: 0,
+			growthRate: '0%',
+			revenueTrend: '0%',
+			customerTrend: '0%',
+			accountTrend: '0%',
+			latestOrders: [],
+		};
+	}
 }
 ---
-
 <AdminDashboardLayout
-  title="Admin Dashboard"
-  breadcrumb={{
+	title="Admin Dashboard"
+	breadcrumb={{
     '/': 'Home',
   }}
 >
-  <div class="head">
-    <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-    <p>
-      Welcome to the admin dashboard, {user.name}!
-    </p>
-  </div>
-  <Separator />
-  <div
-    class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6"
-  >
-    {
+	<div class="head">
+		<h1 class="text-2xl font-bold">Admin Dashboard</h1>
+		<p>Welcome to the admin dashboard, {user.name}!</p>
+	</div>
+	<Separator/>
+	<div
+		class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6"
+	>
+		{
       [
         {
           title: 'Total Revenue',
@@ -174,23 +171,23 @@ async function fetchStripeMetrics() {
         )
       )
     }
-  </div>
-  <!-- Latest orders -->
-  <div class="px-4 lg:px-6" id="latest-orders">
-    <h2 class="text-xl font-bold">Latest Stripe Orders</h2>
-    <div class="overflow-x-auto">
-      <table class="min-w-full border-collapse border border-gray-200">
-        <thead>
-          <tr>
-            <th class="border border-gray-200 px-4 py-2">Order ID</th>
-            <th class="border border-gray-200 px-4 py-2">Amount</th>
-            <th class="border border-gray-200 px-4 py-2">Currency</th>
-            <th class="border border-gray-200 px-4 py-2">Status</th>
-            <th class="border border-gray-200 px-4 py-2">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
+	</div>
+	<!-- Latest orders -->
+	<div class="px-4 lg:px-6" id="latest-orders">
+		<h2 class="text-xl font-bold">Latest Stripe Orders</h2>
+		<div class="overflow-x-auto">
+			<table class="min-w-full border-collapse border border-gray-200">
+				<thead>
+					<tr>
+						<th class="border border-gray-200 px-4 py-2">Order ID</th>
+						<th class="border border-gray-200 px-4 py-2">Amount</th>
+						<th class="border border-gray-200 px-4 py-2">Currency</th>
+						<th class="border border-gray-200 px-4 py-2">Status</th>
+						<th class="border border-gray-200 px-4 py-2">Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
             latestOrders.map((order) => (
               <tr>
                 <td class="border border-gray-200 px-4 py-2">{order.id}</td>
@@ -205,38 +202,38 @@ async function fetchStripeMetrics() {
               </tr>
             ))
           }
-        </tbody>
-      </table>
-    </div>
-  </div>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </AdminDashboardLayout>
 
 <style>
-  .head {
-    padding: 2rem;
-    background-color: var(--background);
-    color: var(--foreground);
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  .head h1 {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  .head p {
-    font-size: 1rem;
-  }
-  #latest-orders {
-    margin-top: 2rem;
-  }
-  #latest-orders table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  #latest-orders table th,
-  #latest-orders table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
+.head {
+	padding: 2rem;
+	background-color: var(--background);
+	color: var(--foreground);
+	border-radius: 0.5rem;
+	margin-bottom: 1rem;
+}
+.head h1 {
+	font-size: 2rem;
+	font-weight: bold;
+}
+.head p {
+	font-size: 1rem;
+}
+#latest-orders {
+	margin-top: 2rem;
+}
+#latest-orders table {
+	border-collapse: collapse;
+	width: 100%;
+}
+#latest-orders table th,
+#latest-orders table td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
 </style>

@@ -44,8 +44,7 @@ export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 				<Button
 					variant="outline"
 					onClick={() => setError(null)}
-					className="mt-4"
-				>
+					className="mt-4">
 					Retry
 				</Button>
 			</div>
@@ -92,8 +91,7 @@ export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 										<Button
 											variant="ghost"
 											size="icon"
-											onClick={() => handleDelete(category.id)}
-										>
+											onClick={() => handleDelete(category.id)}>
 											<Trash2 className="h-4 w-4" />
 										</Button>
 									</div>

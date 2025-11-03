@@ -111,8 +111,7 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 						onClick={() => setRating(value)}
 						onMouseEnter={() => setHoveredRating(value)}
 						onMouseLeave={() => setHoveredRating(0)}
-						className="p-1 transition-colors"
-					>
+						className="p-1 transition-colors">
 						<Star
 							size={24}
 							className={
@@ -133,8 +132,7 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 				<Button
 					onClick={handleSubmit}
 					disabled={isSubmitting || !rating}
-					className="flex-1"
-				>
+					className="flex-1">
 					{isSubmitting
 						? 'Saving...'
 						: review
@@ -145,8 +143,7 @@ function ManageReview({ review: initialReview, productId }: ManageReviewProps) {
 					<Button
 						variant="destructive"
 						onClick={handleDelete}
-						disabled={isSubmitting}
-					>
+						disabled={isSubmitting}>
 						Delete
 					</Button>
 				)}

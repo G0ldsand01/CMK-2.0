@@ -64,8 +64,7 @@ export default function InternalCart({
 				className="w-full sm:max-w-lg"
 				style={{
 					zIndex: 1000,
-				}}
-			>
+				}}>
 				<SheetHeader>
 					<SheetTitle className="text-2xl font-bold">Your Cart</SheetTitle>
 					<SheetDescription>
@@ -80,20 +79,17 @@ export default function InternalCart({
 							<>
 								<div
 									className="text-sm mb-4"
-									style={{ color: 'var(--foreground)' }}
-								>
+									style={{ color: 'var(--foreground)' }}>
 									{Object.values($cart).length} items in your cart
 								</div>
 								<div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-2">
 									{Object.values($cart).map((item) => (
 										<div
 											key={item.products.id}
-											className="flex items-center gap-4 p-4 bg-card rounded-lg shadow-sm"
-										>
+											className="flex items-center gap-4 p-4 bg-card rounded-lg shadow-sm">
 											<div
 												className="w-20 h-20 rounded-md overflow-hidden"
-												style={{ color: 'var(--foreground)' }}
-											>
+												style={{ color: 'var(--foreground)' }}>
 												<img
 													src={`${CDN_URL}${item.products.image}`}
 													alt={item.products.name}
@@ -104,8 +100,7 @@ export default function InternalCart({
 												<h3 className="font-medium">{item.products.name}</h3>
 												<p
 													className="text-sm"
-													style={{ color: 'var(--foreground)' }}
-												>
+													style={{ color: 'var(--foreground)' }}>
 													${item.products.price}
 												</p>
 												<div className="flex items-center gap-2 mt-2">
@@ -123,8 +118,7 @@ export default function InternalCart({
 															if (!error) {
 																setCart(data.cart);
 															}
-														}}
-													>
+														}}>
 														<Minus className="h-4 w-4" />
 													</Button>
 													<span className="w-8 text-center">
@@ -144,8 +138,7 @@ export default function InternalCart({
 															if (!error) {
 																setCart(data.cart);
 															}
-														}}
-													>
+														}}>
 														<Plus className="h-4 w-4" />
 													</Button>
 													<Button
@@ -161,8 +154,7 @@ export default function InternalCart({
 															if (!error) {
 																setCart(data.cart);
 															}
-														}}
-													>
+														}}>
 														<Trash2 className="h-4 w-4" />
 													</Button>
 												</div>
@@ -181,8 +173,7 @@ export default function InternalCart({
 								<span className="text-foreground">Subtotal</span>
 								<span
 									className="font-medium"
-									style={{ color: 'var(--foreground)' }}
-								>
+									style={{ color: 'var(--foreground)' }}>
 									${calculateTotal()}
 								</span>
 							</div>

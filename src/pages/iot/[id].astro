@@ -4,12 +4,12 @@ import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 } from '@/components/ui/card';
 import { productsTable, wishlistTable } from '@/db/schema';
 import db from '@/lib/db';
@@ -23,35 +23,34 @@ const { id } = Astro.params;
 const user = await getCurrentUser(Astro.request as Request);
 
 const { product, isInWishlist } = await db.transaction(async (tx) => {
-  const [product] = await tx
-    .select()
-    .from(productsTable)
-    .where(eq(productsTable.id, Number(id)));
+	const [product] = await tx
+		.select()
+		.from(productsTable)
+		.where(eq(productsTable.id, Number(id)));
 
-  if (user && product) {
-    const isInWishlist = await tx
-      .select()
-      .from(wishlistTable)
-      .where(
-        and(
-          eq(wishlistTable.userId, user.id),
-          eq(wishlistTable.productId, Number(id))
-        )
-      );
+	if (user && product) {
+		const isInWishlist = await tx
+			.select()
+			.from(wishlistTable)
+			.where(
+				and(
+					eq(wishlistTable.userId, user.id),
+					eq(wishlistTable.productId, Number(id)),
+				),
+			);
 
-    return { product, isInWishlist };
-  }
+		return { product, isInWishlist };
+	}
 
-  return { product, isInWishlist: false };
+	return { product, isInWishlist: false };
 });
 
 if (!product) {
-  return Astro.redirect('/');
+	return Astro.redirect('/');
 }
 ---
-
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
-  {
+	{
     product ? (
       <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
         <Card>
@@ -159,107 +158,105 @@ if (!product) {
 </Layout>
 
 <script>
-  import { actions } from 'astro:actions';
-  import { toast } from 'sonner';
-  import { setCart } from '@/lib/cart';
+import { actions } from 'astro:actions';
+import { toast } from 'sonner';
+import { setCart } from '@/lib/cart';
 
-  /*
+/*
     Product ID
   */
 
-  const product = document.querySelector('[data-product-id]');
-  if (!product) {
-    console.error('Product is not set');
-    throw new Error('Product is not set');
-  }
+const product = document.querySelector('[data-product-id]');
+if (!product) {
+	console.error('Product is not set');
+	throw new Error('Product is not set');
+}
 
-  const productId = product.getAttribute('data-product-id');
-  if (!productId) {
-    console.error('Product ID is not set');
-    throw new Error('Product ID is not set');
-  }
+const productId = product.getAttribute('data-product-id');
+if (!productId) {
+	console.error('Product ID is not set');
+	throw new Error('Product ID is not set');
+}
 
-  /*
+/*
     Wishlist Button
   */
 
-  const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
-  if (addToWishlistButton) {
-    addToWishlistButton.addEventListener('click', async () => {
-      const { error, data } = await actions.user.toggleProductFromWishlist({
-        productId: productId as string,
-      });
-      if (!error) {
-        if (data.inWishlist) {
-          addToWishlistButton.classList.add('text-red-500');
-          addToWishlistButton.classList.remove('text-gray-400');
-        } else {
-          addToWishlistButton.classList.remove('text-red-500');
-          addToWishlistButton.classList.add('text-gray-400');
-        }
-      }
-    });
-  }
+const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
+if (addToWishlistButton) {
+	addToWishlistButton.addEventListener('click', async () => {
+		const { error, data } = await actions.user.toggleProductFromWishlist({
+			productId: productId as string,
+		});
+		if (!error) {
+			if (data.inWishlist) {
+				addToWishlistButton.classList.add('text-red-500');
+				addToWishlistButton.classList.remove('text-gray-400');
+			} else {
+				addToWishlistButton.classList.remove('text-red-500');
+				addToWishlistButton.classList.add('text-gray-400');
+			}
+		}
+	});
+}
 
-  /*
+/*
     Add to Cart Button
   */
 
-  const addToCartButton = document.querySelector('#add-to-cart-button');
-  if (addToCartButton) {
-    addToCartButton.addEventListener('click', async () => {
-      const { error, data } = await actions.cart.addProductIdToCart({
-        productId: productId as string,
-      });
+const addToCartButton = document.querySelector('#add-to-cart-button');
+if (addToCartButton) {
+	addToCartButton.addEventListener('click', async () => {
+		const { error, data } = await actions.cart.addProductIdToCart({
+			productId: productId as string,
+		});
 
-      if (!error) {
-        setCart(data.cart);
-        if (data.success) {
-          toast.success('Successfully added to cart', {
-            description: 'You can view your cart in the top right corner',
-            action: {
-              label: 'Undo',
-              onClick: async () => {
-                const { error: newError, data: newData } =
-                  await actions.cart.deleteCartItem({
-                    productId: productId as string,
-                  });
+		if (!error) {
+			setCart(data.cart);
+			if (data.success) {
+				toast.success('Successfully added to cart', {
+					description: 'You can view your cart in the top right corner',
+					action: {
+						label: 'Undo',
+						onClick: async () => {
+							const { error: newError, data: newData } =
+								await actions.cart.deleteCartItem({
+									productId: productId as string,
+								});
 
-                if (!newError) {
-                  toast.success('Successfully removed from cart', {
-                    description:
-                      'You can view your cart in the top right corner',
-                  });
-                  setCart(newData.cart);
-                }
-              },
-            },
-          });
-        } else {
-          toast.warning('Product already in cart', {
-            description: 'You can view your cart in the top right corner',
-            action: {
-              label: 'Remove',
-              onClick: async () => {
-                const { error: newError, data: newData } =
-                  await actions.cart.deleteCartItem({
-                    productId: productId as string,
-                  });
+							if (!newError) {
+								toast.success('Successfully removed from cart', {
+									description: 'You can view your cart in the top right corner',
+								});
+								setCart(newData.cart);
+							}
+						},
+					},
+				});
+			} else {
+				toast.warning('Product already in cart', {
+					description: 'You can view your cart in the top right corner',
+					action: {
+						label: 'Remove',
+						onClick: async () => {
+							const { error: newError, data: newData } =
+								await actions.cart.deleteCartItem({
+									productId: productId as string,
+								});
 
-                if (!newError) {
-                  toast.success('Successfully removed from cart', {
-                    description:
-                      'You can view your cart in the top right corner',
-                  });
-                  setCart(newData.cart);
-                }
-              },
-            },
-          });
-        }
-      } else {
-        toast.error('Failed to add to cart');
-      }
-    });
-  }
+							if (!newError) {
+								toast.success('Successfully removed from cart', {
+									description: 'You can view your cart in the top right corner',
+								});
+								setCart(newData.cart);
+							}
+						},
+					},
+				});
+			}
+		} else {
+			toast.error('Failed to add to cart');
+		}
+	});
+}
 </script>

@@ -37,8 +37,7 @@ function FullPageCart({
 			{Object.values($cart).map((item) => (
 				<div
 					key={item.products.id}
-					className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 bg-[var(--muted)] p-4 rounded-lg shadow-sm my-4"
-				>
+					className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 bg-[var(--muted)] p-4 rounded-lg shadow-sm my-4">
 					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
 						<img
 							src={`${CDN_URL}${item.products.image}`}
@@ -48,19 +47,16 @@ function FullPageCart({
 						/>
 						<div
 							className="flex-1"
-							style={{ color: 'var(--muted-foreground)' }}
-						>
+							style={{ color: 'var(--muted-foreground)' }}>
 							<h2 className="text-lg font-semibold">{item.products.name}</h2>
 							<p
 								className="text-foreground"
-								style={{ color: 'var(--card-foreground)' }}
-							>
+								style={{ color: 'var(--card-foreground)' }}>
 								${Number(item.products.price).toFixed(2)}
 							</p>
 							<p
 								className="text-sm"
-								style={{ color: 'var(--card-foreground)' }}
-							>
+								style={{ color: 'var(--card-foreground)' }}>
 								Total: $
 								{(item.cart.quantity * Number(item.products.price)).toFixed(2)}
 							</p>
@@ -81,14 +77,12 @@ function FullPageCart({
 								if (!error) {
 									setCart(data.cart);
 								}
-							}}
-						>
+							}}>
 							<Minus className="h-4 w-4" />
 						</Button>
 						<span
 							className="w-8 text-center"
-							style={{ color: 'var(--card-foreground)' }}
-						>
+							style={{ color: 'var(--card-foreground)' }}>
 							{item.cart.quantity}
 						</span>
 						<Button
@@ -104,8 +98,7 @@ function FullPageCart({
 								if (!error) {
 									setCart(data.cart);
 								}
-							}}
-						>
+							}}>
 							<Plus className="h-4 w-4" />
 						</Button>
 						<Button
@@ -120,8 +113,7 @@ function FullPageCart({
 								if (!error) {
 									setCart(data.cart);
 								}
-							}}
-						>
+							}}>
 							<Trash2 className="h-4 w-4" />
 						</Button>
 					</div>
@@ -134,8 +126,7 @@ function FullPageCart({
 						<span style={{ color: 'var(--foreground)' }}>Subtotal</span>
 						<span
 							className="font-medium"
-							style={{ color: 'var(--foreground)' }}
-						>
+							style={{ color: 'var(--foreground)' }}>
 							${calculateTotal()}
 						</span>
 					</div>
@@ -148,8 +139,7 @@ function FullPageCart({
 							} else {
 								console.error('Error checking out:', error);
 							}
-						}}
-					>
+						}}>
 						<div className="flex items-center gap-2">
 							<ShoppingBag /> Proceed to Checkout
 						</div>

@@ -8,7 +8,7 @@ import ManageReview from './ManageReview';
 import Reviews from './Reviews';
 
 interface Props {
-  product: typeof productsTable.$inferSelect;
+	product: typeof productsTable.$inferSelect;
 }
 
 const { product } = Astro.props;
@@ -18,29 +18,28 @@ const user = await getCurrentUser(Astro.request as Request);
 
 let userReview: typeof reviewsTable.$inferSelect | null = null;
 if (user) {
-  const userReviewTx = await db
-    .select()
-    .from(reviewsTable)
-    .where(
-      and(
-        eq(reviewsTable.userId, user.id),
-        eq(reviewsTable.productId, productId)
-      )
-    );
-  if (userReviewTx[0]) {
-    userReview = userReviewTx[0];
-  }
+	const userReviewTx = await db
+		.select()
+		.from(reviewsTable)
+		.where(
+			and(
+				eq(reviewsTable.userId, user.id),
+				eq(reviewsTable.productId, productId),
+			),
+		);
+	if (userReviewTx[0]) {
+		userReview = userReviewTx[0];
+	}
 }
 
 const allReviews = await db
-  .select()
-  .from(reviewsTable)
-  .where(eq(reviewsTable.productId, productId));
+	.select()
+	.from(reviewsTable)
+	.where(eq(reviewsTable.productId, productId));
 ---
-
 <div class="space-y-8">
-  {/* User Rating Section */}
-  {
+	{/* User Rating Section */}
+	{
     user && (
       <div class="border-b pb-6">
         <ManageReview
@@ -52,6 +51,6 @@ const allReviews = await db
     )
   }
 
-  {/* Rating Statistics */}
-  <Reviews productId={productId} reviews={allReviews} client:load />
+	{/* Rating Statistics */}
+	<Reviews productId={productId} reviews={allReviews} client:load/>
 </div>

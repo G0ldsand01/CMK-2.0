@@ -5,40 +5,39 @@ import db from '@/lib/db';
 import InternalCart from './InternalCart';
 
 interface Props {
-  classes?: string;
-  variant?:
-    | 'outline'
-    | 'default'
-    | 'secondary'
-    | 'ghost'
-    | 'link'
-    | 'destructive';
+	classes?: string;
+	variant?:
+		| 'outline'
+		| 'default'
+		| 'secondary'
+		| 'ghost'
+		| 'link'
+		| 'destructive';
 }
 
 const { classes, variant } = Astro.props;
 
 const getCurrentUser = () => {
-  if (Astro.locals.user) {
-    return Astro.locals.user;
-  } else {
-    // Redirect to login page if the user is not authenticated
-    Astro.redirect('/login');
-    return null;
-  }
+	if (Astro.locals.user) {
+		return Astro.locals.user;
+	} else {
+		// Redirect to login page if the user is not authenticated
+		Astro.redirect('/login');
+		return null;
+	}
 };
 
 const user = await getCurrentUser();
 if (!user) {
-  return null;
+	return null;
 }
 
 const cart = await db
-  .select()
-  .from(cartTable)
-  .where(eq(cartTable.userId, user.id))
-  .innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+	.select()
+	.from(cartTable)
+	.where(eq(cartTable.userId, user.id))
+	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
-
 <InternalCart newCart={cart} client:load classes={classes} variant={variant}>
-  <slot />
+	<slot/>
 </InternalCart>

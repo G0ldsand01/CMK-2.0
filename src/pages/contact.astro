@@ -1,123 +1,133 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-
 <Layout title="Contact Us" navbar={true}>
-  <section class="contact-section">
-    <h1>Get in Touch</h1>
-    <p>We’d love to hear from you. Fill out the form below and we'll get back to you as soon as possible.</p>
-    <form class="contact-form" method="POST" action="https://formspree.io/f/xjkyjqap">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required />
-      </div>
+	<section class="contact-section">
+		<h1>Get in Touch</h1>
+		<p>
+			We’d love to hear from you. Fill out the form below and we'll get back to
+			you as soon as possible.
+		</p>
+		<form
+			class="contact-form"
+			method="POST"
+			action="https://formspree.io/f/xjkyjqap"
+		>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input type="text" id="name" name="name" required>
+			</div>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required />
-      </div>
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input type="email" id="email" name="email" required>
+			</div>
 
-      <div class="form-group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
-      </div>
+			<div class="form-group">
+				<label for="message">Message</label>
+				<textarea id="message" name="message" rows="6" required></textarea>
+			</div>
 
-      <button type="submit">Send Message</button>
-    </form>
-  </section>
+			<button type="submit">Send Message</button>
+		</form>
+	</section>
 </Layout>
 
 <style>
-  .contact-section {
-    margin-top: 10rem;
-    margin-bottom: 10rem;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 600px;
-    padding: 2rem;
-    background: var(--color-muted);
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 30px var(--color-shadow);
-    color: var(--color-foreground);
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.contact-section {
+	margin-top: 10rem;
+	margin-bottom: 10rem;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 600px;
+	padding: 2rem;
+	background: var(--color-muted);
+	border-radius: 12px;
+	backdrop-filter: blur(8px);
+	box-shadow: 0 8px 30px var(--color-shadow);
+	color: var(--color-foreground);
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	gap: 1.5rem;
+}
 
-  .contact-section h1 {
-    font: 600 Atkinson Hyperlegible, sans-serif;
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
+.contact-section h1 {
+	font:
+		600 Atkinson Hyperlegible,
+		sans-serif;
+	font-size: 2.5rem;
+	margin-bottom: 1rem;
+}
 
-  .contact-section p {
-    font: 400 Atkinson Hyperlegible, sans-serif;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    color: var(--color-foreground);
-  }
+.contact-section p {
+	font:
+		400 Atkinson Hyperlegible,
+		sans-serif;
+	font-size: 1.1rem;
+	margin-bottom: 2rem;
+	color: var(--color-foreground);
+}
 
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    text-align: left;
-  }
+.contact-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	text-align: left;
+}
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
 
-  .form-group label {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--color-foreground);
-  }
+.form-group label {
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+	color: var(--color-foreground);
+}
 
-  .form-group input,
-  .form-group textarea {
-    padding: 0.75rem;
-    border: 1px solid var(--color-border);
-    background: var(--color-background);
-    color: var(--color-foreground);
-    border-radius: 8px;
-    font-size: 1rem;
-    resize: vertical;
-  }
+.form-group input,
+.form-group textarea {
+	padding: 0.75rem;
+	border: 1px solid var(--color-border);
+	background: var(--color-background);
+	color: var(--color-foreground);
+	border-radius: 8px;
+	font-size: 1rem;
+	resize: vertical;
+}
 
-  .form-group input:focus,
-  .form-group textarea:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-foreground);
-  }
+.form-group input:focus,
+.form-group textarea:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 2px var(--color-primary-foreground);
+}
 
-  button[type="submit"] {
-    align-self: center;
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    background: var(--color-primary);
-    color: var(--color-background);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
+button[type="submit"] {
+	align-self: center;
+	padding: 0.8rem 2rem;
+	font-size: 1.1rem;
+	background: var(--color-primary);
+	color: var(--color-background);
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.3s ease;
+}
 
-  button[type="submit"]:hover {
-    background: var(--color-secondary);
-  }
+button[type="submit"]:hover {
+	background: var(--color-secondary);
+}
 
-  @media (max-width: 600px) {
-    .contact-section {
-      max-width: 90%;
-      padding: 1.5rem;
-      gap: 1rem;
-      margin-top: 10rem;
-    }
-  }
+@media (max-width: 600px) {
+	.contact-section {
+		max-width: 90%;
+		padding: 1.5rem;
+		gap: 1rem;
+		margin-top: 10rem;
+	}
+}
 </style>

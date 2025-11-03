@@ -13,42 +13,37 @@ const bestProductsActions = await Astro.callAction(
 );
 const bestProducts = bestProductsActions.data;
 ---
-
 <Layout title="Products" navbar={true}>
-  <div id="products">
-    <div
-      class="title"
-      style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }"
-    >
-      <h1>Our Technology Products</h1>
-    </div>
-    <div class="products-grid">
-      {
+	<div id="products">
+		<div
+			class="title"
+			style="margin-top: 5em; @media  screen and (max-width: 400px) { margin-top: 1em }"
+		>
+			<h1>Our Technology Products</h1>
+		</div>
+		<div class="products-grid">
+			{
         bestProducts && bestProducts.length > 0 ? (
           bestProducts.map((product) => (
-            <ProductCard product={product} server:defer />
-          ))
-        ) : (
-          <p>No products found</p>
-        )
-      }
-    </div>
-  </div>
+            <ProductCard product={product}
+			server:defer /> )) ) : (<p>No products found</p>) }
+		</div>
+	</div>
 </Layout>
 <style>
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-    overflow-y: auto; /* Ensures vertical scrolling is enabled */
-  }
+html,
+body {
+	height: 100%;
+	margin: 0;
+	overflow-y: auto; /* Ensures vertical scrolling is enabled */
+}
 
-  .container {
-    min-height: 100vh; /* Ensures the container takes up full viewport height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+.container {
+	min-height: 100vh; /* Ensures the container takes up full viewport height */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+}
 </style>

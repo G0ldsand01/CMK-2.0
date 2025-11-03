@@ -21,11 +21,10 @@ if (!images[image])
 		`"${image}" does not exist in glob: "/src/assets/icons/*.svg"`,
 	);
 ---
-
 <Image
-    src={images[image]()}
-    alt={altText}
-    width={width}
-    height={height}
-    class={className}
+	src={images[image]()}
+	alt={altText}
+	width={width}
+	height={height}
+	class={className}
 />

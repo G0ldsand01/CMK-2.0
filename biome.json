@@ -27,7 +27,10 @@
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single",
-			"semicolons": "always"
+			"semicolons": "always",
+			"trailingCommas": "all",
+			"bracketSameLine": true,
+			"bracketSpacing": true
 		}
 	},
 	"overrides": [
@@ -47,6 +50,9 @@
 		}
 	],
 	"html": {
+		"formatter": {
+			"enabled": true
+		},
 		"experimentalFullSupportEnabled": true
 	},
 	"css": {

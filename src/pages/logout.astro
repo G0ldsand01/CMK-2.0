@@ -5,10 +5,9 @@ import { LogoutPage } from '@/components/LogoutPage';
 const user = Astro.locals.user;
 
 if (!user) {
-  return Astro.redirect('/');
+	return Astro.redirect('/');
 }
 ---
-
 <Layout title="Logout" navbar={false}>
-  <LogoutPage client:load />
+	<LogoutPage client:load/>
 </Layout>
