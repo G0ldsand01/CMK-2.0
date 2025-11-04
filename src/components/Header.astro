@@ -1,13 +1,13 @@
 ---
-import { HeaderMenu } from '@components/Header.tsx';
-import { CircuitBoard, ShoppingBag } from 'lucide-react';
-import cmkLogo from 'public/cmklogo.png';
-import Cart from '@/components/cart/Cart.astro';
-import CartItemCount from '@/components/cart/CartItemCount.tsx';
-import { getCurrentUser } from '@/lib/auth-server';
-import { HeaderUserMenu } from './HeaderUserMenu';
-import { ModeToggle } from './ModeToggle';
-import { Button } from './ui/button';
+import { HeaderMenu } from "@components/Header.tsx";
+import { CircuitBoard, ShoppingBag } from "lucide-react";
+import cmkLogo from "public/cmklogo.png";
+import Cart from "@/components/cart/Cart.astro";
+import CartItemCount from "@/components/cart/CartItemCount.tsx";
+import { HeaderUserMenu } from "./HeaderUserMenu";
+import { ModeToggle } from "./ModeToggle";
+import { Button } from "./ui/button";
+import { getCurrentUser } from "@/lib/auth-server";
 
 interface Props {
   cart?: boolean;
@@ -15,7 +15,8 @@ interface Props {
 
 const { cart } = Astro.props;
 
-const user = await getCurrentUser(Astro.request);
+const user = await getCurrentUser(Astro.request as Request);
+
 ---
 
 <header>
@@ -24,8 +25,7 @@ const user = await getCurrentUser(Astro.request);
       href="/"
       style="display: flex; align-items: center; gap: 1rem; flex-direction: row;"
     >
-      <CircuitBoard />
-      CMK</a
+      <CircuitBoard /> CMK</a
     >
   </div>
   <div class="HeaderMenu">
@@ -128,30 +128,14 @@ const user = await getCurrentUser(Astro.request);
     </div>
 
     <ul>
-      <li>
-        <a href="/" data-astro-prefetch>Home</a>
-      </li>
-      <li>
-        <a href="/products" data-astro-prefetch>Products</a>
-      </li>
-      <li>
-        <a href="/models"> Models</a>
-      </li>
-      <li>
-        <a href="/3dprint"> 3D Print Service</a>
-      </li>
-      <li>
-        <a href="/tech"> Tech</a>
-      </li>
-      <li>
-        <a href="/iot"> IoT</a>
-      </li>
-      <li>
-        <a href="/about" data-astro-prefetch>About Us</a>
-      </li>
-      <li>
-        <a href="/contact" data-astro-prefetch>Contact Us</a>
-      </li>
+      <li><a href="/" data-astro-prefetch>Home</a></li>
+      <li><a href="/products" data-astro-prefetch>Products</a></li>
+      <li><a href="/models"> Models</a></li>
+      <li><a href="/3dprint"> 3D Print Service</a></li>
+      <li><a href="/tech"> Tech</a></li>
+      <li><a href="/iot"> IoT</a></li>
+      <li><a href="/about" data-astro-prefetch>About Us</a></li>
+      <li><a href="/contact" data-astro-prefetch>Contact Us</a></li>
       {
         user ? (
           <HeaderUserMenu
@@ -174,22 +158,22 @@ const user = await getCurrentUser(Astro.request);
   </nav>
 </header>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlayNav = document.querySelector('.overlay-nav');
-    const menuToggle = document.getElementById('menu-toggle');
-    const closeMenu = document.querySelector('.close-menu');
+  document.addEventListener("DOMContentLoaded", () => {
+    const overlayNav = document.querySelector(".overlay-nav");
+    const menuToggle = document.getElementById("menu-toggle");
+    const closeMenu = document.querySelector(".close-menu");
 
     if (!overlayNav || !menuToggle || !closeMenu) {
-      console.warn('One or more navigation elements not found');
+      console.warn("One or more navigation elements not found");
       return;
     }
 
-    menuToggle.addEventListener('click', () => {
-      overlayNav.classList.toggle('active');
+    menuToggle.addEventListener("click", () => {
+      overlayNav.classList.toggle("active");
     });
 
-    closeMenu.addEventListener('click', () => {
-      overlayNav.classList.remove('active');
+    closeMenu.addEventListener("click", () => {
+      overlayNav.classList.remove("active");
     });
   });
 </script>
@@ -239,21 +223,21 @@ const user = await getCurrentUser(Astro.request);
   }
 
   #menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 3000;
-    color: var(--color-foreground);
-  }
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 3000;
+  color: var(--color-foreground);
+}
 
   .toggle {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
 
   .close-menu {
     position: absolute;
@@ -357,7 +341,7 @@ const user = await getCurrentUser(Astro.request);
     gap: 1rem;
     flex-direction: row; /* Move the username to the right of the profile picture */
   }
-
+  
   @media (max-width: 980px) {
     #menu-toggle {
       display: block;
@@ -372,13 +356,13 @@ const user = await getCurrentUser(Astro.request);
     }
 
     #auth-buttons,
-    .login {
-      display: none !important;
-    }
-
+  .login {
+    display: none !important;
+  
     #profile-section {
       display: none;
     }
+  }
   }
   @keyframes fadeIn {
     from {
