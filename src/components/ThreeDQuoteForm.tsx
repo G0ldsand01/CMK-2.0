@@ -1,11 +1,9 @@
-'use client';
-
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+import { Button } from '@/components/ui/button';
 
 export default function ThreeDQuoteForm() {
 	// --- Controlled form state ---

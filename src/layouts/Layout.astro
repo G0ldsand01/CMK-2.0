@@ -3,63 +3,68 @@ import { DEV_MODE, NODE_ENV } from 'astro:env/client';
 import { Toaster } from '@/components/ui/sonner';
 import Header from '../components/Header.astro';
 import '@styles/global.css';
+
 interface Props {
-	title: string;
-	navbar?: boolean;
-	cart?: boolean;
+  title: string;
+  navbar?: boolean;
+  cart?: boolean;
 }
 
 const { title, navbar = true, cart = true } = Astro.props;
 
 const isDev = NODE_ENV === 'development' && DEV_MODE;
 ---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width">
-		<link rel="icon" type="image/svg+xml" href="/favicon.png">
-		<meta name="generator" content={Astro.generator}>
-		<title>{title}| CMK</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link
-			href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
-			rel="stylesheet"
-		>
-		{
-      isDev ? (
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | CMK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
+      rel="stylesheet"
+    />
+    {
+      isDev && (
         <script src="//unpkg.com/react-scan/dist/auto.global.js" is:inline />
-      ) : null
+      )
     }
-	</head>
-	<body>
-		{navbar ? <Header cart={cart}/> : null}
-		<slot/>
-		<Toaster client:load/>
-	</body>
+    <script is:inline>
+      const getThemePreference = () => {
+        if (
+          typeof localStorage !== 'undefined' &&
+          localStorage.getItem('theme')
+        ) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      };
+      const isDark = getThemePreference() === 'dark';
+      document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+
+      if (typeof localStorage !== 'undefined') {
+        const observer = new MutationObserver(() => {
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+      }
+    </script>
+  </head>
+
+  <body>
+    {navbar && <Header cart={cart} />}
+    <slot />
+    <Toaster client:load />
+  </body>
 </html>
-
-<script is:inline>
-const getThemePreference = () => {
-	if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-		return localStorage.getItem('theme');
-	}
-	return window.matchMedia('(prefers-color-scheme: dark)').matches
-		? 'dark'
-		: 'light';
-};
-const isDark = getThemePreference() === 'dark';
-document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
-
-if (typeof localStorage !== 'undefined') {
-	const observer = new MutationObserver(() => {
-		const isDark = document.documentElement.classList.contains('dark');
-		localStorage.setItem('theme', isDark ? 'dark' : 'light');
-	});
-	observer.observe(document.documentElement, {
-		attributes: true,
-		attributeFilter: ['class'],
-	});
-}
-</script>

@@ -1,5 +1,13 @@
 ---
-import { Heart, ShoppingBag } from 'lucide-react';
+import { ArrowRight, Heart, ShoppingBag } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 
@@ -16,192 +24,113 @@ if (!user) {
     '/': 'Home',
   }}
 >
-  <div class="content">
-    <div class="head">
-      <div class="welcome-message">
-        <h1>Welcome Back, {user.name}</h1>
-        <p>Here's your dashboard</p>
-      </div>
+  <div class="space-y-8">
+    <!-- Welcome Section -->
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">
+        Welcome back, {user.name}!
+      </h1>
+      <p class="text-muted-foreground">
+        Here's an overview of your account and quick access to your most
+        important features.
+      </p>
     </div>
-    <div class="menu">
-      <div class="nav-to-order">
-        <div class="icon">
-          <ShoppingBag />
-        </div>
-        <h2>Orders</h2>
-        <p>Check the history of all your orders & their status</p>
-        <a href="/dashboard/orders">My Orders</a>
-      </div>
-      <div class="my-whishlist">
-        <div class="icon">
-          <Heart />
-        </div>
-        <h2>My Wishlist</h2>
-        <p>View & manage products in your wishlist</p>
-        <a href="/dashboard/wishlist">My Wishlist</a>
-      </div>
+
+    <!-- Quick Actions Grid -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+      <!-- Orders Card -->
+      <Card
+        className="group relative overflow-hidden transition-all hover:shadow-lg"
+      >
+        <CardHeader>
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/20"
+          >
+            <ShoppingBag className="size-6" />
+          </div>
+          <CardTitle className="text-2xl">Orders</CardTitle>
+          <CardDescription>
+            Check the history of all your orders and their current status
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            View your order history, track shipments, and manage returns all in
+            one place.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <a
+            href="/dashboard/orders"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 w-full group-hover:gap-3"
+          >
+            View Orders
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+            />
+          </a>
+        </CardFooter>
+      </Card>
+
+      <!-- Wishlist Card -->
+      <Card
+        className="group relative overflow-hidden transition-all hover:shadow-lg"
+      >
+        <CardHeader>
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-pink-500/10 text-pink-600 dark:text-pink-400 transition-colors group-hover:bg-pink-500/20"
+          >
+            <Heart className="size-6" />
+          </div>
+          <CardTitle className="text-2xl">My Wishlist</CardTitle>
+          <CardDescription>
+            View and manage products in your wishlist
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            Save your favorite products and add them to your cart when you're
+            ready to purchase.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <a
+            href="/dashboard/wishlist"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 w-full group-hover:gap-3"
+          >
+            View My Wishlist
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-1"
+            />
+          </a>
+        </CardFooter>
+      </Card>
     </div>
+
+    <!-- Additional Info Section -->
+    <Card className="border-dashed">
+      <CardHeader>
+        <CardTitle className="text-xl">Need Help?</CardTitle>
+        <CardDescription>
+          We're here to assist you with any questions or concerns
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="flex flex-col gap-4 sm:flex-row">
+          <a
+            href="/dashboard/settings"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-9 px-4 py-2 border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 flex-1"
+          >
+            Account Settings
+          </a>
+          <a
+            href="/support"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-9 px-4 py-2 border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 flex-1"
+          >
+            Contact Support
+          </a>
+        </div>
+      </CardContent>
+    </Card>
   </div>
 </DashboardLayout>
-
-<style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .head {
-    margin-top: 5rem;
-    width: 50%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-muted);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  .welcome-message h1 {
-    color: var(--color-foreground);
-    font-size: 28px;
-  }
-
-  .welcome-message p {
-    color: var(--color-muted-foreground);
-    font-size: 16px;
-  }
-  /* Menu Section */
-  .menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 50%;
-    flex-wrap: wrap;
-    margin-top: 5rem;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 5rem;
-  }
-
-  .icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    margin: auto;
-  }
-
-  .nav-to-order,
-  .my-whishlist {
-    /*Glassmorphism*/
-    background: var(--color-muted);
-    color: var(--color-foreground); /* Texte plus foncé pour le contraste */
-    box-shadow: 0 4px 15px var(--color-shadow); /* Ombre subtile */
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    flex: 1 1 45%;
-    text-align: center;
-    border: var(--color-border) 2px solid;
-    border-radius: 16px;
-    margin: 10px;
-    padding: 20px;
-    width: 10rem;
-    height: 20rem;
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .nav-to-order:hover,
-  .my-whishlist:hover {
-    transform: scale(1.05);
-  }
-
-  .nav-to-order h2,
-  .my-whishlist h2 {
-    color: var(--color-foreground);
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-
-  .nav-to-order p,
-  .my-whishlist p {
-    color: var(--color-foreground);
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .nav-to-order a,
-  .my-whishlist a {
-    background-color: var(--color-primary);
-    color: var(--color-foreground);
-    border: none;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease-in-out;
-    width: 10rem;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-  }
-
-  .nav-to-order a:hover,
-  .my-whishlist a:hover {
-    background-color: var(--color-secondary);
-    color: var(--color-foreground);
-  }
-  @media (max-width: 1300px) {
-    .head {
-      width: 70%;
-      padding: 20px;
-      border-radius: 1rem;
-    }
-    .menu {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 5rem;
-      width: 90%;
-      flex-wrap: wrap;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .head {
-      width: 70%;
-      padding: 20px;
-      border-radius: 1rem;
-      margin-top: 2rem;
-    }
-    /* Menu Section */
-    .menu {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 5rem;
-      width: 90%;
-      flex-wrap: wrap;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .nav-to-order,
-    .my-whishlist {
-      flex: 1 1 100%;
-    }
-    .head {
-      width: 90%;
-      padding: 20px;
-      border-radius: 1rem;
-      margin-top: 2rem;
-    }
-  }
-</style>
