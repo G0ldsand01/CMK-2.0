@@ -2,31 +2,32 @@
 import { CategoriesTable } from '@/components/admin/categories/CategoriesTable';
 import { productCategoryTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import db from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth-server';
+import db from '@/lib/db';
 
-const user = await getCurrentUser(Astro.request as Request);
+const user = await getCurrentUser(Astro.request);
 
 if (!user || user.role !== 'admin') {
-	return Astro.redirect('/dashboard');
+  return Astro.redirect('/dashboard');
 }
 
 const categories = await db.select().from(productCategoryTable);
 ---
+
 <AdminDashboardLayout
-	title="Manage Categories"
-	breadcrumb={{
+  title="Manage Categories"
+  breadcrumb={{
     '/categories': 'Manage Categories',
   }}
 >
-	<div class="space-y-6 p-6">
-		<div class="flex items-center justify-between">
-			<div>
-				<h1 class="text-3xl font-bold">Categories</h1>
-				<p class="text-muted-foreground">Manage your product categories</p>
-			</div>
-		</div>
+  <div class="space-y-6 p-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">Categories</h1>
+        <p class="text-muted-foreground">Manage your product categories</p>
+      </div>
+    </div>
 
-		<CategoriesTable client:load initialCategories={categories}/>
-	</div>
+    <CategoriesTable client:load initialCategories={categories} />
+  </div>
 </AdminDashboardLayout>

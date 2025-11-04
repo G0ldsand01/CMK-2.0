@@ -1,41 +1,42 @@
 ---
 import { actions } from 'astro:actions';
+import Image from 'astro/components/Image.astro';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
-import Image from 'astro/components/Image.astro';
 
-const user = await getCurrentUser(Astro.request as Request);
+const user = await getCurrentUser(Astro.request);
 
 if (!user) {
-	return Astro.redirect('/login');
+  return Astro.redirect('/login');
 }
 
 const action = await Astro.callAction(actions.user.getWishlist, {});
 const data = action.data;
 
 if (!data) {
-	return Astro.redirect('/dashboard/');
+  return Astro.redirect('/dashboard/');
 }
 
 const wishlist = data.wishlist ?? [];
 ---
+
 <DashboardLayout
-	title="Wishlist"
-	breadcrumb={{
-  '/wishlist': 'Wishlist',
-}}
+  title="Wishlist"
+  breadcrumb={{
+    '/wishlist': 'Wishlist',
+  }}
 >
-	<div class="content">
-		<div class="head">
-			<div class="welcome-message">
-				<h1>{user.name}'s Wishlist</h1>
-				<p>Save your favorite products</p>
-			</div>
-		</div>
-		<div class="wishlist">
-			<div class="wishlist-list">
-				<div class="wishlist-list-body">
-					{
+  <div class="content">
+    <div class="head">
+      <div class="welcome-message">
+        <h1>{user.name}'s Wishlist</h1>
+        <p>Save your favorite products</p>
+      </div>
+    </div>
+    <div class="wishlist">
+      <div class="wishlist-list">
+        <div class="wishlist-list-body">
+          {
             wishlist.map((product) => (
               <div class="wishlist-list-body-item">
                 <a href={`/product/${product.products.id}`}>
@@ -69,219 +70,219 @@ const wishlist = data.wishlist ?? [];
               </div>
             ))
           }
-					{
+          {
             wishlist.length === 0 && (
               <div class="wishlist-list-body-item">
                 <h2>No items in your wishlist</h2>
               </div>
             )
           }
-				</div>
-			</div>
-		</div>
-	</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </DashboardLayout>
 <script>
-import { actions } from 'astro:actions';
+  import { actions } from 'astro:actions';
 
-const removeFromWishlistButtons = document.querySelectorAll(
-	'.remove-from-wishlist-button',
-);
+  const removeFromWishlistButtons = document.querySelectorAll(
+    '.remove-from-wishlist-button'
+  );
 
-removeFromWishlistButtons.forEach((button) => {
-	button.addEventListener('click', async () => {
-		const productId = button.getAttribute('product-id');
-		if (!productId) {
-			console.error('Product ID is not set');
-			return;
-		}
-		const { error } = await actions.user.toggleProductFromWishlist({
-			productId: productId,
-		});
-		if (!error) {
-			const itemToRemove = button.parentElement;
-			if (itemToRemove) {
-				itemToRemove.remove();
-				window.location.reload();
-			}
-		} else {
-			console.error('Failed to remove item from wishlist:', error);
-		}
-	});
-});
+  removeFromWishlistButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const productId = button.getAttribute('product-id');
+      if (!productId) {
+        console.error('Product ID is not set');
+        return;
+      }
+      const { error } = await actions.user.toggleProductFromWishlist({
+        productId: productId,
+      });
+      if (!error) {
+        const itemToRemove = button.parentElement;
+        if (itemToRemove) {
+          itemToRemove.remove();
+          window.location.reload();
+        }
+      } else {
+        console.error('Failed to remove item from wishlist:', error);
+      }
+    });
+  });
 </script>
 <style>
-/* Global Styles */
-body {
-	font-family: Arial, sans-serif;
-	background-color: var(--color-background);
-	color: var(--color-foreground);
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-}
+  /* Global Styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
 
-.content {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	margin: 2rem;
-}
-.head {
-	margin-top: 5rem;
-	width: 50%;
-	background-color: var(--color-muted);
-	padding: 30px;
-	box-shadow: 0 4px 12px var(--color-shadow);
-	border-radius: 2rem;
-	margin-left: auto;
-	margin-right: auto;
-	text-align: center;
-}
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+  }
+  .head {
+    margin-top: 5rem;
+    width: 50%;
+    background-color: var(--color-muted);
+    padding: 30px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    border-radius: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
 
-.welcome-message h1 {
-	color: var(--color-foreground);
-	font-size: 28px;
-}
+  .welcome-message h1 {
+    color: var(--color-foreground);
+    font-size: 28px;
+  }
 
-.welcome-message p {
-	color: var(--color-muted-foreground);
-	font-size: 16px;
-}
+  .welcome-message p {
+    color: var(--color-muted-foreground);
+    font-size: 16px;
+  }
 
-/* Wishlist Section */
-.wishlist {
-	margin-top: 3rem;
-	width: 50%;
-	background-color: var(--color-muted);
-	padding: 30px;
-	box-shadow: 0 4px 12px var(--color-shadow);
-	border-radius: 2rem;
-	margin-left: auto;
-	margin-right: auto;
-}
-.wishlist-list-body-item h2 {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: var(--color-foreground);
-}
-.wishlist-list-body-item {
-	background-color: var(--color-background);
-	padding: 1rem;
-	margin-bottom: 1rem;
-	border-radius: 2rem;
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	transition:
-		transform 0.3s ease,
-		background-color 0.3s ease;
-	justify-content: space-between; /* Added to space out items */
-}
+  /* Wishlist Section */
+  .wishlist {
+    margin-top: 3rem;
+    width: 50%;
+    background-color: var(--color-muted);
+    padding: 30px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    border-radius: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .wishlist-list-body-item h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-foreground);
+  }
+  .wishlist-list-body-item {
+    background-color: var(--color-background);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition:
+      transform 0.3s ease,
+      background-color 0.3s ease;
+    justify-content: space-between; /* Added to space out items */
+  }
 
-.wishlist-list-body-item:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 4px 12px var(--color-shadow);
-}
+  .wishlist-list-body-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px var(--color-shadow);
+  }
 
-.wishlist-list-body-item a {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	text-decoration: none;
-	color: inherit; /* Inherit color from parent */
-	flex-grow: 1; /* Allow the link part to take up more space */
-}
+  .wishlist-list-body-item a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit; /* Inherit color from parent */
+    flex-grow: 1; /* Allow the link part to take up more space */
+  }
 
-.wishlist-list-body-item img {
-	width: 100px;
-	height: 100px;
-	border-radius: 15%;
-	object-fit: cover;
-}
+  .wishlist-list-body-item img {
+    width: 100px;
+    height: 100px;
+    border-radius: 15%;
+    object-fit: cover;
+  }
 
-.wishlist-list-body-item-details {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-	color: var(--color-foreground);
-}
+  .wishlist-list-body-item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-foreground);
+  }
 
-.wishlist-list-body-item-price {
-	font-weight: bold;
-	color: var(--color-foreground);
-	margin-left: auto; /* Push price to the right */
-}
-/* add margin at the end of the wishlist */
-.wishlist {
-	margin-bottom: 2rem;
-}
+  .wishlist-list-body-item-price {
+    font-weight: bold;
+    color: var(--color-foreground);
+    margin-left: auto; /* Push price to the right */
+  }
+  /* add margin at the end of the wishlist */
+  .wishlist {
+    margin-bottom: 2rem;
+  }
 
-.remove-from-wishlist-button {
-	background-color: #e74c3c;
-	color: #fff;
-	border: none;
-	padding: 0.5rem 1rem;
-	border-radius: 0.25rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-}
+  .remove-from-wishlist-button {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
 
-.remove-from-wishlist-button:hover {
-	background-color: #c0392b;
-}
+  .remove-from-wishlist-button:hover {
+    background-color: #c0392b;
+  }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-	.head,
-	.wishlist {
-		width: 70%;
-	}
-}
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .head,
+    .wishlist {
+      width: 70%;
+    }
+  }
 
-@media (max-width: 768px) {
-	.head,
-	.wishlist {
-		width: 90%;
-		padding: 20px;
-		border-radius: 1rem;
-		margin-top: 2rem;
-	}
+  @media (max-width: 768px) {
+    .head,
+    .wishlist {
+      width: 90%;
+      padding: 20px;
+      border-radius: 1rem;
+      margin-top: 2rem;
+    }
 
-	.wishlist-list-body-item {
-		flex-direction: column;
-		text-align: center;
-		gap: 1rem;
-	}
+    .wishlist-list-body-item {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
 
-	.wishlist-list-body-item img {
-		margin: 0 auto;
-	}
+    .wishlist-list-body-item img {
+      margin: 0 auto;
+    }
 
-	.wishlist-list-body-item a {
-		flex-direction: column;
-	}
+    .wishlist-list-body-item a {
+      flex-direction: column;
+    }
 
-	.wishlist-list-body-item-price {
-		margin-left: 0;
-	}
-	.content {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		margin-top: 5rem;
-	}
-}
+    .wishlist-list-body-item-price {
+      margin-left: 0;
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-top: 5rem;
+    }
+  }
 
-@media (max-width: 480px) {
-	.welcome-message h1 {
-		font-size: 22px;
-	}
+  @media (max-width: 480px) {
+    .welcome-message h1 {
+      font-size: 22px;
+    }
 
-	.welcome-message p {
-		font-size: 14px;
-	}
-}
+    .welcome-message p {
+      font-size: 14px;
+    }
+  }
 </style>

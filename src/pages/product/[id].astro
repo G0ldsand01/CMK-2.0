@@ -1,74 +1,75 @@
 ---
 import { CDN_URL } from 'astro:env/client';
+import { and, eq } from 'drizzle-orm';
+import { Heart, ShoppingCart } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import {
-	imageTable,
-	productImageTable,
-	productsTable,
-	wishlistTable,
+  imageTable,
+  productImageTable,
+  productsTable,
+  wishlistTable,
 } from '@/db/schema';
-import db from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth-server';
-import { and, eq } from 'drizzle-orm';
-import { Heart, ShoppingCart } from 'lucide-react';
+import db from '@/lib/db';
 import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 
-const user = await getCurrentUser(Astro.request as Request);
+const user = await getCurrentUser(Astro.request);
 
 const { product, images, isInWishlist } = await db.transaction(async (tx) => {
-	const [product] = await tx
-		.select()
-		.from(productsTable)
-		.where(eq(productsTable.id, Number(id)));
+  const [product] = await tx
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.id, Number(id)));
 
-	const images = await tx
-		.select({
-			product_image: productImageTable,
-			image: imageTable,
-		})
-		.from(productImageTable)
-		.where(eq(productImageTable.productId, Number(id)))
-		.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
-		.orderBy(productImageTable.priority);
+  const images = await tx
+    .select({
+      product_image: productImageTable,
+      image: imageTable,
+    })
+    .from(productImageTable)
+    .where(eq(productImageTable.productId, Number(id)))
+    .leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+    .orderBy(productImageTable.priority);
 
-	if (user && product) {
-		const isInWishlist = await tx
-			.select()
-			.from(wishlistTable)
-			.where(
-				and(
-					eq(wishlistTable.userId, user.id),
-					eq(wishlistTable.productId, Number(id)),
-				),
-			);
+  if (user && product) {
+    const isInWishlist = await tx
+      .select()
+      .from(wishlistTable)
+      .where(
+        and(
+          eq(wishlistTable.userId, user.id),
+          eq(wishlistTable.productId, Number(id))
+        )
+      );
 
-		return { product, images, isInWishlist };
-	}
+    return { product, images, isInWishlist };
+  }
 
-	return { product, images, isInWishlist: false };
+  return { product, images, isInWishlist: false };
 });
 
 if (!product) {
-	return Astro.redirect('/');
+  return Astro.redirect('/');
 }
 
 const mainImage = images[0]?.image?.image;
 ---
+
 <Layout title={product ? 'Viewing: ' + product.name : 'Product'} navbar>
-	{
+  {
     product ? (
       <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
         <Card>
@@ -212,149 +213,151 @@ const mainImage = images[0]?.image?.image;
 </Layout>
 
 <script>
-import { actions } from 'astro:actions';
-import { toast } from 'sonner';
-import { setCart } from '@/lib/cart';
-import { CDN_URL } from 'astro:env/client';
+  import { actions } from 'astro:actions';
+  import { CDN_URL } from 'astro:env/client';
+  import { toast } from 'sonner';
+  import { setCart } from '@/lib/cart';
 
-function changeMainImage(imagePath: string) {
-	const mainImage = document.getElementById(
-		'main-product-image',
-	) as HTMLImageElement | null;
-	if (mainImage) {
-		mainImage.src = `${CDN_URL}/${imagePath}`;
+  function changeMainImage(imagePath: string) {
+    const mainImage = document.getElementById(
+      'main-product-image'
+    ) as HTMLImageElement | null;
+    if (mainImage) {
+      mainImage.src = `${CDN_URL}/${imagePath}`;
 
-		// Update active state of thumbnails
-		const thumbnails = document.querySelectorAll('.image-carousel button');
-		thumbnails.forEach((thumb) => {
-			if (thumb.getAttribute('data-image-path') === imagePath) {
-				thumb.classList.add('border-primary');
-				thumb.classList.remove('border-transparent');
-			} else {
-				thumb.classList.remove('border-primary');
-				thumb.classList.add('border-transparent');
-			}
-		});
-	}
-}
+      // Update active state of thumbnails
+      const thumbnails = document.querySelectorAll('.image-carousel button');
+      thumbnails.forEach((thumb) => {
+        if (thumb.getAttribute('data-image-path') === imagePath) {
+          thumb.classList.add('border-primary');
+          thumb.classList.remove('border-transparent');
+        } else {
+          thumb.classList.remove('border-primary');
+          thumb.classList.add('border-transparent');
+        }
+      });
+    }
+  }
 
-// Add click event listeners to thumbnails
-document.addEventListener('DOMContentLoaded', () => {
-	const thumbnails = document.querySelectorAll('.image-carousel button');
-	thumbnails.forEach((thumb) => {
-		thumb.addEventListener('click', () => {
-			const imagePath = thumb.getAttribute('data-image-path');
-			if (imagePath) {
-				changeMainImage(imagePath);
-			}
-		});
-	});
+  // Add click event listeners to thumbnails
+  document.addEventListener('DOMContentLoaded', () => {
+    const thumbnails = document.querySelectorAll('.image-carousel button');
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const imagePath = thumb.getAttribute('data-image-path');
+        if (imagePath) {
+          changeMainImage(imagePath);
+        }
+      });
+    });
 
-	// Set initial active state
-	const firstThumbnail = thumbnails[0];
-	if (firstThumbnail) {
-		const imagePath = firstThumbnail.getAttribute('data-image-path');
-		if (imagePath) {
-			changeMainImage(imagePath);
-		}
-	}
-});
+    // Set initial active state
+    const firstThumbnail = thumbnails[0];
+    if (firstThumbnail) {
+      const imagePath = firstThumbnail.getAttribute('data-image-path');
+      if (imagePath) {
+        changeMainImage(imagePath);
+      }
+    }
+  });
 
-/*
+  /*
     Product ID
   */
 
-const product = document.querySelector('[data-product-id]');
-if (!product) {
-	console.error('Product is not set');
-	throw new Error('Product is not set');
-}
+  const product = document.querySelector('[data-product-id]');
+  if (!product) {
+    console.error('Product is not set');
+    throw new Error('Product is not set');
+  }
 
-const productId = product.getAttribute('data-product-id');
-if (!productId) {
-	console.error('Product ID is not set');
-	throw new Error('Product ID is not set');
-}
+  const productId = product.getAttribute('data-product-id');
+  if (!productId) {
+    console.error('Product ID is not set');
+    throw new Error('Product ID is not set');
+  }
 
-/*
+  /*
     Wishlist Button
   */
 
-const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
-if (addToWishlistButton) {
-	addToWishlistButton.addEventListener('click', async () => {
-		const { error, data } = await actions.user.toggleProductFromWishlist({
-			productId: productId as string,
-		});
-		if (!error) {
-			if (data.inWishlist) {
-				addToWishlistButton.classList.add('text-red-500');
-				addToWishlistButton.classList.remove('text-gray-400');
-			} else {
-				addToWishlistButton.classList.remove('text-red-500');
-				addToWishlistButton.classList.add('text-gray-400');
-			}
-		}
-	});
-}
+  const addToWishlistButton = document.querySelector('#add-to-wishlist-button');
+  if (addToWishlistButton) {
+    addToWishlistButton.addEventListener('click', async () => {
+      const { error, data } = await actions.user.toggleProductFromWishlist({
+        productId: productId as string,
+      });
+      if (!error) {
+        if (data.inWishlist) {
+          addToWishlistButton.classList.add('text-red-500');
+          addToWishlistButton.classList.remove('text-gray-400');
+        } else {
+          addToWishlistButton.classList.remove('text-red-500');
+          addToWishlistButton.classList.add('text-gray-400');
+        }
+      }
+    });
+  }
 
-/*
+  /*
     Add to Cart Button
   */
 
-const addToCartButton = document.querySelector('#add-to-cart-button');
-if (addToCartButton) {
-	addToCartButton.addEventListener('click', async () => {
-		const { error, data } = await actions.cart.addProductIdToCart({
-			productId: productId as string,
-		});
+  const addToCartButton = document.querySelector('#add-to-cart-button');
+  if (addToCartButton) {
+    addToCartButton.addEventListener('click', async () => {
+      const { error, data } = await actions.cart.addProductIdToCart({
+        productId: productId as string,
+      });
 
-		if (!error) {
-			setCart(data.cart);
-			if (data.success) {
-				toast.success('Successfully added to cart', {
-					description: 'You can view your cart in the top right corner',
-					action: {
-						label: 'Undo',
-						onClick: async () => {
-							const { error: newError, data: newData } =
-								await actions.cart.deleteCartItem({
-									productId: productId as string,
-								});
+      if (!error) {
+        setCart(data.cart);
+        if (data.success) {
+          toast.success('Successfully added to cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Undo',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
 
-							if (!newError) {
-								toast.success('Successfully removed from cart', {
-									description: 'You can view your cart in the top right corner',
-								});
-								setCart(newData.cart);
-							}
-						},
-					},
-				});
-			} else {
-				toast.warning('Product already in cart', {
-					description: 'You can view your cart in the top right corner',
-					action: {
-						label: 'Remove',
-						onClick: async () => {
-							const { error: newError, data: newData } =
-								await actions.cart.deleteCartItem({
-									productId: productId as string,
-								});
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
+        } else {
+          toast.warning('Product already in cart', {
+            description: 'You can view your cart in the top right corner',
+            action: {
+              label: 'Remove',
+              onClick: async () => {
+                const { error: newError, data: newData } =
+                  await actions.cart.deleteCartItem({
+                    productId: productId as string,
+                  });
 
-							if (!newError) {
-								toast.success('Successfully removed from cart', {
-									description: 'You can view your cart in the top right corner',
-								});
-								setCart(newData.cart);
-							}
-						},
-					},
-				});
-			}
-		} else {
-			toast.error('Failed to add to cart');
-		}
-	});
-}
+                if (!newError) {
+                  toast.success('Successfully removed from cart', {
+                    description:
+                      'You can view your cart in the top right corner',
+                  });
+                  setCart(newData.cart);
+                }
+              },
+            },
+          });
+        }
+      } else {
+        toast.error('Failed to add to cart');
+      }
+    });
+  }
 </script>
