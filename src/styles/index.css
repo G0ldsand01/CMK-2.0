@@ -22,7 +22,7 @@ body {
 	font-family: "Poppins", sans-serif;
 	font-size: 1rem;
 	line-height: 1.5;
-	color: var(--color-foreground);
+	color: #27ae60;
 	background-color: var(--color-background);
 }
 

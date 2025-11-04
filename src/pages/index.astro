@@ -1,4 +1,5 @@
 ---
+
 import ProductCard from '../components/ProductCard.tsx';
 import Layout from '../layouts/Layout.astro';
 import '../styles/index.css';
@@ -6,73 +7,77 @@ import { actions } from 'astro:actions';
 import { Button } from '../components/ui/button';
 
 const bestProductsActions = await Astro.callAction(
-	actions.products.getBestProducts,
-	{},
+  actions.products.getBestProducts,
+  {}
 );
 const bestProducts = bestProductsActions.data || [];
 ---
-<Layout title="Home" navbar={true}>
-	<main>
-		<div id="home">
-			<div class="title">
-				<h1>Welcome to CMK</h1>
-				<h2>Customize your own mouse and keyboard with CMK</h2>
-			</div>
-			<a href="#products" class="scroll-to-products">
-				<div class="middle">
-					<div class="mouse"></div>
-					<div class="scroll" style="margin-top: 50%">Scroll</div>
-				</div>
-			</a>
-		</div>
-	</main>
 
-	<div id="products">
-		<div class="products-title">
-			<h1>Our Products</h1>
-		</div>
-		<div class="products-grid">
-			{
+<Layout title="Home" navbar={true}>
+  <main>
+    <div id="home">
+      <div class="title">
+        <h1>Welcome to CMK</h1>
+        <h2>Customize your own mouse and keyboard with CMK</h2>
+      </div>
+      <a href="#products" class="scroll-to-products">
+        <div class="middle">
+          <div class="mouse"></div>
+          <div class="scroll" style="margin-top: 50%">Scroll</div>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <div id="products">
+    <div class="products-title">
+      <h1>Our Products</h1>
+    </div>
+    <div class="products-grid">
+      {
         bestProducts &&
           bestProducts.map((product) => (
-            <ProductCard product={product}
-			server:defer /> )) }
-		</div>
-		<a href="/products" class="view-all-button"
-			><button
-				id="view-all-products"
-				className="font-bold py-2 px-4 rounded flex items-center gap-2"
-				client:load
-				server:defer={true}
-			>
-				View All Products
-			</button></a
-		>
-	</div>
+            <ProductCard product={product} server:defer />
+          ))
+      }
+    </div>
+    <a href="/products" class="view-all-button"
+      ><Button
+        id="view-all-products"
+        className="font-bold py-2 px-4 rounded flex items-center gap-2"
+        client:load
+        server:defer={true}
+      >
+        View All Products
+      </Button></a
+    >
+  </div>
 </Layout>
 
 <script>
-document
-	.querySelector('.scroll-to-products')
-	?.addEventListener('click', (e) => {
-		e.preventDefault();
-		document.querySelector('#products')?.scrollIntoView({ behavior: 'smooth' });
-	});
+  document
+    .querySelector('.scroll-to-products')
+    ?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document
+        .querySelector('#products')
+        ?.scrollIntoView({ behavior: 'smooth' });
+    });
 </script>
 <style>
-html,
-body {
-	height: 100%;
-	margin: 0;
-	overflow-y: auto; /* Ensures vertical scrolling is enabled */
-}
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* Ensures vertical scrolling is enabled */
+  }
 
-.container {
-	min-height: 100vh; /* Ensures the container takes up full viewport height */
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: 20px;
-}
+  .container {
+    min-height: 100vh; /* Ensures the container takes up full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
 </style>
