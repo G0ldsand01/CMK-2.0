@@ -271,8 +271,7 @@ export default function ThreeDQuoteForm() {
 						name="material"
 						value={form.material}
 						onChange={handleChange}
-						className="input"
-					>
+						className="input">
 						<option value="PLA">PLA</option>
 						<option value="ABS">ABS</option>
 						<option value="PETG">PETG</option>
@@ -282,8 +281,7 @@ export default function ThreeDQuoteForm() {
 						name="printer"
 						value={form.printer}
 						onChange={handleChange}
-						className="input"
-					>
+						className="input">
 						<option value="small">Small / 180mm</option>
 						<option value="medium">Ender 3 / 220mm</option>
 						<option value="large">Large / 256mm</option>
@@ -292,8 +290,7 @@ export default function ThreeDQuoteForm() {
 						name="color"
 						value={form.color}
 						onChange={handleChange}
-						className="input"
-					>
+						className="input">
 						<option value="#000000">Black</option>
 						<option value="#ffffff">White</option>
 						<option value="#808080">Grey</option>
@@ -334,8 +331,7 @@ export default function ThreeDQuoteForm() {
 						<Button onClick={prev}>Previous</Button>
 						<Button
 							onClick={handleCheckout}
-							className="flex items-center gap-2"
-						>
+							className="flex items-center gap-2">
 							<ShoppingCart className="w-4 h-4" /> Go to Checkout
 						</Button>
 					</div>

@@ -8,15 +8,14 @@ import Layout from '@/layouts/Layout.astro';
 import db from '@/lib/db';
 
 const getCurrentUser = () => {
-  if (Astro.locals.user) {
-    return Astro.locals.user;
-  } else {
-    // Redirect to login page if the user is not authenticated
-    Astro.redirect('/login');
-    return null;
-  }
+	if (Astro.locals.user) {
+		return Astro.locals.user;
+	} else {
+		// Redirect to login page if the user is not authenticated
+		Astro.redirect('/login');
+		return null;
+	}
 };
-
 
 const user = await getCurrentUser();
 if (!user) return Astro.redirect('/login');
@@ -27,12 +26,11 @@ const cart = await db
 	.where(eq(cartTable.userId, user.id))
 	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 ---
-
 <Layout title="Your Cart" navbar={true} cart={false}>
-  <main class="max-w-4xl mx-auto px-4 py-10 mt-25">
-    <h1 class="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+	<main class="max-w-4xl mx-auto px-4 py-10 mt-25">
+		<h1 class="text-3xl font-bold mb-8 text-center">Your Cart</h1>
 
-    {
+		{
       cart.length === 0 ? (
         <p class="text-center text-gray-500">Your cart is empty.</p>
         <div class="flex justify-center items-center mt-10">
@@ -49,5 +47,5 @@ const cart = await db
         </div>
       )
     }
-  </main>
+	</main>
 </Layout>

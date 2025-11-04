@@ -107,8 +107,7 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 							<Button
 								variant={selectedCategory === null ? 'default' : 'outline'}
 								onClick={() => handleCategoryFilter(null)}
-								className="w-full"
-							>
+								className="w-full">
 								All Categories
 							</Button>
 							{categories.map((category) => (
@@ -118,8 +117,7 @@ export default function ProductGrid({ type: initialType }: ProductGridProps) {
 										selectedCategory === category.id ? 'default' : 'outline'
 									}
 									onClick={() => handleCategoryFilter(category.id)}
-									className="w-full"
-								>
+									className="w-full">
 									{category.name}
 								</Button>
 							))}

@@ -49,8 +49,7 @@ export default function ProductCard({
 				<a
 					href={`/product/${product.id}`}
 					data-astro-prefetch
-					className="block"
-				>
+					className="block">
 					<Button className="w-full font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2">
 						<ShoppingCart className="h-4 w-4" /> View Product{' '}
 						<ChevronRight className="h-4 w-4" />

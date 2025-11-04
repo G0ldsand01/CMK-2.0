@@ -2,22 +2,21 @@
 import { CDN_URL } from 'astro:env/client';
 
 interface Props {
-  imagePath: string;
-  altText: string;
-  width: number;
-  height: number;
-  class?: string;
+	imagePath: string;
+	altText: string;
+	width: number;
+	height: number;
+	class?: string;
 }
 
 const { imagePath, altText, width, height, class: className } = Astro.props;
 
 const imageUrl = `${CDN_URL}${imagePath}`;
 ---
-
 <img
-  src={imageUrl}
-  alt={altText}
-  width={width}
-  height={height}
-  class={className ?? ''}
-/>
+	src={imageUrl}
+	alt={altText}
+	width={width}
+	height={height}
+	class={className ?? ''}
+>

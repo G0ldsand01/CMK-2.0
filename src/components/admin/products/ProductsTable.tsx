@@ -112,8 +112,7 @@ export default function ProductsTable({
 				<Button
 					variant="outline"
 					onClick={() => handlePageChange(currentPage)}
-					className="mt-4"
-				>
+					className="mt-4">
 					Retry
 				</Button>
 			</div>
@@ -181,8 +180,7 @@ export default function ProductsTable({
 										<Button
 											variant="ghost"
 											size="icon"
-											onClick={() => handleDelete(product.id)}
-										>
+											onClick={() => handleDelete(product.id)}>
 											<Trash2 className="h-4 w-4" />
 										</Button>
 									</div>
@@ -202,8 +200,7 @@ export default function ProductsTable({
 						variant="outline"
 						size="sm"
 						onClick={() => handlePageChange(currentPage - 1)}
-						disabled={currentPage === 1 || isLoading}
-					>
+						disabled={currentPage === 1 || isLoading}>
 						<ChevronLeft className="h-4 w-4" />
 						Previous
 					</Button>
@@ -214,8 +211,7 @@ export default function ProductsTable({
 						variant="outline"
 						size="sm"
 						onClick={() => handlePageChange(currentPage + 1)}
-						disabled={currentPage === totalPages || isLoading}
-					>
+						disabled={currentPage === totalPages || isLoading}>
 						Next
 						<ChevronRight className="h-4 w-4" />
 					</Button>

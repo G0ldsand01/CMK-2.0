@@ -6,10 +6,9 @@ import { LoginPage } from '@/components/LoginPage';
 const user = Astro.locals.user;
 
 if (user) {
-  return Astro.redirect('/dashboard');
+	return Astro.redirect('/dashboard');
 }
 ---
-
 <Layout title="Login" navbar={false}>
-  <LoginPage client:load />
+	<LoginPage client:load/>
 </Layout>

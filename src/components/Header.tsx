@@ -1,11 +1,4 @@
-import {
-	ShoppingCart,
-	Box,
-	Cpu,
-	Printer,
-	Wifi,
-	ArrowRight,
-} from 'lucide-react';
+import { ArrowRight, Box, Cpu, Printer, ShoppingCart } from 'lucide-react';
 import * as React from 'react';
 import {
 	NavigationMenu,
@@ -46,19 +39,45 @@ const otherItems = [
 ];
 
 export function HeaderMenu() {
-	const currentPath =
-		typeof window !== 'undefined' ? window.location.pathname : '';
-
-	const isActive = (path: string) =>
-		currentPath.startsWith(path) ? 'text-primary font-semibold' : '';
-
 	return (
 		<NavigationMenu>
 			<NavigationMenuList>
 				<MenuLink href="/" label="Home" />
-				<ProductsDropdown />
-				<MenuLink href="/about" label="About" />
-				<MenuLink href="/contact" label="Contact" />
+				<NavigationMenuItem>
+					<NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+						Products
+					</NavigationMenuTrigger>
+					<NavigationMenuContent className="w-[300px] md:w-[400px] lg:w-[500px]">
+						<ul className="grid gap-3 p-4 lg:grid-cols-[1fr]">
+							{/* Other links */}
+							{otherItems.map((item) => (
+								<ListItem
+									key={item.title}
+									title={item.title}
+									href={item.href}
+									icon={item.icon}
+									description={item.description}
+								/>
+							))}
+						</ul>
+					</NavigationMenuContent>
+				</NavigationMenuItem>
+				<NavigationMenuLink asChild>
+					<a
+						href="/about"
+						data-astro-prefetch
+						className={navigationMenuTriggerStyle()}>
+						About
+					</a>
+				</NavigationMenuLink>
+				<NavigationMenuLink asChild>
+					<a
+						href="/contact"
+						data-astro-prefetch
+						className={navigationMenuTriggerStyle()}>
+						Contact
+					</a>
+				</NavigationMenuLink>
 			</NavigationMenuList>
 		</NavigationMenu>
 	);
@@ -73,40 +92,10 @@ function MenuLink({ href, label }: { href: string; label: string }) {
 					navigationMenuTriggerStyle(),
 					'px-4 py-2 transition-colors bg-translucent',
 					'hover:bg-primary/20 hover:text-foreground',
-				)}
-			>
+				)}>
 				{label}
 			</a>
 		</NavigationMenuLink>
-	);
-}
-
-function ProductsDropdown() {
-	return (
-		<NavigationMenuItem>
-			<NavigationMenuTrigger
-				className={cn(
-					navigationMenuTriggerStyle(),
-					'px-4 py-2 transition-colors bg-translucent',
-					'hover:bg-primary/20 hover:text-foreground',
-					'data-[state=open]:bg-primary/25 data-[state=open]:text-foreground',
-				)}
-			>
-				Products
-			</NavigationMenuTrigger>
-
-			<NavigationMenuContent
-				className="min-w-[520px] translate-x-[-50%] left-1/2 relative
-        bg-background/90 backdrop-blur-xl border border-border/50 rounded-xl shadow-xl
-        py-4 px-3 animate-in fade-in slide-in-from-top-2 duration-200"
-			>
-				<ul className="flex flex-col divide-y divide-border/30">
-					{otherItems.map((item) => (
-						<ListItem key={item.title} {...item} />
-					))}
-				</ul>
-			</NavigationMenuContent>
-		</NavigationMenuItem>
 	);
 }
 
@@ -130,8 +119,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
 						'focus:bg-primary/10 focus:text-primary',
 						'duration-200 ease-in-out transform',
 					)}
-					{...props}
-				>
+					{...props}>
 					{/* Icon */}
 					<Icon className="h-5 w-5 text-primary group-hover:scale-110 group-hover:rotate-3 transition-transform duration-150" />
 					{/* Title + Description */}
@@ -142,7 +130,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
 
 					{/* Arrow micro animation on hover */}
 					<ArrowRight
-						className="h-4 w-4 opacity-0 group-hover:opacity-100 
+						className="h-4 w-4 opacity-0 group-hover:opacity-100
           group-hover:translate-x-1 transition-all duration-150"
 					/>
 				</a>

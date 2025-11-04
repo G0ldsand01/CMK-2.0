@@ -1,207 +1,206 @@
 ---
-import { Heart, ShoppingBag } from "lucide-react";
-import DashboardLayout from "@/layouts/DashboardLayout.astro";
-import { getCurrentUser } from "@/lib/auth-server";
+import { Heart, ShoppingBag } from 'lucide-react';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
 
 const user = await getCurrentUser(Astro.request as Request);
 
 if (!user) {
-  return Astro.redirect("/login");
+	return Astro.redirect('/login');
 }
 ---
-
 <DashboardLayout
-  title="Dashboard"
-  breadcrumb={{
-    "/": "Home",
-  }}
+	title="Dashboard"
+	breadcrumb={{
+		"/": "Home",
+	}}
 >
-  <div class="content">
-    <div class="head">
-      <div class="welcome-message">
-        <h1>Welcome Back, {user.name}</h1>
-        <p>Here's your dashboard</p>
-      </div>
-    </div>
-    <div class="menu">
-      <div class="nav-to-order">
-        <div class="icon">
-          <ShoppingBag />
-        </div>
-        <h2>Orders</h2>
-        <p>Check the history of all your orders & their status</p>
-        <a href="/dashboard/orders">My Orders</a>
-      </div>
-      <div class="my-whishlist">
-        <div class="icon">
-          <Heart />
-        </div>
-        <h2>My Wishlist</h2>
-        <p>View & manage products in your wishlist</p>
-        <a href="/dashboard/wishlist">My Wishlist</a>
-      </div>
-    </div>
-  </div>
+	<div class="content">
+		<div class="head">
+			<div class="welcome-message">
+				<h1>Welcome Back, {user.name}</h1>
+				<p>Here's your dashboard</p>
+			</div>
+		</div>
+		<div class="menu">
+			<div class="nav-to-order">
+				<div class="icon">
+					<ShoppingBag/>
+				</div>
+				<h2>Orders</h2>
+				<p>Check the history of all your orders & their status</p>
+				<a href="/dashboard/orders">My Orders</a>
+			</div>
+			<div class="my-whishlist">
+				<div class="icon">
+					<Heart/>
+				</div>
+				<h2>My Wishlist</h2>
+				<p>View & manage products in your wishlist</p>
+				<a href="/dashboard/wishlist">My Wishlist</a>
+			</div>
+		</div>
+	</div>
 </DashboardLayout>
 
 <style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .head {
-    margin-top: 5rem;
-    width: 50%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-muted);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
+.content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+.head {
+	margin-top: 5rem;
+	width: 50%;
+	background-color: var(--color-muted);
+	padding: 30px;
+	box-shadow: 0 4px 12px var(--color-muted);
+	border-radius: 2rem;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
 
-  .welcome-message h1 {
-    color: var(--color-foreground);
-    font-size: 28px;
-  }
+.welcome-message h1 {
+	color: var(--color-foreground);
+	font-size: 28px;
+}
 
-  .welcome-message p {
-    color: var(--color-muted-foreground);
-    font-size: 16px;
-  }
-  /* Menu Section */
-  .menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 50%;
-    flex-wrap: wrap;
-    margin-top: 5rem;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 5rem;
-  }
+.welcome-message p {
+	color: var(--color-muted-foreground);
+	font-size: 16px;
+}
+/* Menu Section */
+.menu {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 50%;
+	flex-wrap: wrap;
+	margin-top: 5rem;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 5rem;
+}
 
-  .icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    margin: auto;
-  }
+.icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background-color: var(--color-background);
+	color: var(--color-foreground);
+	margin: auto;
+}
 
-  .nav-to-order,
-  .my-whishlist {
-    /*Glassmorphism*/
-    background: var(--color-muted);
-    color: var(--color-foreground); /* Texte plus foncé pour le contraste */
-    box-shadow: 0 4px 15px var(--color-shadow); /* Ombre subtile */
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    flex: 1 1 45%;
-    text-align: center;
-    border: var(--color-border) 2px solid;
-    border-radius: 16px;
-    margin: 10px;
-    padding: 20px;
-    width: 10rem;
-    height: 20rem;
-    transition: transform 0.3s ease-in-out;
-  }
+.nav-to-order,
+.my-whishlist {
+	/*Glassmorphism*/
+	background: var(--color-muted);
+	color: var(--color-foreground); /* Texte plus foncé pour le contraste */
+	box-shadow: 0 4px 15px var(--color-shadow); /* Ombre subtile */
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	flex: 1 1 45%;
+	text-align: center;
+	border: var(--color-border) 2px solid;
+	border-radius: 16px;
+	margin: 10px;
+	padding: 20px;
+	width: 10rem;
+	height: 20rem;
+	transition: transform 0.3s ease-in-out;
+}
 
-  .nav-to-order:hover,
-  .my-whishlist:hover {
-    transform: scale(1.05);
-  }
+.nav-to-order:hover,
+.my-whishlist:hover {
+	transform: scale(1.05);
+}
 
-  .nav-to-order h2,
-  .my-whishlist h2 {
-    color: var(--color-foreground);
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
+.nav-to-order h2,
+.my-whishlist h2 {
+	color: var(--color-foreground);
+	font-size: 24px;
+	margin-bottom: 10px;
+}
 
-  .nav-to-order p,
-  .my-whishlist p {
-    color: var(--color-foreground);
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
+.nav-to-order p,
+.my-whishlist p {
+	color: var(--color-foreground);
+	font-size: 16px;
+	margin-bottom: 10px;
+}
 
-  .nav-to-order a,
-  .my-whishlist a {
-    background-color: var(--color-primary);
-    color: var(--color-foreground);
-    border: none;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease-in-out;
-    width: 10rem;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-  }
+.nav-to-order a,
+.my-whishlist a {
+	background-color: var(--color-primary);
+	color: var(--color-foreground);
+	border: none;
+	text-decoration: none;
+	padding: 10px;
+	border-radius: 5px;
+	transition: background-color 0.3s ease-in-out;
+	width: 10rem;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
 
-  .nav-to-order a:hover,
-  .my-whishlist a:hover {
-    background-color: var(--color-secondary);
-    color: var(--color-foreground);
-  }
-  @media (max-width: 1300px) {
-    .head {
-      width: 70%;
-      padding: 20px;
-      border-radius: 1rem;
-    }
-    .menu {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 5rem;
-      width: 90%;
-      flex-wrap: wrap;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .head {
-      width: 70%;
-      padding: 20px;
-      border-radius: 1rem;
-      margin-top: 2rem;
-    }
-    /* Menu Section */
-    .menu {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 5rem;
-      width: 90%;
-      flex-wrap: wrap;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
+.nav-to-order a:hover,
+.my-whishlist a:hover {
+	background-color: var(--color-secondary);
+	color: var(--color-foreground);
+}
+@media (max-width: 1300px) {
+	.head {
+		width: 70%;
+		padding: 20px;
+		border-radius: 1rem;
+	}
+	.menu {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 5rem;
+		width: 90%;
+		flex-wrap: wrap;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+	.head {
+		width: 70%;
+		padding: 20px;
+		border-radius: 1rem;
+		margin-top: 2rem;
+	}
+	/* Menu Section */
+	.menu {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 5rem;
+		width: 90%;
+		flex-wrap: wrap;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
 
-  @media (max-width: 480px) {
-    .nav-to-order,
-    .my-whishlist {
-      flex: 1 1 100%;
-    }
-    .head {
-      width: 90%;
-      padding: 20px;
-      border-radius: 1rem;
-      margin-top: 2rem;
-    }
-  }
+@media (max-width: 480px) {
+	.nav-to-order,
+	.my-whishlist {
+		flex: 1 1 100%;
+	}
+	.head {
+		width: 90%;
+		padding: 20px;
+		border-radius: 1rem;
+		margin-top: 2rem;
+	}
+}
 </style>

@@ -133,8 +133,7 @@ export function AppSidebar({
 						href="/"
 						aria-label="Home"
 						title="Home"
-						className="flex items-center"
-					>
+						className="flex items-center">
 						<CircuitBoard size={24} className="mr-2 m-0.5" />
 						<div className="text-2xl font-bold">CMK</div>
 					</a>

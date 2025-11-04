@@ -192,8 +192,7 @@ export default function AddProductForm({
 								if (category) {
 									setSelectedCategory(category);
 								}
-							}}
-						>
+							}}>
 							<SelectTrigger>
 								<SelectValue placeholder="Select category" />
 							</SelectTrigger>
