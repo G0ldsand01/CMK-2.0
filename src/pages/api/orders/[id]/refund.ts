@@ -8,7 +8,7 @@ export async function POST(context: {
 	request: Request;
 	params: { id: string };
 }): Promise<Response> {
-	const user = await getCurrentUser(context.request as Request);
+	const user = await getCurrentUser(context.request);
 	if (!user || user.role !== 'admin') {
 		return new Response('Unauthorized', { status: 401 });
 	}

@@ -3,25 +3,25 @@ import { actions } from 'astro:actions';
 import ProductsTable from '@/components/admin/products/ProductsTable';
 import { productCategoryTable } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import db from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth-server';
+import db from '@/lib/db';
 
-const user = await getCurrentUser(Astro.request as Request);
+const user = await getCurrentUser(Astro.request);
 
 if (!user || user.role !== 'admin') {
-	return Astro.redirect('/dashboard');
+  return Astro.redirect('/dashboard');
 }
 
 const { data, error } = await Astro.callAction(
-	actions.admin.products.getProducts,
-	{
-		limit: 10,
-		offset: 0,
-	},
+  actions.admin.products.getProducts,
+  {
+    limit: 10,
+    offset: 0,
+  }
 );
 
 if (error) {
-	console.error(error);
+  console.error(error);
 }
 
 // Extract the data array and total from the productsResult
@@ -31,19 +31,20 @@ const totalProducts = data?.total || 0;
 const categories = await db.select().from(productCategoryTable);
 const types = ['products', 'models', 'tech', 'iot'];
 ---
+
 <AdminDashboardLayout
-	title="Manage Products"
-	breadcrumb={{
+  title="Manage Products"
+  breadcrumb={{
     '/products': 'Manage Products',
   }}
 >
-	<div class="space-y-6 p-6">
-		<ProductsTable
-			client:load
-			initialProducts={products}
-			totalProducts={totalProducts}
-			categories={categories}
-			types={types}
-		/>
-	</div>
+  <div class="space-y-6 p-6">
+    <ProductsTable
+      client:load
+      initialProducts={products}
+      totalProducts={totalProducts}
+      categories={categories}
+      types={types}
+    />
+  </div>
 </AdminDashboardLayout>
