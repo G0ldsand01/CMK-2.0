@@ -1,25 +1,58 @@
 import type { APIRoute } from 'astro';
-import { stripe } from '@/lib/stripe';
-import db from '@/lib/db';
 import { ordersTable } from '@/db/schema';
+import db from '@/lib/db';
+import { stripe } from '@/lib/stripe';
 
-// Optionnel : URL pour tes futurs fichiers hébergés
+// Optionnel : base pour tes fichiers hébergés
 const STORAGE_BASE_URL = import.meta.env.STORAGE_BASE_URL || '';
 
-// ✅ Fonction utilitaire pour garantir une URL valide
+/* ======================
+   🔧 URL HELPERS
+====================== */
+
+// ✅ Retourne l’URL du site à partir de l’environnement
 function getSiteUrl(): string {
 	const envSite = import.meta.env.SITE?.trim();
 	if (
 		envSite &&
 		(envSite.startsWith('http://') || envSite.startsWith('https://'))
 	) {
-		return envSite.replace(/\/$/, ''); // retire le slash final
+		return envSite.replace(/\/$/, '');
 	}
-	// fallback local
+	// Fallback local
 	return 'http://localhost:4321';
 }
 
-// ✅ Fonction pour convertir une couleur hex en nom simple
+// ✅ Utilise une URL fournie dans la requête ou fallback vers celle du site
+function getSiteUrlFromRequest(data?: any): string {
+	const candidate = (
+		data?.siteUrl ||
+		data?.url ||
+		data?.returnUrl ||
+		''
+	).trim();
+	if (!candidate) return getSiteUrl();
+
+	const normalized =
+		candidate.startsWith('http://') || candidate.startsWith('https://')
+			? candidate
+			: `https://${candidate}`;
+
+	try {
+		const url = new URL(normalized);
+		if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+			return getSiteUrl();
+		}
+		return url.origin.replace(/\/$/, '');
+	} catch {
+		return getSiteUrl();
+	}
+}
+
+/* ======================
+   🎨 UTILITIES
+====================== */
+
 function colorNameFromHex(hex: string): string {
 	const map: Record<string, string> = {
 		'#000000': 'Black',
@@ -32,14 +65,18 @@ function colorNameFromHex(hex: string): string {
 		'#ff00ff': 'Magenta',
 		'#00ffff': 'Cyan',
 	};
-	return map[hex.toLowerCase()] || hex;
+	return map[hex.toLowerCase()] || hex || 'Unknown';
 }
+
+/* ======================
+   💳 MAIN ROUTE
+====================== */
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		const data = await request.json();
 
-		// Vérification des champs requis
+		// === Validation ===
 		const required = ['firstName', 'lastName', 'email', 'price', 'filename'];
 		for (const key of required) {
 			if (!data[key]) {
@@ -58,14 +95,15 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
-		const SITE_URL = getSiteUrl();
+		const SITE_URL = getSiteUrlFromRequest(data);
 
-		// URL du fichier (futur serveur)
+		// === File URL ===
 		const fileUrl =
 			STORAGE_BASE_URL && data.filename
 				? `${STORAGE_BASE_URL.replace(/\/$/, '')}/${data.filename}`
 				: '';
 
+		// === Metadata ===
 		const material = data.material || 'PLA';
 		const color = colorNameFromHex(data.color || '');
 		const infill = data.infill ? `${data.infill}%` : 'N/A';
@@ -73,10 +111,9 @@ export const POST: APIRoute = async ({ request }) => {
 		const volume = data.volumeCm3
 			? `${Number(data.volumeCm3).toFixed(1)} cm³`
 			: 'N/A';
-
 		const customerFullName = `${data.firstName} ${data.lastName}`;
 
-		// === Création de la session Stripe ===
+		// === Stripe Session ===
 		const session = await stripe.checkout.sessions.create({
 			mode: 'payment',
 			payment_method_types: ['card'],
@@ -117,7 +154,7 @@ export const POST: APIRoute = async ({ request }) => {
 			cancel_url: `${SITE_URL}/cancel`,
 		});
 
-		// === Enregistrement en base de données ===
+		// === Database Save ===
 		try {
 			await db.insert(ordersTable).values({
 				customerEmail: data.email,
@@ -135,9 +172,10 @@ export const POST: APIRoute = async ({ request }) => {
 				createdAt: new Date(),
 			});
 		} catch (dbErr) {
-			console.warn('⚠️ DB insert warning:', dbErr);
+			console.warn('⚠️ Database insert warning:', dbErr);
 		}
 
+		// === Success ===
 		return new Response(JSON.stringify({ url: session.url }), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },
