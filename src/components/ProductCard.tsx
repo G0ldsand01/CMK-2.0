@@ -26,7 +26,9 @@ export default function ProductCard({
 		setImageLoaded(false);
 		setHasError(false);
 
-		if (!product.images?.[0]?.image || !CDN_URL) {
+		const imagePath = product.images?.[0]?.image;
+
+		if (!imagePath || !CDN_URL) {
 			setImageLoaded(true);
 			return;
 		}
@@ -37,7 +39,8 @@ export default function ProductCard({
 		}, 2000);
 
 		return () => clearTimeout(timeout);
-	}, [product.images?.[0]?.image, CDN_URL]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [product.images?.[0]?.image]);
 
 	return (
 		<Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 border-border/50">
