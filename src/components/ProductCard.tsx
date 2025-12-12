@@ -33,20 +33,18 @@ export default function ProductCard({
 
 		// Fallback: if image doesn't load within 2 seconds, hide spinner
 		const timeout = setTimeout(() => {
-			if (!imageLoaded) {
-				setImageLoaded(true);
-			}
+			setImageLoaded(true);
 		}, 2000);
 
 		return () => clearTimeout(timeout);
-	}, [product.images, product.id]);
+	}, [product.images?.[0]?.image, CDN_URL]);
 
 	return (
 		<Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 border-border/50">
 			{/* Image Container */}
 			<div className="relative aspect-square bg-gradient-to-br from-muted/50 to-muted/30 overflow-hidden">
 				<div className="absolute inset-0 flex items-center justify-center p-6">
-					{product.images?.[0]?.image && CDN_URL ? (
+					{product.images?.[0]?.image && CDN_URL && !hasError ? (
 						<img
 							src={`${CDN_URL}/${product.images[0].image}`}
 							alt={product.name}
@@ -58,15 +56,15 @@ export default function ProductCard({
 							onLoad={() => {
 								setImageLoaded(true);
 							}}
-							onError={(e) => {
-								console.error('Image failed to load:', e);
+							onError={() => {
+								setHasError(true);
 								setImageLoaded(true);
 							}}
 							loading="lazy"
 						/>
 					) : null}
 				</div>
-				{!imageLoaded && product.images?.[0]?.image && CDN_URL && (
+				{!imageLoaded && product.images?.[0]?.image && CDN_URL && !hasError && (
 					<div className="absolute inset-0 flex items-center justify-center bg-muted/20">
 						<div className="h-12 w-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
 					</div>
