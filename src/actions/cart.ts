@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
-import { CDN_URL, WEBSITE_URL } from 'astro:env/server';
+import { WEBSITE_URL } from 'astro:env/server';
 import { and, eq, sql } from 'drizzle-orm';
 import {
 	cartTable,
@@ -262,7 +262,10 @@ export const cart = {
 
 			const line_items = cartWithImages.map((item) => {
 				// Get the first image URL if available
-				const imageUrl = item.image ? `${CDN_URL}/${item.image}` : null;
+				// Use import.meta.env since CDN_URL is public and accessible on server
+				const cdnUrl = import.meta.env.CDN_URL;
+				const imageUrl =
+					item.image && cdnUrl ? `${cdnUrl}/${item.image}` : null;
 
 				return {
 					price_data: {
