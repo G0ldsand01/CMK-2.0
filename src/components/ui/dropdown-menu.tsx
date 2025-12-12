@@ -159,6 +159,32 @@ function DropdownMenuLabel({
 	);
 }
 
+function DropdownMenuDescription({
+	className,
+	...props
+}: React.ComponentProps<'div'>) {
+	return (
+		<div
+			data-slot="dropdown-menu-description"
+			className={cn('px-2 py-1.5 text-sm text-muted-foreground', className)}
+			{...props}
+		/>
+	);
+}
+
+function DropdownMenuHeader({
+	className,
+	...props
+}: React.ComponentProps<'div'>) {
+	return (
+		<div
+			data-slot="dropdown-menu-header"
+			className={cn('px-2 py-1.5', className)}
+			{...props}
+		/>
+	);
+}
+
 function DropdownMenuSeparator({
 	className,
 	...props
@@ -240,6 +266,8 @@ export {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuLabel,
+	DropdownMenuDescription,
+	DropdownMenuHeader,
 	DropdownMenuItem,
 	DropdownMenuCheckboxItem,
 	DropdownMenuRadioGroup,
