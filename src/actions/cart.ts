@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
-import { WEBSITE_URL } from 'astro:env/server';
+import { CDN_URL, WEBSITE_URL } from 'astro:env/server';
 import { and, eq, sql } from 'drizzle-orm';
 import {
 	cartTable,
@@ -257,18 +257,26 @@ export const cart = {
 				});
 			}
 
-			const line_items = Object.values(cart).map(({ products, cart }) => ({
-				price_data: {
-					currency: 'cad',
-					product_data: {
-						name: products.name,
-						description: products.description,
-						images: [`${WEBSITE_URL}/api/image/${products.thumbnail}.png`],
+			// Load images for cart items
+			const cartWithImages = await loadCartWithImages(cart);
+
+			const line_items = cartWithImages.map((item) => {
+				// Get the first image URL if available
+				const imageUrl = item.image ? `${CDN_URL}/${item.image}` : null;
+
+				return {
+					price_data: {
+						currency: 'cad',
+						product_data: {
+							name: item.products.name,
+							description: item.products.description,
+							images: imageUrl ? [imageUrl] : [],
+						},
+						unit_amount: Number.parseInt(item.products.price, 10) * 100,
 					},
-					unit_amount: Number.parseInt(products.price, 10) * 100,
-				},
-				quantity: cart.quantity,
-			}));
+					quantity: item.cart.quantity,
+				};
+			});
 
 			// Calculate total amount for metadata
 			line_items.reduce((sum, item) => {

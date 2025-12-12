@@ -58,7 +58,7 @@ export default defineConfig({
 			}),
 			CDN_URL: envField.string({
 				access: 'public',
-				context: 'client',
+				context: ['client', 'server'],
 			}),
 			CDN_SECRET: envField.string({
 				access: 'secret',
