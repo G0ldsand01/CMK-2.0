@@ -1,5 +1,26 @@
 ---
+import { actions } from 'astro:actions';
+import ReviewsTable from '@/components/admin/reviews/ReviewsTable';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+
+const { data: reviewsData, error } = await Astro.callAction(
+  actions.admin.reviews.getReviews,
+  { limit: 20, offset: 0 }
+);
+
+if (error) {
+  console.error('Error fetching reviews:', error);
+}
+
+const reviews = reviewsData?.data || [];
+const totalReviews = reviewsData?.total || 0;
 ---
 <AdminDashboardLayout
 	title="Reviews"
@@ -7,56 +28,18 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
   '/reviews': 'Manage Reviews',
 }}
 >
-	<div class="content">
-		<div class="head">
-			<div class="welcome-message">
-				<h1>Reviews</h1>
-				<p>Manage Reviews</p>
-			</div>
+	<div class="space-y-6 p-6">
+		<div class="space-y-2">
+			<h1 class="text-3xl font-bold tracking-tight">Manage Reviews</h1>
+			<p class="text-muted-foreground text-lg">
+				View and manage all product reviews from customers
+			</p>
 		</div>
-		<div class="table-container">
-			<table>
-				<thead>
-					<tr>
-						<th>Product</th>
-						<th>Review</th>
-						<th>Rating</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Product Name</td>
-						<td>Review Content</td>
-						<td>4.5</td>
-						<td>
-							<a href="#">View</a>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-					<tr>
-						<td>Product Name</td>
-						<td>Review Content</td>
-						<td>4.5</td>
-						<td>
-							<a href="#">View</a>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-					<tr>
-						<td>Product Name</td>
-						<td>Review Content</td>
-						<td>4.5</td>
-						<td>
-							<a href="#">View</a>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+
+		<ReviewsTable
+			client:load
+			initialReviews={JSON.parse(JSON.stringify(reviews))}
+			totalReviews={totalReviews}
+		/>
 	</div>
 </AdminDashboardLayout>

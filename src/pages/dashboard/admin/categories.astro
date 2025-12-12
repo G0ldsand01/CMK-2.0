@@ -21,11 +21,11 @@ const categories = await db.select().from(productCategoryTable);
   }}
 >
   <div class="space-y-6 p-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold">Categories</h1>
-        <p class="text-muted-foreground">Manage your product categories</p>
-      </div>
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">Manage Categories</h1>
+      <p class="text-muted-foreground text-lg">
+        Organize your products by creating and managing categories
+      </p>
     </div>
 
     <CategoriesTable client:load initialCategories={categories} />

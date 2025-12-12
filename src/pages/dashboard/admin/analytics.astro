@@ -1,0 +1,42 @@
+---
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+import { actions } from 'astro:actions';
+import AnalyticsDashboard from '@/components/admin/analytics/AnalyticsDashboard';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+
+const { data: analyticsData, error } = await Astro.callAction(
+  actions.admin.analytics.getAnalytics,
+  {}
+);
+
+if (error) {
+  console.error('Error fetching analytics:', error);
+}
+---
+<AdminDashboardLayout
+	title="Analytics"
+	breadcrumb={{
+  '/analytics': 'Analytics',
+}}
+>
+	<div class="space-y-8">
+		<div class="space-y-2">
+			<h1 class="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
+			<p class="text-muted-foreground">
+				View detailed analytics and insights about your business
+			</p>
+		</div>
+
+		<AnalyticsDashboard
+			client:load
+			initialData={JSON.parse(JSON.stringify(analyticsData || {}))}
+		/>
+	</div>
+</AdminDashboardLayout>
+

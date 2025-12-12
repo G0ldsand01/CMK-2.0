@@ -1,0 +1,29 @@
+---
+import EmailTemplatesManager from '@/components/admin/email-templates/EmailTemplatesManager';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+---
+<AdminDashboardLayout
+	title="Email Templates"
+	breadcrumb={{
+  '/email-templates': 'Email Templates',
+}}
+>
+	<div class="space-y-6 p-6">
+		<div class="space-y-2">
+			<h1 class="text-3xl font-bold tracking-tight">Email Templates</h1>
+			<p class="text-muted-foreground text-lg">
+				Create and manage email templates
+			</p>
+		</div>
+
+		<EmailTemplatesManager client:load />
+	</div>
+</AdminDashboardLayout>
+

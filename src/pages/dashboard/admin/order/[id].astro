@@ -1,14 +1,33 @@
 ---
 import { CDN_URL } from 'astro:env/client';
 import { eq, inArray } from 'drizzle-orm';
-import { ordersTable, productsTable } from '@/db/schema';
+import { 
+  AlertCircle,
+  ArrowLeft, 
+  Calendar, 
+  CheckCircle2, 
+  Clock, 
+  DollarSign, 
+  Package, 
+  RefreshCw, 
+  XCircle,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  imageTable, 
+  ordersTable, 
+  productImageTable,
+  productsTable, 
+  user as userTable,
+} from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import db from '@/lib/db';
-import type { Product } from '@/store';
 
-const user = await getCurrentUser(Astro.request);
-if (!user || user.role !== 'admin') {
+const currentUser = await getCurrentUser(Astro.request);
+if (!currentUser || currentUser.role !== 'admin') {
   return Astro.redirect('/login');
 }
 
@@ -20,13 +39,26 @@ const [order] = await db
     status: ordersTable.status,
     cartJSON: ordersTable.cartJSON,
     createdAt: ordersTable.createdAt,
+    userId: ordersTable.userId,
+    stripeSessionId: ordersTable.stripeSessionId,
   })
   .from(ordersTable)
   .where(eq(ordersTable.id, Number(id)));
 
 if (!order) {
-  throw Astro.redirect('/dashboard/admin/orders');
+  return Astro.redirect('/dashboard/admin/orders');
 }
+
+// Get user info
+const orderUser = await db
+  .select({
+    id: userTable.id,
+    name: userTable.name,
+    email: userTable.email,
+  })
+  .from(userTable)
+  .where(eq(userTable.id, order.userId))
+  .limit(1);
 
 // Extract product IDs
 const productIds = order.cartJSON.map((item) => item.products.id);
@@ -34,448 +66,276 @@ const products = await db
   .select()
   .from(productsTable)
   .where(inArray(productsTable.id, productIds));
-// Combine cart and product data
-const orderItems = order.cartJSON
-  .map((item) => {
+
+// Load images for each product
+const orderItemsWithImages = await Promise.all(
+  order.cartJSON.map(async (item) => {
     const product = products.find((p) => p.id === item.products.id);
+    if (!product) return null;
+
+    const [firstImage] = await db
+      .select({
+        image: imageTable,
+      })
+      .from(productImageTable)
+      .where(eq(productImageTable.productId, product.id))
+      .leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+      .orderBy(productImageTable.priority)
+      .limit(1);
+
     return {
       ...item,
       product,
+      image: firstImage?.image?.image || null,
     };
   })
-  .filter((item) => item.product); // remove items where product is undefined
+);
+
+const orderItems = orderItemsWithImages.filter((item) => item !== null);
 
 const totalPrice = orderItems.reduce((sum, item) => {
   return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
 }, 0);
 
-const orderData = {
-  id: order.id,
-  status: order.status,
-  createdAt: order.createdAt,
-  items: Array.isArray(orderItems) ? orderItems : [],
-  total: totalPrice,
+// Helper function to get status badge
+const getStatusBadge = (status: string) => {
+  const statusLower = status.toLowerCase();
+  if (statusLower === 'completed' || statusLower === 'paid') {
+    return { variant: 'default' as const, icon: CheckCircle2, label: 'Completed' };
+  } else if (statusLower === 'pending' || statusLower === 'processing') {
+    return { variant: 'secondary' as const, icon: Clock, label: 'Pending' };
+  } else if (statusLower === 'cancelled') {
+    return { variant: 'destructive' as const, icon: XCircle, label: 'Cancelled' };
+  } else if (statusLower === 'refunded') {
+    return { variant: 'outline' as const, icon: RefreshCw, label: 'Refunded', className: 'border-yellow-500 text-yellow-500' };
+  } else {
+    return { variant: 'outline' as const, icon: AlertCircle, label: status };
+  }
 };
-const missingIds = productIds.filter(
-  (id) => !products.find((p) => p.id === id)
-);
-if (missingIds.length) {
-  console.warn('Produits manquants dans la DB:', missingIds);
-}
+
+const statusInfo = getStatusBadge(order.status);
+const StatusIcon = statusInfo.icon;
 ---
 
 <AdminDashboardLayout
-  title="Order"
+  title={`Order #${id}`}
   breadcrumb={{
     '/orders': 'Manage Orders',
-    [`/order/${id}`]: `Order ${id}`,
+    [`/order/${id}`]: `Order #${id}`,
   }}
 >
-  <div class="content">
-    <div class="admin-order-head">
-      <div class="welcome-message">
-        <h1>Order Details</h1>
-        <p>Manage your account settings</p>
+  <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
+    {/* Header */}
+    <div class="flex items-center justify-between mb-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-3">
+          <h1 class="text-3xl font-bold tracking-tight">Order #{order.id}</h1>
+          <Badge variant={statusInfo.variant} class={`flex items-center gap-1.5 ${statusInfo.className || ''}`}>
+            <StatusIcon class="size-3" />
+            {statusInfo.label}
+          </Badge>
+        </div>
+        <p class="text-muted-foreground text-lg">
+          View order details and manage order status
+        </p>
       </div>
+      <a href="/dashboard/admin/orders">
+        <Button variant="outline" class="gap-2">
+          <ArrowLeft class="size-4" />
+          Back to Orders
+        </Button>
+      </a>
     </div>
 
-    <div class="order-details">
-      <div class="order-details-item">
-        <div class="order-details-item-title">
-          <h1>Order ID</h1>
-        </div>
-        <div class="order-details-item-value">{orderData.id}</div>
-      </div>
-      <div class="order-details-item">
-        <div class="order-details-item-title">
-          <h1>Status</h1>
-        </div>
-        <div class="order-details-item-value">{orderData.status}</div>
-      </div>
-      <div class="order-details-item">
-        <div class="order-details-item-title">
-          <h1>Created At</h1>
-        </div>
-        <div class="order-details-item-value">{orderData.createdAt}</div>
-      </div>
-
-      <div class="order-details-item">
-        <div class="order-details-item-title">
-          <h1>Order Content</h1>
-        </div>
-        <div class="order-details-item-value">
-          {
-            orderData.items.length > 0 ? (
-              orderData.items.map((item) => (
-                <div class="product-item">
-                  <img
-                    src={`${CDN_URL}${item.product?.thumbnail}`}
-                    alt={item.product?.name}
-                    width="50"
-                  />
-                  <div>
-                    <strong>{item.product?.name}</strong>
-                    <br />
-                    Quantity: {item.cart.quantity}
-                    <br />
-                    Price: ${item.product?.price} each
-                    <br />
-                    Total: ${item.cart.quantity * Number(item.product?.price)}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content */}
+      <div class="lg:col-span-2 space-y-6">
+        {/* Order Items */}
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <Package class="size-5" />
+              Order Items
+            </CardTitle>
+            <CardDescription>
+              {orderItems.length} item{orderItems.length !== 1 ? 's' : ''} in this order
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {orderItems.length > 0 ? (
+              <div class="space-y-4">
+                {orderItems.map((item) => (
+                  <div class="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors">
+                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center shrink-0 border border-border/50">
+                      {item.image ? (
+                        <img
+                          src={`${CDN_URL}/${item.image}`}
+                          alt={item.product?.name || 'Product'}
+                          class="w-full h-full object-contain p-2"
+                        />
+                      ) : (
+                        <Package class="size-8 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-semibold text-lg mb-1">{item.product?.name || 'Unknown Product'}</h3>
+                      <p class="text-sm text-muted-foreground mb-2">
+                        {item.product?.description || 'No description available'}
+                      </p>
+                      <div class="flex items-center gap-4 text-sm">
+                        <span class="text-muted-foreground">
+                          Quantity: <span class="font-medium text-foreground">{item.cart.quantity}</span>
+                        </span>
+                        <span class="text-muted-foreground">
+                          Unit Price: <span class="font-medium text-foreground">${Number(item.product?.price || 0).toFixed(2)}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-sm text-muted-foreground mb-1">Subtotal</p>
+                      <p class="text-xl font-bold text-primary">
+                        ${(item.cart.quantity * Number(item.product?.price || 0)).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              <div>Aucun produit trouvé pour cette commande.</div>
-            )
-          }
-        </div>
+              <div class="text-center py-12">
+                <Package class="size-16 text-muted-foreground mx-auto mb-4" />
+                <p class="text-muted-foreground">No products found for this order</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      <div class="order-details-item">
-        <div class="order-details-item-title">Total</div>
-        <div class="order-details-item-value">${orderData.total}</div>
-      </div>
-      <div class="order-actions">
-        <div class="back">
-          <a href={`/dashboard/admin/orders/`} class="go-to-order-list">
-            <button>Back to Order List</button>
-          </a>
-        </div>
-        <div class="actions">
-          <form
-            method="POST"
-            action={`/api/orders/${order.id}/refund`}
-            style="display:inline;"
-          >
-            <button type="submit" class="refund-button">Refund </button>
-          </form>
-          <form
-            method="POST"
-            action={`/api/orders/${order.id}/cancel`}
-            style="display:inline;"
-          >
-            <button type="submit" class="cancel-button">Cancel </button>
-          </form>
-        </div>
+      {/* Sidebar */}
+      <div class="space-y-6">
+        {/* Order Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground flex items-center gap-2">
+                <Calendar class="size-4" />
+                Order Date
+              </span>
+              <span class="font-medium">
+                {new Date(order.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
+            <div class="border-t pt-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-muted-foreground">Subtotal</span>
+                <span class="font-medium">${totalPrice.toFixed(2)}</span>
+              </div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-muted-foreground">Tax</span>
+                <span class="font-medium">$0.00</span>
+              </div>
+              <div class="border-t pt-2 mt-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-lg font-semibold flex items-center gap-2">
+                    <DollarSign class="size-5" />
+                    Total
+                  </span>
+                  <span class="text-2xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Customer Info */}
+        {orderUser.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent class="space-y-2">
+              <div>
+                <p class="text-sm text-muted-foreground mb-1">Name</p>
+                <p class="font-medium">{orderUser[0].name}</p>
+              </div>
+              <div>
+                <p class="text-sm text-muted-foreground mb-1">Email</p>
+                <p class="font-medium">{orderUser[0].email}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Order Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Information</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div>
+              <p class="text-sm text-muted-foreground mb-1">Order ID</p>
+              <p class="font-mono text-sm font-medium">{order.id}</p>
+            </div>
+            <div>
+              <p class="text-sm text-muted-foreground mb-1">Stripe Session ID</p>
+              <code class="text-xs bg-muted px-2 py-1 rounded-md font-mono border border-border block break-all">
+                {order.stripeSessionId}
+              </code>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Actions</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            {order.status !== 'refunded' && order.status !== 'cancelled' && (
+              <>
+                <form method="POST" action={`/api/orders/${order.id}/refund`} class="w-full">
+                  <Button 
+                    type="submit" 
+                    variant="outline" 
+                    class="w-full gap-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/20"
+                  >
+                    <RefreshCw class="size-4" />
+                    Process Refund
+                  </Button>
+                </form>
+                <form method="POST" action={`/api/orders/${order.id}/cancel`} class="w-full">
+                  <Button 
+                    type="submit" 
+                    variant="destructive" 
+                    class="w-full gap-2"
+                  >
+                    <XCircle class="size-4" />
+                    Cancel Order
+                  </Button>
+                </form>
+              </>
+            )}
+            {order.status === 'refunded' && (
+              <div class="text-sm text-muted-foreground text-center py-2">
+                This order has been refunded
+              </div>
+            )}
+            {order.status === 'cancelled' && (
+              <div class="text-sm text-muted-foreground text-center py-2">
+                This order has been cancelled
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   </div>
 </AdminDashboardLayout>
-
-<style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-top: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-  }
-
-  .admin-order-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .welcome-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .welcome-message h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  .welcome-message p {
-    font-size: 1rem;
-    margin-bottom: 0;
-  }
-
-  .order-details {
-    background-color: var(--color-muted);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px var(--color-shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 5rem;
-  }
-
-  .order-details-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .order-details-item-title {
-    font-weight: bold;
-    font-size: 1rem;
-  }
-
-  .order-details-item-value {
-    font-size: 1rem;
-  }
-
-  .product-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #444;
-    padding: 1rem 0;
-  }
-
-  .product-item img {
-    border-radius: 0.5rem;
-  }
-
-  .order-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    justify-content: right;
-  }
-  .go-to-order {
-    display: flex;
-    position: relative;
-  }
-  .back button {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    text-align: center;
-    padding: 0.5rem 1rem; /* Normal button padding */
-    border-radius: 0.5rem;
-    background-color: var(--color-primary);
-    color: var(--mutted-foreground);
-    width: 100%; /* Optional: make it full width */
-  }
-
-  .back button:hover {
-    background-color: var(--color-foreground-hover);
-    color: var(--color-foreground);
-    border: 1px solid var(--color-foreground);
-  }
-  .order-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    justify-content: space-between;
-  }
-
-  .order-actions button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  }
-  .go-to-order-button {
-    background-color: var(--button-background);
-    color: var(--button-text);
-  }
-  .go-to-order-button:hover {
-    background-color: var(--color-foreground-hover);
-    color: var(--color-background);
-  }
-
-  .action {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .refund-button {
-    background-color: #ffc107;
-    color: black;
-    border: solid 1px #ffc107;
-    margin-left: 2rem;
-  }
-
-  .refund-button:hover {
-    background-color: #e0a800c4;
-    border: solid 1px #e0a800;
-  }
-
-  .cancel-button {
-    background-color: #dc3545;
-    color: white;
-    margin-left: 2rem;
-  }
-
-  .cancel-button:hover {
-    background-color: #c82333b9;
-    border: solid 1px #c82333;
-  }
-  @media (max-width: 1400px) {
-    .content {
-      width: 90%;
-    }
-    .admin-order-head {
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-
-    .order-details {
-      margin: auto;
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-    .order-details-item {
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-    }
-    .order-actions {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .order-actions button {
-      width: 100%;
-    }
-    .go-to-order-button {
-      width: 100%;
-    }
-
-    .refund-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-    .cancel-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-  }
-  /* Responsive Breakpoints */
-  @media (max-width: 900px) {
-    .content {
-      width: 90%;
-    }
-    .admin-order-head {
-      flex-direction: column;
-      padding: 20px;
-    }
-    .product-item {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .order-actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .order-actions button {
-      width: 100%;
-    }
-    .cancel-button {
-      margin-left: 0;
-    }
-    .refund-button {
-      margin-left: 0;
-    }
-  }
-  @media (max-width: 600px) {
-    .content {
-      width: 90%;
-    }
-    .head {
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-    .order-details {
-      margin: auto;
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-    .order-details-item {
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-    }
-    .order-actions {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .order-actions button {
-      width: 100%;
-    }
-    .go-to-order-button {
-      width: 100%;
-    }
-
-    .refund-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-    .cancel-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-  }
-  @media (max-width: 400px) {
-    .content {
-      width: 90%;
-    }
-    .head {
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-    .order-details {
-      margin: auto;
-      width: 90%;
-      margin-bottom: 5rem;
-    }
-    .order-details-item {
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-    }
-    .order-actions {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .order-actions button {
-      width: 100%;
-    }
-    .go-to-order-button {
-      width: 100%;
-    }
-
-    .refund-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-    .cancel-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-bottom: 1rem;
-      margin-left: 0;
-    }
-  }
-</style>

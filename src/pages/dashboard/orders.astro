@@ -1,9 +1,12 @@
 ---
-import { eq } from 'drizzle-orm';
-import { ordersTable } from '@/db/schema';
+import { eq, desc } from 'drizzle-orm';
+import { ordersTable, productsTable } from '@/db/schema';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import db from '@/lib/db';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Package, Calendar, DollarSign, CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react';
 
 const user = await getCurrentUser(Astro.request);
 
@@ -11,199 +14,154 @@ if (!user) {
   return Astro.redirect('/login');
 }
 
-const userEmail = user.email;
-
 const orders = await db
   .select()
   .from(ordersTable)
-  .where(eq(ordersTable.userId, user.id));
+  .where(eq(ordersTable.userId, user.id))
+  .orderBy(desc(ordersTable.createdAt));
+
+// Helper function to calculate order total
+const calculateOrderTotal = (cartJSON: any[]) => {
+  if (!Array.isArray(cartJSON)) return 0;
+  return cartJSON.reduce(
+    (acc, item) => acc + Number(item.products?.price || 0) * (item.cart?.quantity || 0),
+    0
+  );
+};
+
+// Helper function to get status badge
+const getStatusBadge = (status: string) => {
+  const statusLower = status.toLowerCase();
+  if (statusLower === 'completed' || statusLower === 'paid') {
+    return { variant: 'default' as const, icon: CheckCircle2, label: 'Completed' };
+  } else if (statusLower === 'pending' || statusLower === 'processing') {
+    return { variant: 'secondary' as const, icon: Clock, label: 'Pending' };
+  } else if (statusLower === 'cancelled' || statusLower === 'refunded') {
+    return { variant: 'destructive' as const, icon: XCircle, label: status };
+  } else {
+    return { variant: 'outline' as const, icon: AlertCircle, label: status };
+  }
+};
+
+// Helper function to count items in order
+const countOrderItems = (cartJSON: any[]) => {
+  if (!Array.isArray(cartJSON)) return 0;
+  return cartJSON.reduce((acc, item) => acc + (item.cart?.quantity || 0), 0);
+};
 ---
 
 <DashboardLayout
-  title="Orders History"
+  title="My Orders"
   breadcrumb={{
-    '/orders': 'Orders',
+    '/orders': 'My Orders',
   }}
 >
-  <div class="content">
-    <div class="head">
-      <div class="welcome-message">
-        <h1>{`${user.name}'s Orders`}</h1>
-        <p>Check the history of all your orders associated with: {userEmail}</p>
-      </div>
+  <div class="space-y-6 p-6">
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">My Orders</h1>
+      <p class="text-muted-foreground">
+        View and track all your orders
+      </p>
     </div>
-    <div class="orders">
-      <div class="orders-list">
-        <div class="orders-list-header">
-          <h1>Orders</h1>
-          <p>Showing orders for {userEmail}</p>
-        </div>
-        {
-          orders.map((order) => (
-            <div class="orders-list-body-item">
-              <div class="orders-list-body-item-header">
-                <h3>Order #{order.id}</h3>
-                <p>
-                  Order Date: {new Date(order.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div class="orders-list-body-item-body">
-                <p>
-                  Order Total: $
-                  {order.cartJSON.reduce(
-                    (acc, item) =>
-                      acc + Number(item.products.price) * item.cart.quantity,
-                    0
+
+    {orders.length === 0 ? (
+      <Card>
+        <CardContent class="flex flex-col items-center justify-center py-16">
+          <Package class="size-16 text-muted-foreground mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No orders yet</h3>
+          <p class="text-muted-foreground text-center mb-6">
+            When you place an order, it will appear here.
+          </p>
+          <a
+            href="/products"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
+          >
+            Start Shopping
+          </a>
+        </CardContent>
+      </Card>
+    ) : (
+      <div class="space-y-4">
+        {orders.map((order) => {
+          const total = calculateOrderTotal(order.cartJSON);
+          const itemCount = countOrderItems(order.cartJSON);
+          const statusInfo = getStatusBadge(order.status);
+          const StatusIcon = statusInfo.icon;
+          
+          return (
+            <Card key={order.id} class="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <CardTitle class="text-xl">Order #{order.id}</CardTitle>
+                      <Badge variant={statusInfo.variant} class="flex items-center gap-1">
+                        <StatusIcon class="size-3" />
+                        {statusInfo.label}
+                      </Badge>
+                    </div>
+                    <CardDescription class="flex items-center gap-2">
+                      <Calendar class="size-4" />
+                      {new Date(order.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </CardDescription>
+                  </div>
+                  <div class="flex items-center gap-2 text-lg font-semibold">
+                    <DollarSign class="size-5" />
+                    {total.toFixed(2)} CAD
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div class="space-y-4">
+                  <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Package class="size-4" />
+                    <span>{itemCount} item{itemCount !== 1 ? 's' : ''}</span>
+                  </div>
+                  
+                  {Array.isArray(order.cartJSON) && order.cartJSON.length > 0 && (
+                    <div class="space-y-2">
+                      <h4 class="text-sm font-medium">Items:</h4>
+                      <div class="space-y-2">
+                        {order.cartJSON.slice(0, 3).map((item: any, idx: number) => (
+                          <div class="flex items-center justify-between text-sm p-2 rounded-md bg-muted/50">
+                            <span class="flex-1">
+                              {item.products?.name || `Item ${idx + 1}`}
+                            </span>
+                            <span class="text-muted-foreground">
+                              Qty: {item.cart?.quantity || 0}
+                            </span>
+                            {item.products?.price && (
+                              <span class="ml-4 font-medium">
+                                ${(Number(item.products.price) * (item.cart?.quantity || 0)).toFixed(2)}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {order.cartJSON.length > 3 && (
+                          <p class="text-sm text-muted-foreground text-center pt-2">
+                            +{order.cartJSON.length - 3} more item{order.cartJSON.length - 3 !== 1 ? 's' : ''}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   )}
-                </p>
-                <p>Order Status: {order.status}</p>
-              </div>
-            </div>
-          ))
-        }
-        {orders.length === 0 && <p>No orders found for this email address.</p>}
+                  
+                  <div class="pt-4 border-t">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-muted-foreground">Stripe Session ID:</span>
+                      <code class="text-xs bg-muted px-2 py-1 rounded">{order.stripeSessionId}</code>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
-    </div>
+    )}
   </div>
 </DashboardLayout>
-<style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-top: 2rem;
-  }
-  /* Header Styling */
-  .head {
-    margin-top: 5rem;
-    width: 50%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  .welcome-message h1 {
-    color: var(--color-foreground);
-    font-size: 28px;
-  }
-
-  .welcome-message p {
-    color: var(--color-muted-foreground);
-    font-size: 16px;
-  }
-  .orders {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-bottom: 5rem;
-  }
-  .orders-list {
-    margin-top: 3rem;
-    width: 50%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .orders-list-body-item {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    background-color: var(--color-background);
-    border: var(--color-border) solid 1px;
-    margin: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-  }
-
-  .orders-list-body-item-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .orders-list-body-item-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .orders-list-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--color-foreground);
-    margin-left: 2rem;
-    margin-right: auto;
-  }
-  .orders-list-body-item-body p {
-    color: var(--color-foreground);
-  }
-  .orders-list-body-item-body p:first-child {
-    color: var(--color-foreground);
-  }
-  .orders-list-body-item-body p:last-child {
-    font-weight: bold;
-    color: var(--color-foreground);
-  }
-  .error-message {
-    color: red;
-    margin-top: 1rem;
-  }
-  @media (max-width: 1200px) {
-    .head {
-      width: 80%;
-    }
-    .orders-list {
-      width: 80%;
-    }
-    .order {
-      width: 80%;
-    }
-    .orders-list-header {
-      font-size: 1.5rem;
-    }
-    .orders-list-body-item-header {
-      font-size: 1.25rem;
-    }
-  }
-  @media (max-width: 768px) {
-    .orders-list {
-      width: 90%;
-    }
-    .head {
-      width: 90%;
-    }
-    .order {
-      width: 90%;
-    }
-    .orders-list-header {
-      font-size: 1.1rem;
-    }
-    .orders-list-body-item-header {
-      font-size: 1rem;
-    }
-  }
-  @media (max-width: 508px) {
-    .head {
-      width: 90%;
-    }
-    .orders-list {
-      width: 90%;
-    }
-    .order {
-      width: 90%;
-    }
-    .orders-list-header {
-      font-size: 0.8rem;
-    }
-    .orders-list-body-item-header {
-      font-size: 0.9rem;
-    }
-  }
-</style>

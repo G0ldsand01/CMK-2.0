@@ -1,8 +1,16 @@
 ---
-import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
+import { 
+  TrendingDownIcon, 
+  TrendingUpIcon,
+  DollarSign,
+  Users,
+  Activity,
+  TrendingUp,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -12,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import { stripe } from '@/lib/stripe';
+import { TransactionsTable } from '@/components/admin/TransactionsTable';
 
 const user = await getCurrentUser(Astro.request);
 const { totalRevenue, newCustomers, activeAccounts, growthRate, latestOrders } =
@@ -55,8 +64,92 @@ async function fetchStripeMetrics() {
         : '0%';
 
     const latestOrders = await stripe.paymentIntents.list({
-      limit: 10,
+      limit: 100,
+      expand: ['data.customer', 'data.payment_method'],
     });
+
+    // Fetch additional customer and payment method details (with error handling)
+    const ordersWithDetails = await Promise.allSettled(
+      latestOrders.data.map(async (order) => {
+        let customerName: string | undefined;
+        let customerEmail: string | undefined;
+        let last4: string | undefined;
+        let brand: string | undefined;
+
+        // Get customer info if available
+        if (order.customer) {
+          if (typeof order.customer === 'string') {
+            try {
+              const customer = await stripe.customers.retrieve(order.customer);
+              if (customer && !('deleted' in customer && customer.deleted)) {
+                customerName = (customer as any).name || undefined;
+                customerEmail = (customer as any).email || undefined;
+              }
+            } catch (e) {
+              // Customer might not exist, continue
+            }
+          } else {
+            customerName = (order.customer as any).name || undefined;
+            customerEmail = (order.customer as any).email || undefined;
+          }
+        }
+
+        // Get payment method info if available
+        if (order.payment_method) {
+          if (typeof order.payment_method === 'string') {
+            try {
+              const pm = await stripe.paymentMethods.retrieve(order.payment_method);
+              if (pm && (pm as any).card) {
+                last4 = (pm as any).card.last4;
+                brand = (pm as any).card.brand;
+              }
+            } catch (e) {
+              // Payment method might not exist, continue
+            }
+          } else if ((order.payment_method as any).card) {
+            last4 = (order.payment_method as any).card.last4;
+            brand = (order.payment_method as any).card.brand;
+          }
+        }
+
+        // Also check metadata for customer info
+        if (order.metadata) {
+          if (order.metadata.firstName && order.metadata.lastName) {
+            customerName = `${order.metadata.firstName} ${order.metadata.lastName}`;
+          }
+          if (order.metadata.email) {
+            customerEmail = order.metadata.email;
+          }
+        }
+
+        const createdDate = new Date(order.created * 1000);
+        return {
+          id: order.id,
+          amount: order.amount / 100,
+          currency: order.currency.toUpperCase(),
+          status: order.status,
+          created: createdDate.toISOString(),
+          createdFormatted: createdDate.toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          }),
+          createdTime: createdDate.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          customerName,
+          customerEmail,
+          last4,
+          brand: brand ? brand.charAt(0).toUpperCase() + brand.slice(1) : undefined,
+        };
+      })
+    );
+
+    // Filter out failed promises and extract values
+    const successfulOrders = ordersWithDetails
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => (result as PromiseFulfilledResult<any>).value);
 
     return {
       totalRevenue: (balance.available[0]?.amount || 0) / 100,
@@ -66,13 +159,7 @@ async function fetchStripeMetrics() {
       revenueTrend: revenueTrend || '0%',
       customerTrend: '0%',
       accountTrend: '0%',
-      latestOrders: latestOrders.data.map((order) => ({
-        id: order.id,
-        amount: order.amount / 100,
-        currency: order.currency.toUpperCase(),
-        status: order.status,
-        created: new Date(order.created * 1000).toLocaleDateString(),
-      })),
+      latestOrders: successfulOrders,
     };
   } catch (error) {
     console.error('Error fetching Stripe metrics:', error);
@@ -96,39 +183,51 @@ async function fetchStripeMetrics() {
     '/': 'Home',
   }}
 >
-  <div class="head">
-    <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-    <p>Welcome to the admin dashboard, {user.name}!</p>
-  </div>
-  <Separator />
-  <div
-    class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6"
-  >
+  <div class="space-y-8">
+    <!-- Welcome Section -->
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">
+        Welcome back, {user.name}!
+      </h1>
+      <p class="text-muted-foreground">
+        Here's an overview of your admin dashboard and quick access to your most
+        important management features.
+      </p>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
     {
       [
         {
           title: 'Total Revenue',
-          value: `${totalRevenue}$`,
+          value: `$${totalRevenue.toFixed(2)}`,
           trend: '+12.5%',
-          icon: <TrendingUpIcon className="size-3" />,
+          icon: DollarSign,
+          iconColor: 'text-green-600 dark:text-green-400',
+          bgColor: 'bg-green-500/10 dark:bg-green-500/20',
           description: 'Trending up this month',
-          subtext: 'Visitors for the last 6 months',
+          subtext: 'Revenue for the last 6 months',
           isPositive: true,
         },
         {
           title: 'New Customers',
-          value: newCustomers,
+          value: newCustomers.toString(),
           trend: '-20%',
-          icon: <TrendingDownIcon className="size-3" />,
+          icon: Users,
+          iconColor: 'text-blue-600 dark:text-blue-400',
+          bgColor: 'bg-blue-500/10 dark:bg-blue-500/20',
           description: 'Down 20% this period',
           subtext: 'Acquisition needs attention',
           isPositive: false,
         },
         {
           title: 'Active Accounts',
-          value: activeAccounts,
+          value: activeAccounts.toString(),
           trend: '+12.5%',
-          icon: <TrendingUpIcon className="size-3" />,
+          icon: Activity,
+          iconColor: 'text-purple-600 dark:text-purple-400',
+          bgColor: 'bg-purple-500/10 dark:bg-purple-500/20',
           description: 'Strong user retention',
           subtext: 'Engagement exceed targets',
           isPositive: true,
@@ -137,104 +236,78 @@ async function fetchStripeMetrics() {
           title: 'Growth Rate',
           value: `${growthRate}`,
           trend: '+4.5%',
-          icon: <TrendingUpIcon className="size-3" />,
+          icon: TrendingUp,
+          iconColor: 'text-orange-600 dark:text-orange-400',
+          bgColor: 'bg-orange-500/10 dark:bg-orange-500/20',
           description: 'Steady performance',
           subtext: 'Meets growth projections',
           isPositive: true,
         },
       ].map(
         (
-          { title, value, trend, icon, description, subtext, isPositive },
+          { title, value, trend, icon: Icon, iconColor, bgColor, description, subtext, isPositive },
           index
         ) => (
-          <Card key={index} className="@container/card">
-            <CardHeader className="relative">
-              <CardDescription>{title}</CardDescription>
-              <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          <Card 
+            key={index} 
+            className="group relative overflow-hidden transition-all hover:shadow-lg hover:border-primary/50"
+          >
+            <CardHeader className="relative pb-3">
+              <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-lg ${bgColor} ${iconColor} transition-colors group-hover:scale-110`}>
+                <Icon className="size-6" />
+              </div>
+              <CardDescription className="text-sm font-medium mb-1">{title}</CardDescription>
+              <CardTitle className="text-3xl font-bold tabular-nums mb-2">
                 {value}
               </CardTitle>
               <div class="absolute right-4 top-4">
                 <Badge
-                  variant="outline"
-                  className="flex gap-1 rounded-lg text-xs"
+                  variant={isPositive ? "default" : "secondary"}
+                  className={`flex gap-1 rounded-lg text-xs ${isPositive ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}
                 >
-                  {icon} {trend}
+                  {isPositive ? <TrendingUpIcon className="size-3" /> : <TrendingDownIcon className="size-3" />} 
+                  {trend}
                 </Badge>
               </div>
             </CardHeader>
-            <CardFooter className="flex-col items-start gap-1 text-sm">
-              <div class="line-clamp-1 flex gap-2 font-medium">
-                {description} {icon}
+            <CardFooter className="flex-col items-start gap-1 pt-0">
+              <div class="text-sm font-medium text-foreground">
+                {description}
               </div>
-              <div class="text-muted-foreground">{subtext}</div>
+              <div class="text-xs text-muted-foreground">{subtext}</div>
             </CardFooter>
           </Card>
         )
       )
     }
-  </div>
-  <!-- Latest orders -->
-  <div class="px-4 lg:px-6" id="latest-orders">
-    <h2 class="text-xl font-bold">Latest Stripe Orders</h2>
-    <div class="overflow-x-auto">
-      <table class="min-w-full border-collapse border border-gray-200">
-        <thead>
-          <tr>
-            <th class="border border-gray-200 px-4 py-2">Order ID</th>
-            <th class="border border-gray-200 px-4 py-2">Amount</th>
-            <th class="border border-gray-200 px-4 py-2">Currency</th>
-            <th class="border border-gray-200 px-4 py-2">Status</th>
-            <th class="border border-gray-200 px-4 py-2">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            latestOrders.map((order) => (
-              <tr>
-                <td class="border border-gray-200 px-4 py-2">{order.id}</td>
-                <td class="border border-gray-200 px-4 py-2">{order.amount}</td>
-                <td class="border border-gray-200 px-4 py-2">
-                  {order.currency}
-                </td>
-                <td class="border border-gray-200 px-4 py-2">{order.status}</td>
-                <td class="border border-gray-200 px-4 py-2">
-                  {order.created}
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+    </div>
+
+    <!-- Latest Orders Section -->
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-bold tracking-tight">Latest Orders</h2>
+        <p class="text-muted-foreground">
+          Recent payment intents from Stripe
+        </p>
+      </div>
+      <Card className="overflow-hidden border shadow-sm">
+        <CardHeader className="pb-4 border-b bg-muted/30">
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl font-semibold">Recent Transactions</CardTitle>
+              <CardDescription className="mt-1">
+                View and manage recent payment transactions from Stripe
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {latestOrders.length} transactions
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <TransactionsTable transactions={latestOrders} client:only="react" />
+        </CardContent>
+      </Card>
     </div>
   </div>
 </AdminDashboardLayout>
-
-<style>
-  .head {
-    padding: 2rem;
-    background-color: var(--background);
-    color: var(--foreground);
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  .head h1 {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  .head p {
-    font-size: 1rem;
-  }
-  #latest-orders {
-    margin-top: 2rem;
-  }
-  #latest-orders table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  #latest-orders table th,
-  #latest-orders table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-</style>

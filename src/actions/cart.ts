@@ -2,11 +2,44 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:content';
 import { WEBSITE_URL } from 'astro:env/server';
 import { and, eq, sql } from 'drizzle-orm';
-import { cartTable, ordersTable, productsTable } from '@/db/schema';
+import {
+	cartTable,
+	imageTable,
+	ordersTable,
+	productImageTable,
+	productsTable,
+} from '@/db/schema';
 import { authServer } from '@/lib/auth-server';
 import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { logSecurityEvent } from './index';
+
+// Helper function to load images for cart items
+async function loadCartWithImages(
+	cartItems: Array<{
+		cart: typeof cartTable.$inferSelect;
+		products: typeof productsTable.$inferSelect;
+	}>,
+) {
+	return Promise.all(
+		cartItems.map(async (item) => {
+			const [firstImage] = await db
+				.select({
+					image: imageTable,
+				})
+				.from(productImageTable)
+				.where(eq(productImageTable.productId, item.products.id))
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.orderBy(productImageTable.priority)
+				.limit(1);
+
+			return {
+				...item,
+				image: firstImage?.image?.image || null,
+			};
+		}),
+	);
+}
 
 export const cart = {
 	addProductIdToCart: defineAction({
@@ -33,15 +66,20 @@ export const cart = {
 			const { productId } = input;
 
 			const cart = await db
-				.select()
+				.select({
+					cart: cartTable,
+					products: productsTable,
+				})
 				.from(cartTable)
 				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
+			const cartWithImages = await loadCartWithImages(cart);
+
 			if (cart.some((item) => item.products.id === Number(productId))) {
 				return {
 					success: false,
-					cart: cart,
+					cart: cartWithImages,
 				};
 			}
 
@@ -56,14 +94,19 @@ export const cart = {
 				.returning();
 
 			const newCart = await db
-				.select()
+				.select({
+					cart: cartTable,
+					products: productsTable,
+				})
 				.from(cartTable)
 				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
+			const newCartWithImages = await loadCartWithImages(newCart);
+
 			return {
 				success: true,
-				cart: newCart,
+				cart: newCartWithImages,
 			};
 		},
 	}),
@@ -158,14 +201,19 @@ export const cart = {
 					);
 
 				const cart = await tx
-					.select()
+					.select({
+						cart: cartTable,
+						products: productsTable,
+					})
 					.from(cartTable)
 					.where(eq(cartTable.userId, user.id))
 					.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
+				const cartWithImages = await loadCartWithImages(cart);
+
 				return {
 					success: true,
-					cart: cart,
+					cart: cartWithImages,
 				};
 			});
 		},
@@ -189,7 +237,10 @@ export const cart = {
 			}
 
 			const cart = await db
-				.select()
+				.select({
+					cart: cartTable,
+					products: productsTable,
+				})
 				.from(cartTable)
 				.where(eq(cartTable.userId, user.id))
 				.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
@@ -255,6 +306,7 @@ export const cart = {
 					metadata: {
 						orderId: orderId.toString(),
 						userId: user.id,
+						sessionId: 'pending', // Will be updated after session creation
 					},
 				},
 				shipping_address_collection: {
@@ -270,6 +322,25 @@ export const cart = {
 				.update(ordersTable)
 				.set({ stripeSessionId: session.id })
 				.where(eq(ordersTable.id, orderId));
+
+			// Update payment intent metadata with the actual session ID
+			try {
+				if (
+					session.payment_intent &&
+					typeof session.payment_intent === 'string'
+				) {
+					await stripe.paymentIntents.update(session.payment_intent, {
+						metadata: {
+							orderId: orderId.toString(),
+							userId: user.id,
+							sessionId: session.id,
+						},
+					});
+				}
+			} catch (updateError) {
+				// Non-critical error, log but don't fail
+				console.warn('Failed to update payment intent metadata:', updateError);
+			}
 
 			return {
 				url: session.url,

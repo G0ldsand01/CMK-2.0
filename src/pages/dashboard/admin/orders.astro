@@ -1,241 +1,89 @@
 ---
-import { ordersTable } from '@/db/schema';
+import { desc, eq } from 'drizzle-orm';
+import { AlertCircle, Calendar, CheckCircle2, Clock, DollarSign, Eye, Package, RefreshCw, User as UserIcon, XCircle } from 'lucide-react';
+import OrdersTable from '@/components/admin/orders/OrdersTable';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ordersTable, user } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import db from '@/lib/db';
 
-const user = await getCurrentUser(Astro.request);
+const currentUser = await getCurrentUser(Astro.request);
 
-if (!user || user.role !== 'admin') {
-  throw Astro.redirect('/login');
+if (!currentUser || currentUser.role !== 'admin') {
+  return Astro.redirect('/login');
 }
 
-const orders = await db.select().from(ordersTable);
+const orders = await db
+  .select({
+    order: ordersTable,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+  })
+  .from(ordersTable)
+  .leftJoin(user, eq(ordersTable.userId, user.id))
+  .orderBy(desc(ordersTable.createdAt));
+
+// Helper function to calculate order total
+const calculateOrderTotal = (cartJSON: any[]) => {
+  if (!Array.isArray(cartJSON)) return 0;
+  return cartJSON.reduce(
+    (acc, item) => acc + Number(item.products?.price || 0) * (item.cart?.quantity || 0),
+    0
+  );
+};
+
+// Helper function to get status badge
+const getStatusBadge = (status: string) => {
+  const statusLower = status.toLowerCase();
+  if (statusLower === 'completed' || statusLower === 'paid') {
+    return { variant: 'default' as const, iconName: 'CheckCircle2', label: 'Completed' };
+  } else if (statusLower === 'pending' || statusLower === 'processing') {
+    return { variant: 'secondary' as const, iconName: 'Clock', label: 'Pending' };
+  } else if (statusLower === 'cancelled') {
+    return { variant: 'destructive' as const, iconName: 'XCircle', label: 'Cancelled' };
+  } else if (statusLower === 'refunded') {
+    return { variant: 'outline' as const, iconName: 'RefreshCw', label: 'Refunded', className: 'border-yellow-500 text-yellow-500' };
+  } else {
+    return { variant: 'outline' as const, iconName: 'AlertCircle', label: status };
+  }
+};
+
+// Helper function to count items in order
+const countOrderItems = (cartJSON: any[]) => {
+  if (!Array.isArray(cartJSON)) return 0;
+  return cartJSON.reduce((acc, item) => acc + (item.cart?.quantity || 0), 0);
+};
+
+// Format orders with user info and calculated totals
+const formattedOrders = orders.map(({ order, user: orderUser }) => ({
+  ...order,
+  user: orderUser,
+  total: calculateOrderTotal(order.cartJSON),
+  itemCount: countOrderItems(order.cartJSON),
+  statusInfo: getStatusBadge(order.status),
+}));
 ---
 
 <AdminDashboardLayout
-  title="Orders"
+  title="Manage Orders"
   breadcrumb={{
     '/orders': 'Manage Orders',
   }}
 >
-  <div class="content">
-    <div class="head">
-      <div class="welcome-message">
-        <h1>Orders</h1>
-        <p>Manage Orders</p>
-      </div>
+  <div class="space-y-6 p-6">
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">Manage Orders</h1>
+      <p class="text-muted-foreground text-lg">
+        View and manage all customer orders, process refunds, and track order status
+      </p>
     </div>
-    <div class="table-container">
-      {
-        orders.map((order) => (
-          <div class="order">
-            <h2>{order.id}</h2>
-            <p>{order.status}</p>
-            <p>{order.createdAt}</p>
 
-            <div class="order-actions">
-              <div class="back">
-                <a
-                  href={`/dashboard/admin/order/${order.id}`}
-                  class="go-to-order-button"
-                >
-                  <button>Go to Order</button>
-                </a>
-              </div>
-              <div class="actions">
-                <form
-                  method="POST"
-                  action={`/api/orders/${order.id}/refund`}
-                  style="display:inline;"
-                >
-                  <button type="submit" class="refund-button">
-                    Refund
-                  </button>
-                </form>
-                <form
-                  method="POST"
-                  action={`/api/orders/${order.id}/cancel`}
-                  style="display:inline;"
-                >
-                  <button type="submit" class="cancel-button">
-                    Cancel
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        ))
-      }
-    </div>
+    <OrdersTable orders={JSON.parse(JSON.stringify(formattedOrders))} client:load />
   </div>
 </AdminDashboardLayout>
-
-<style>
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-top: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-  }
-  .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    background-color: var(--color-muted);
-    padding: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    border-radius: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .welcome-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .welcome-message h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: center;
-  }
-  .welcome-message p {
-    font-size: 1rem;
-    margin-bottom: 0;
-  }
-  .table-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 5rem;
-  }
-  .order {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-  }
-  .order h2 {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-  .go-to-order {
-    display: flex;
-    position: relative;
-  }
-  .back button {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    text-align: center;
-    padding: 0.5rem 1rem; /* Normal button padding */
-    border-radius: 0.5rem;
-    background-color: var(--color-foreground);
-    color: var(--color-background);
-    width: 100%; /* Optional: make it full width */
-  }
-  .back button:hover {
-    background-color: var(--color-foreground-hover);
-    color: var(--color-foreground);
-    border: 1px solid var(--color-foreground);
-  }
-  .order-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    justify-content: space-between;
-  }
-
-  .order-actions button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s ease-in-out;
-  }
-  .go-to-order {
-    display: flex;
-    position: relative;
-    text-align: center;
-  }
-
-  .go-to-order-button {
-    background-color: var(button-background);
-    color: var(button-text);
-  }
-  .go-to-order-button:hover {
-    background-color: var(--color-foreground);
-    color: var(--color-foreground);
-  }
-  .refund-button {
-    background-color: #ffc107;
-    color: black;
-  }
-
-  .refund-button:hover {
-    background-color: #e0a800;
-  }
-
-  .cancel-button {
-    background-color: #dc3545;
-    color: white;
-  }
-
-  .cancel-button:hover {
-    background-color: #c82333;
-  }
-
-  @media (max-width: 1400px) {
-    .content {
-      width: 90%;
-    }
-    .head {
-      width: 90%;
-    }
-    .order {
-      margin: auto;
-      width: 90%;
-    }
-    .order p {
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-    }
-    .order-actions {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .order-actions button {
-      width: 100%;
-    }
-    .go-to-order-button {
-      width: 100%;
-    }
-
-    .refund-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-    .cancel-button {
-      width: 100%;
-      padding: 0.5rem 0;
-      margin-bottom: 1rem;
-    }
-    .order-actions {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  }
-</style>

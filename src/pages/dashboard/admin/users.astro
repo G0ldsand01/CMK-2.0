@@ -1,182 +1,45 @@
 ---
+import { actions } from 'astro:actions';
+import UsersTable from '@/components/admin/users/UsersTable';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
-import { CircleUser, UserCircleIcon } from 'lucide-react';
+import { getCurrentUser } from '@/lib/auth-server';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+
+const { data, error } = await Astro.callAction(
+  actions.admin.users.getUsers,
+  {
+    limit: 20,
+    offset: 0,
+  }
+);
+
+if (error) {
+  console.error(error);
+}
+
+const users = data?.data || [];
+const totalUsers = data?.total || 0;
 ---
 <AdminDashboardLayout title="Users" breadcrumb={{ '/users': 'Manage Users' }}>
-	<div class="content">
-		<div class="head">
-			<div class="welcome-message">
-				<h1>Users</h1>
-				<p>Manage Users</p>
-			</div>
-		</div>
-		<div class="table-container">
-			<table>
-				<thead>
-					<tr>
-						<th>Username</th>
-						<th>Email</th>
-						<th>Role</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Username</td>
-						<td>Email</td>
-						<td>Role</td>
-						<td>
-							<a href="#"
-								><CircleUser/></a
-							>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-					<tr>
-						<td>Username</td>
-						<td>Email</td>
-						<td>Role</td>
-						<td>
-							<a href="#"
-								><CircleUser/></a
-							>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-					<tr>
-						<td>Username</td>
-						<td>Email</td>
-						<td>Role</td>
-						<td>
-							<a href="#"
-								><CircleUser/></a
-							>
-							<a href="#">Edit</a>
-							<a href="#">Delete</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</AdminDashboardLayout>
+  <div class="space-y-6 p-6">
+    <!-- Welcome Section -->
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">Manage Users</h1>
+      <p class="text-muted-foreground text-lg">
+        View and manage all user accounts, roles, and permissions
+      </p>
+    </div>
 
-<style>
-.content {
-	display: flex;
-	flex-direction: column;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 5rem;
-	width: 50%;
-}
-.head {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	background-color: var(--color-muted);
-	padding: 30px;
-	box-shadow: 0 4px 12px var(--color-shadow);
-	border-radius: 2rem;
-	margin-left: auto;
-	margin-right: auto;
-}
-.welcome-message {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-}
-.welcome-message h1 {
-	font-size: 1.5rem;
-	margin-bottom: 0.5rem;
-	display: flex;
-	justify-content: center;
-}
-.welcome-message p {
-	font-size: 1rem;
-	margin-bottom: 0;
-}
-.table-container {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-	margin-top: 2rem;
-}
-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-th,
-td {
-	padding: 10px;
-	text-align: left;
-	border-bottom: 1px solid var(--color-border);
-}
-th {
-	background-color: var(--color-muted);
-}
-td {
-	background-color: var(--color-background);
-}
-@media (max-width: 1400px) {
-	.content {
-		width: 90%;
-	}
-	.head {
-		width: 70%;
-		margin-bottom: 5rem;
-	}
-	.table-container {
-		margin: auto;
-		width: 90%;
-	}
-	table {
-		margin: auto;
-		width: 90%;
-	}
-	tr {
-		flex-direction: column;
-		gap: 1rem;
-		margin-bottom: 1rem;
-		font-size: 0.8rem;
-	}
-	th,
-	td {
-		padding: 0.5rem;
-		text-align: left;
-	}
-}
-@media (max-width: 768px) {
-	.content {
-		width: 100%;
-	}
-	.head {
-		width: 70%;
-	}
-	.table-container {
-		margin: auto;
-		width: 100%;
-	}
-	table {
-		margin: auto;
-		width: 100%;
-	}
-	tr {
-		flex-direction: column;
-		gap: 1rem;
-		margin-bottom: 1rem;
-		font-size: 0.8rem;
-	}
-	th,
-	td {
-		padding: 0.5rem;
-		text-align: left;
-	}
-}
-</style>
+    <!-- Users Table -->
+    <UsersTable
+      client:load
+      initialUsers={users}
+      totalUsers={totalUsers}
+    />
+  </div>
+</AdminDashboardLayout>

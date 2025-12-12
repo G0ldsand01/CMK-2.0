@@ -83,84 +83,94 @@ export default function InternalCart({
 									{Object.values($cart).length} items in your cart
 								</div>
 								<div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-2">
-									{Object.values($cart).map((item) => (
-										<div
-											key={item.products.id}
-											className="flex items-center gap-4 p-4 bg-card rounded-lg shadow-sm">
+									{Object.values($cart).map((item) => {
+										const imageUrl = item.image
+											? `${CDN_URL}/${item.image}`
+											: null;
+
+										return (
 											<div
-												className="w-20 h-20 rounded-md overflow-hidden"
-												style={{ color: 'var(--foreground)' }}>
-												<img
-													src={`${CDN_URL}${item.products.image}`}
-													alt={item.products.name}
-													className="w-full h-full object-cover"
-												/>
-											</div>
-											<div className="flex-1">
-												<h3 className="font-medium">{item.products.name}</h3>
-												<p
-													className="text-sm"
-													style={{ color: 'var(--foreground)' }}>
-													${item.products.price}
-												</p>
-												<div className="flex items-center gap-2 mt-2">
-													<Button
-														variant="outline"
-														size="icon"
-														className="h-8 w-8"
-														onClick={async () => {
-															const { data, error } =
-																await actions.cart.updateCartItem({
-																	productId: item.products.id.toString(),
-																	decrement: true,
-																});
+												key={item.products.id}
+												className="flex items-center gap-4 p-4 bg-card rounded-lg shadow-sm">
+												<div className="w-20 h-20 rounded-lg overflow-hidden bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center shrink-0 border border-border/50">
+													{imageUrl ? (
+														<img
+															src={imageUrl}
+															alt={item.products.name}
+															className="w-full h-full object-contain p-2"
+														/>
+													) : (
+														<span className="text-xs text-muted-foreground text-center px-2">
+															No image
+														</span>
+													)}
+												</div>
+												<div className="flex-1">
+													<h3 className="font-medium">{item.products.name}</h3>
+													<p
+														className="text-sm"
+														style={{ color: 'var(--foreground)' }}>
+														${item.products.price}
+													</p>
+													<div className="flex items-center gap-2 mt-2">
+														<Button
+															variant="outline"
+															size="icon"
+															className="h-8 w-8"
+															onClick={async () => {
+																const { data, error } =
+																	await actions.cart.updateCartItem({
+																		productId: item.products.id.toString(),
+																		decrement: true,
+																	});
 
-															if (!error) {
-																setCart(data.cart);
-															}
-														}}>
-														<Minus className="h-4 w-4" />
-													</Button>
-													<span className="w-8 text-center">
-														{item.cart.quantity}
-													</span>
-													<Button
-														variant="outline"
-														size="icon"
-														className="h-8 w-8"
-														onClick={async () => {
-															const { data, error } =
-																await actions.cart.updateCartItem({
-																	productId: item.products.id.toString(),
-																	increment: true,
-																});
+																if (!error) {
+																	setCart(data.cart);
+																}
+															}}>
+															<Minus className="h-4 w-4" />
+														</Button>
+														<span className="w-8 text-center">
+															{item.cart.quantity}
+														</span>
+														<Button
+															variant="outline"
+															size="icon"
+															className="h-8 w-8"
+															onClick={async () => {
+																const { data, error } =
+																	await actions.cart.updateCartItem({
+																		productId: item.products.id.toString(),
+																		increment: true,
+																	});
 
-															if (!error) {
-																setCart(data.cart);
-															}
-														}}>
-														<Plus className="h-4 w-4" />
-													</Button>
-													<Button
-														variant="ghost"
-														size="icon"
-														className="h-8 w-8 ml-auto text-destructive"
-														onClick={async () => {
-															const { data, error } =
-																await actions.cart.deleteCartItem({
-																	productId: item.products.id.toString(),
-																});
+																if (!error) {
+																	setCart(data.cart);
+																}
+															}}>
+															<Plus className="h-4 w-4" />
+														</Button>
+														<Button
+															variant="ghost"
+															size="icon"
+															className="h-8 w-8 ml-auto text-destructive"
+															onClick={async () => {
+																const { data, error } =
+																	await actions.cart.deleteCartItem({
+																		productId: item.products.id.toString(),
+																	});
 
-															if (!error) {
-																setCart(data.cart);
-															}
-														}}>
-														<Trash2 className="h-4 w-4" />
-													</Button>
+																if (!error) {
+																	setCart(data.cart);
+																}
+															}}>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</div>
 												</div>
 											</div>
-										</div>
-									))}
+										);
+									})}
 								</div>
 							</>
 						)}

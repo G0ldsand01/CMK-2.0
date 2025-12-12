@@ -1,313 +1,246 @@
 ---
+import { 
+	CheckCircle2, 
+	Handshake, 
+	Heart, 
+	Keyboard,
+	Lightbulb, 
+	Mouse,
+	Palette,
+	Shield,
+	Sparkles,
+	Star, 
+	Target, 
+	Users 
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '../layouts/Layout.astro';
 ---
+
 <Layout title="About Us" navbar={true}>
-	<div class="title">
-		<h1>About Us</h1>
-	</div>
-	<div class="about-us">
-		<div class="section-container">
-			<div class="image-content left">
-				<img src="https://picsum.photos/200/300" alt="Placeholder Image 1">
+	<div class="max-w-7xl mx-auto px-4 py-20 pt-30">
+		{/* Hero Section */}
+		<div class="text-center space-y-6 mb-16">
+			<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+				<Sparkles class="size-8 text-primary" />
 			</div>
-			<div class="text-content right">
-				<h2>Who Are We?</h2>
-				<p>
-					CMK is a leading provider of customized computer peripherals,
-					dedicated to enhancing your computing experience. Our team of experts
-					is passionate about technology and design, ensuring that every product
-					we create meets the highest standards of quality and performance.
-				</p>
-				<p>
-					We understand that every user has unique needs and preferences. That's
-					why we offer a wide range of customizable options for our keyboards
-					and mice, allowing you to create the perfect setup for your style and
-					performance requirements. Whether you're a gamer, designer, or
-					professional, we've got you covered.
-				</p>
+			<h1 class="text-5xl font-bold tracking-tight">About CMK</h1>
+			<p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+				Your go-to destination for premium customized computer peripherals. 
+				We specialize in tailoring keyboards and mice to suit your style, performance needs, and comfort.
+			</p>
+		</div>
+
+		{/* Who Are We Section */}
+		<div class="mb-16">
+			<Card class="overflow-hidden my-12">
+				<div class="grid md:grid-cols-2 gap-0">
+			<div class="relative aspect-square md:aspect-auto bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center p-0 w-[350px] h-[350px] ml-[87px] mr-[87px]">
+				<Users class="size-24 text-primary/30" />
+			</div>
+					<CardContent class="p-8 md:p-12 flex flex-col justify-center">
+						<CardTitle class="text-3xl mb-4">Who Are We?</CardTitle>
+						<CardDescription class="text-base mb-4">
+							CMK is a leading provider of customized computer peripherals, dedicated to enhancing your computing experience. 
+							Our team of experts is passionate about technology and design, ensuring that every product we create meets 
+							the highest standards of quality and performance.
+						</CardDescription>
+						<p class="text-muted-foreground">
+							We understand that every user has unique needs and preferences. That's why we offer a wide range of 
+							customizable options for our keyboards and mice, allowing you to create the perfect setup for your style 
+							and performance requirements. Whether you're a gamer, designer, or professional, we've got you covered.
+						</p>
+					</CardContent>
+				</div>
+			</Card>
+		</div>
+
+		{/* Mission & Values */}
+		<div class="grid md:grid-cols-2 gap-8 mb-16">
+			<Card>
+				<CardHeader>
+					<div class="flex items-center gap-3 mb-2">
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+							<Target class="size-6" />
+						</div>
+						<CardTitle class="text-2xl">Our Mission</CardTitle>
+					</div>
+				</CardHeader>
+				<CardContent>
+					<p class="text-muted-foreground leading-relaxed">
+						At CMK, our mission is to revolutionize the way you interact with your computer. We believe that every 
+						individual has unique preferences, and our goal is to offer custom solutions that elevate comfort, 
+						efficiency, and performance. We aim to empower gamers, creatives, and professionals by providing 
+						high-quality peripherals that are designed for excellence.
+					</p>
+				</CardContent>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<div class="flex items-center gap-3 mb-2">
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+							<Heart class="size-6" />
+						</div>
+						<CardTitle class="text-2xl">Our Values</CardTitle>
+					</div>
+				</CardHeader>
+				<CardContent>
+					<p class="text-muted-foreground leading-relaxed">
+						Customer satisfaction is our top priority. Our team of experts is always ready to assist you with 
+						personalized recommendations and support, ensuring a seamless customization experience. We use only 
+						the finest materials to deliver peripherals that offer both style and function.
+					</p>
+				</CardContent>
+			</Card>
+		</div>
+
+		{/* What We Offer */}
+		<div class="mb-16">
+			<div class="text-center mb-8">
+				<h2 class="text-3xl font-bold mb-2">What We Offer</h2>
+				<p class="text-muted-foreground">Premium features and customization options</p>
+			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<Keyboard class="size-6" />
+						</div>
+						<CardTitle>Custom Mechanical Keyboards</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							Fully customizable mechanical keyboards with switch and keycap options to match your style and performance needs.
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<Mouse class="size-6" />
+						</div>
+						<CardTitle>Personalized Gaming Mice</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							Ergonomic gaming mice with personalized enhancements designed for precision and comfort during long gaming sessions.
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<Palette class="size-6" />
+						</div>
+						<CardTitle>RGB Lighting & Software</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							RGB lighting and software customization for an immersive experience that reflects your personality.
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<Shield class="size-6" />
+						</div>
+						<CardTitle>Premium Materials</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							Only the finest materials ensuring durability and longevity for products that last.
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<Star class="size-6" />
+						</div>
+						<CardTitle>Limited Edition Designs</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							Exclusive limited-edition designs and collaborations that you won't find anywhere else.
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card class="hover:shadow-lg transition-shadow">
+					<CardHeader>
+						<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4">
+							<CheckCircle2 class="size-6" />
+						</div>
+						<CardTitle>Quality Assurance</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p class="text-sm text-muted-foreground">
+							Every product undergoes rigorous testing to ensure superior performance and longevity.
+						</p>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 
-		<div class="section-container">
-			<div class="text-content left">
-				<p>
-					Welcome to CMK, your go-to destination for premium customized computer
-					peripherals. We specialize in tailoring keyboards and mice to suit
-					your style, performance needs, and comfort. Whether you are a gamer,
-					designer, or office professional, we provide high-quality, durable,
-					and aesthetically crafted products to enhance your experience.
-				</p>
+		{/* Community Section */}
+		<Card class="mb-16 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+			<CardContent class="p-8 md:p-12">
+				<div class="grid md:grid-cols-2 gap-8 items-center">
+					<div>
+						<div class="flex items-center gap-3 mb-4">
+							<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary">
+								<Users class="size-6" />
+							</div>
+							<CardTitle class="text-3xl">Join the CMK Community</CardTitle>
+						</div>
+						<p class="text-muted-foreground text-lg leading-relaxed">
+							Beyond just products, CMK is a growing community of tech enthusiasts who share a passion for 
+							innovation and customization. Join us on our journey by following us on social media, participating 
+							in our exclusive events, and staying updated on our latest designs.
+						</p>
+					</div>
+					<div class="relative aspect-square bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg flex items-center justify-center">
+						<Heart class="size-24 text-primary/30" />
+					</div>
+				</div>
+			</CardContent>
+		</Card>
 
-				<h2>Our Mission</h2>
-				<p>
-					At CMK, our mission is to revolutionize the way you interact with your
-					computer. We believe that every individual has unique preferences, and
-					our goal is to offer custom solutions that elevate comfort,
-					efficiency, and performance. We aim to empower gamers, creatives, and
-					professionals by providing high-quality peripherals that are designed
-					for excellence.
+		{/* Call to Action */}
+		<Card class="mb-16 mt-16 border-2 border-primary/20">
+			<CardContent class="p-8 md:p-12 text-center">
+				<div class="flex items-center justify-center gap-3 mb-4">
+					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+						<Handshake class="size-5" />
+					</div>
+					<CardTitle class="text-3xl">Want to Give Us a Hand?</CardTitle>
+				</div>
+				<CardDescription class="text-base mt-4 mb-4 max-w-2xl mx-auto w-[920px] text-center ml-[61px] mr-[61px]">
+					We're always looking for new ideas and ways to improve our products. If you have a creative idea or a 
+					unique feature request, please don't hesitate to reach out to us. Your input is invaluable in shaping 
+					the future of CMK.
+				</CardDescription>
+				<p class="text-muted-foreground mb-8 max-w-2xl mx-auto pt-8 pb-8">
+					We're also open to collaborations and partnerships. If you're interested in working together, please reach 
+					out to us. Together, we can create innovative solutions that push the boundaries of what's possible.
 				</p>
-
-				<h2>What We Offer</h2>
-				<ul>
-					<li>
-						Fully customizable mechanical keyboards with switch and keycap
-						options
-					</li>
-					<li>Personalized gaming mice with ergonomic enhancements</li>
-					<li>
-						RGB lighting and software customization for an immersive experience
-					</li>
-					<li>Premium materials ensuring durability and longevity</li>
-					<li>Exclusive limited-edition designs and collaborations</li>
-				</ul>
-			</div>
-			<div class="image-content right">
-				<img src="https://picsum.photos/200/300" alt="Placeholder Image 2">
-			</div>
-		</div>
-
-		<div class="section-container">
-			<div class="image-content left">
-				<img src="https://picsum.photos/200/300" alt="Placeholder Image 3">
-			</div>
-			<div class="text-content right">
-				<p>
-					Our commitment to quality sets us apart. Every product we create
-					undergoes rigorous testing to ensure superior performance and
-					longevity. We use only the finest materials to deliver peripherals
-					that offer both style and function.
-				</p>
-				<p>
-					Customer satisfaction is our top priority. Our team of experts is
-					always ready to assist you with personalized recommendations and
-					support, ensuring a seamless customization experience.
-				</p>
-			</div>
-		</div>
-
-		<div class="section-container">
-			<div class="text-content left">
-				<h2>Join the CMK Community</h2>
-				<p>
-					Beyond just products, CMK is a growing community of tech enthusiasts
-					who share a passion for innovation and customization. Join us on our
-					journey by following us on social media, participating in our
-					exclusive events, and staying updated on our latest designs.
-				</p>
-			</div>
-			<div class="image-content right">
-				<img src="https://picsum.photos/200/300" alt="Placeholder Image 4">
-			</div>
-		</div>
-
-		<div class="section-container last">
-			<div class="image-content left">
-				<img src="https://picsum.photos/200/300" alt="Placeholder Image 5">
-			</div>
-			<div class="text-content right">
-				<h2>Want to give us a hand?</h2>
-				<p>
-					We're always looking for new ideas and ways to improve our products.
-					If you have a creative idea or a unique feature request, please don't
-					hesitate to reach out to us. Your input is invaluable in shaping the
-					future of CMK.
-				</p>
-				<p>
-					We're also open to collaborations and partnerships. If you're
-					interested in working together, please reach out to us. Together, we
-					can create innovative solutions that push the boundaries of what's
-					possible.
-				</p>
-				<a href="/contact" rel="noopener noreferrer">
-					<button>Get in Touch</button>
-				</a>
-			</div>
-		</div>
+				<div class="flex justify-center">
+					<a href="/contact">
+						<Button size="lg" class="gap-2">
+							<Lightbulb class="size-4" />
+							Get in Touch
+						</Button>
+					</a>
+				</div>
+			</CardContent>
+		</Card>
 	</div>
 </Layout>
-
-<style>
-.image-content img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	border-radius: 8px;
-}
-.title {
-	margin-top: 10rem;
-	text-align: center;
-	margin-bottom: 3rem;
-}
-
-.title h1 {
-	font-size: 2.5rem;
-	font-weight: 600;
-	color: var(--color-foreground);
-}
-
-.about-us {
-	padding: 20px;
-	max-width: 1200px;
-	margin: 0 auto;
-}
-
-.section-container {
-	display: flex;
-	margin-bottom: 3rem;
-	gap: 20px;
-	align-items: stretch; /* Make items the same height */
-}
-
-.image-content {
-	flex: 1;
-	display: flex;
-}
-
-.text-content {
-	flex: 1;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-}
-
-.image-content img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	border-radius: 8px;
-}
-
-.left {
-	order: -1; /* Image on the left */
-}
-
-.right {
-	order: 1; /* Text on the right */
-}
-
-.text-content h2 {
-	font-size: 2rem;
-	color: var(--color-foreground);
-	margin-bottom: 1rem;
-}
-
-.text-content p {
-	font-size: 1.1rem;
-	line-height: 1.7;
-	color: var(--color-foreground);
-	margin-bottom: 1.5rem;
-}
-
-.text-content ul {
-	list-style-type: none;
-	padding: 0;
-	margin-bottom: 1.5rem;
-}
-
-.text-content ul li {
-	font-size: 1.1rem;
-	line-height: 1.5;
-	color: var(--color-foreground);
-	margin-bottom: 0.8rem;
-	position: relative;
-	padding-left: 1.5rem; /* Space for bullet/icon */
-}
-
-.text-content ul li::before {
-	content: "•"; /* You can replace this with a checkmark or other icon */
-	color: #27ae60;
-	position: absolute;
-	left: 0;
-	top: 0.2rem;
-	font-size: 1rem;
-}
-
-.last {
-	margin-bottom: 6rem; /* Add some extra space at the end */
-}
-
-.last .text-content {
-	align-items: center;
-	text-align: right; /* Align text to the right in the last section */
-}
-
-.last .image-content {
-	order: -1; /* Image on the left in the last section */
-}
-
-.last h2 {
-	font-size: 2rem;
-	color: var(--color-foreground);
-	margin-bottom: 1rem;
-}
-
-.last p {
-	font-size: 1.1rem;
-	color: var(--color-foreground);
-	margin-bottom: 1rem;
-}
-
-.last a {
-	text-decoration: none;
-}
-
-.last button {
-	background-color: transparent;
-	color: var(--color-primary);
-	font-size: 1.1rem;
-	font-weight: 600;
-	padding: 0.8rem 1.5rem;
-	border: 2px solid var(--color-primary);
-	border-radius: 5px;
-	cursor: pointer;
-	transition:
-		background-color 0.3s ease,
-		color 0.3s ease;
-}
-
-.last button:hover {
-	background-color: var(--color-primary);
-	color: var(--color-background);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-	.section-container {
-		flex-direction: column;
-		text-align: center;
-	}
-
-	.image-content {
-		order: 0;
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		margin-bottom: 1rem;
-	}
-
-	.image-content img {
-		max-width: 80%;
-		height: auto;
-		border-radius: 8px;
-	}
-
-	.text-content {
-		padding: 10px 5px;
-	}
-
-	.text-content h2 {
-		font-size: 1.6rem;
-	}
-
-	.text-content p,
-	.text-content ul li {
-		font-size: 1rem;
-	}
-
-	.last .text-content {
-		text-align: center;
-	}
-}
-</style>

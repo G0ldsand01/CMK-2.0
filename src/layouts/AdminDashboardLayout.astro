@@ -26,7 +26,11 @@ const userData = {
 ---
 
 <Layout title={title} navbar={false}>
-  <AdminSidebar userData={userData} breadcrumb={breadcrumb} client:load>
+  <AdminSidebar
+    userData={userData}
+    breadcrumb={breadcrumb}
+    client:only="react"
+  >
     <slot />
   </AdminSidebar>
 </Layout>
@@ -36,9 +40,5 @@ const userData = {
   body {
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
-  }
-
-  .sidebar {
-    background-color: var(--color-sidebar);
   }
 </style>

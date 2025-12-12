@@ -72,139 +72,181 @@ const mainImage = images[0]?.image?.image;
   {
     product ? (
       <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
-        <Card>
-          <CardContent className="p-6 relative">
-            {user && (
-              <button
-                class={`absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-md
-              ${isInWishlist ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'}
-              transition-all duration-200 hover:scale-110 hover:shadow-lg active:scale-95`}
-                id="add-to-wishlist-button"
-                aria-label={
-                  isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
-                }
-              >
-                <Heart
-                  className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
-                />
-              </button>
-            )}
-            <div data-product-id={id}>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left column - Image */}
-                <div class="relative">
+        {/* Breadcrumb */}
+        <nav class="mb-6 text-sm text-muted-foreground">
+          <a href="/" class="hover:text-foreground transition-colors">Home</a>
+          <span class="mx-2">/</span>
+          <a href="/products" class="hover:text-foreground transition-colors">Products</a>
+          <span class="mx-2">/</span>
+          <span class="text-foreground">{product.name}</span>
+        </nav>
+
+        <div data-product-id={id}>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            {/* Left column - Image Gallery */}
+            <div class="space-y-4">
+              <Card class="overflow-hidden border-2">
+                <CardContent class="p-0 relative">
+                  {user && (
+                    <button
+                      class={`absolute top-4 right-4 z-20 p-3 rounded-full bg-background/90 backdrop-blur-sm shadow-lg
+                    ${isInWishlist ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'}
+                    transition-all duration-200 hover:scale-110 hover:shadow-xl active:scale-95`}
+                      id="add-to-wishlist-button"
+                      aria-label={
+                        isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
+                      }
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
+                      />
+                    </button>
+                  )}
                   {images.length > 0 ? (
-                    <img
-                      src={`${CDN_URL}/${mainImage || ''}`}
-                      alt={product.name}
-                      class="rounded-lg w-full h-auto object-cover"
-                      id="main-product-image"
-                    />
+                    <div class="relative aspect-square bg-gradient-to-br from-muted/50 to-muted/30">
+                      <img
+                        src={`${CDN_URL}/${mainImage || ''}`}
+                        alt={product.name}
+                        class="w-full h-full object-contain p-8 transition-opacity duration-300"
+                        id="main-product-image"
+                      />
+                    </div>
                   ) : (
-                    <div class="rounded-lg w-full aspect-square bg-muted flex items-center justify-center">
+                    <div class="aspect-square bg-muted flex items-center justify-center">
                       <span class="text-muted-foreground">
                         No image available
                       </span>
                     </div>
                   )}
+                </CardContent>
+              </Card>
 
-                  {/* Image Carousel */}
-                  {images.length > 0 && (
-                    <div class="mt-4">
-                      <div class="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory image-carousel">
-                        {images.map(
-                          (image) =>
-                            image.image && (
-                              <button
-                                type="button"
-                                class={`snap-start shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                                  image.image.image === mainImage
-                                    ? 'border-primary'
-                                    : 'border-transparent hover:border-primary'
-                                } transition-colors`}
-                                data-image-path={image.image.image}
-                              >
-                                <img
-                                  src={`${CDN_URL}/${image.image.image}`}
-                                  alt={product.name}
-                                  class="w-full h-full object-cover"
-                                  loading="lazy"
-                                />
-                              </button>
-                            )
-                        )}
-                      </div>
-                    </div>
+              {/* Image Thumbnails */}
+              {images.length > 1 && (
+                <div class="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory image-carousel scrollbar-hide">
+                  {images.map(
+                    (image) =>
+                      image.image && (
+                        <button
+                          type="button"
+                          class={`snap-start shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all ${
+                            image.image.image === mainImage
+                              ? 'border-primary shadow-md scale-105'
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                          data-image-path={image.image.image}
+                        >
+                          <img
+                            src={`${CDN_URL}/${image.image.image}`}
+                            alt={product.name}
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </button>
+                      )
                   )}
                 </div>
-
-                {/* Right column - Content */}
-                <div class="flex flex-col">
-                  <CardHeader className="px-0">
-                    <CardTitle className="text-3xl">{product.name}</CardTitle>
-                    <CardDescription className="text-base">
-                      {product.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <div class="mb-6">
-                    <span class="text-2xl font-bold">
-                      ${Number(product.price).toFixed(2) || '0.00'}
-                    </span>
-                  </div>
-                  <CardFooter className="px-0 mt-auto">
-                    <div class="flex gap-4 w-full">
-                      {user && (
-                        <>
-                          <Cart
-                            classes="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
-                            variant="outline"
-                            server:defer
-                          >
-                            <ShoppingCart /> View Cart
-                          </Cart>
-                          <Button
-                            id="add-to-cart-button"
-                            className="flex-1 font-bold py-2 px-4 rounded flex items-center gap-2"
-                            client:load
-                            server:defer
-                          >
-                            <ShoppingCart /> Add to Cart
-                          </Button>
-                        </>
-                      )}
-                      {!user && (
-                        <a href="/login" class="w-full">
-                          <Button
-                            id="add-to-cart-button"
-                            className="w-full font-bold py-2 px-4 rounded flex items-center gap-2 justify-center"
-                          >
-                            <ShoppingCart /> Login to Add to Cart
-                          </Button>
-                        </a>
-                      )}
-                    </div>
-                  </CardFooter>
-                </div>
-              </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Review section below */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Reviews</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ReviewSection product={product} />
-          </CardContent>
-        </Card>
+            {/* Right column - Product Info */}
+            <div class="flex flex-col space-y-6">
+              <div>
+                <CardHeader class="px-0 pt-0">
+                  <CardTitle class="text-4xl font-bold mb-3">{product.name}</CardTitle>
+                  <CardDescription class="text-lg leading-relaxed">
+                    {product.description}
+                  </CardDescription>
+                </CardHeader>
+              </div>
+
+              {/* Price Section */}
+              <div class="flex items-baseline gap-3 py-4 border-y">
+                <span class="text-sm text-muted-foreground uppercase tracking-wide">Price</span>
+                <span class="text-4xl font-bold text-primary">
+                  ${Number(product.price).toFixed(2) || '0.00'}
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div class="space-y-3 pt-4">
+                {user && (
+                  <>
+                    <Button
+                      id="add-to-cart-button"
+                      size="lg"
+                      class="w-full font-semibold text-base h-12 gap-2"
+                      client:load
+                      server:defer
+                    >
+                      <ShoppingCart class="w-5 h-5" />
+                      Add to Cart
+                    </Button>
+                    <Cart
+                      classes="w-full font-semibold text-base h-12 gap-2"
+                      variant="outline"
+                      server:defer
+                    >
+                      <ShoppingCart class="w-5 h-5" />
+                      View Cart
+                    </Cart>
+                  </>
+                )}
+                {!user && (
+                  <a href="/login" class="w-full block">
+                    <Button
+                      id="add-to-cart-button"
+                      size="lg"
+                      class="w-full font-semibold text-base h-12 gap-2"
+                    >
+                      <ShoppingCart class="w-5 h-5" />
+                      Login to Add to Cart
+                    </Button>
+                  </a>
+                )}
+              </div>
+
+              {/* Product Details */}
+              <Card class="bg-muted/30">
+                <CardContent class="p-6">
+                  <h3 class="font-semibold mb-4 text-lg">Product Details</h3>
+                  <div class="space-y-2 text-sm text-muted-foreground">
+                    <p>Premium quality materials and craftsmanship</p>
+                    <p>Customizable to your preferences</p>
+                    <p>Fast and secure shipping</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Review section */}
+          <Card class="mt-12">
+            <CardHeader>
+              <CardTitle class="text-2xl">Customer Reviews</CardTitle>
+              <CardDescription>
+                See what our customers are saying about this product
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ReviewSection product={product} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     ) : (
       <div class="max-w-7xl mx-auto px-4 py-8">
         <Card>
-          <CardContent className="p-6">
-            <h1 class="text-2xl font-bold">Product not found</h1>
+          <CardContent class="p-12 text-center">
+            <div class="space-y-4">
+              <h1 class="text-3xl font-bold">Product not found</h1>
+              <p class="text-muted-foreground">
+                The product you're looking for doesn't exist or has been removed.
+              </p>
+              <a href="/products">
+                <Button>Browse Products</Button>
+              </a>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { ShoppingBag } from 'lucide-react';
 import FullPageCart from '@/components/cart/FullPageCart';
 import { Button } from '@/components/ui/button';
-import { cartTable, productsTable } from '@/db/schema';
+import { cartTable, imageTable, productImageTable, productsTable } from '@/db/schema';
 import Layout from '@/layouts/Layout.astro';
 import db from '@/lib/db';
 
@@ -20,11 +20,35 @@ const getCurrentUser = () => {
 const user = await getCurrentUser();
 if (!user) return Astro.redirect('/login');
 
-const cart = await db
-	.select()
+// Load cart items with product images
+const cartItems = await db
+	.select({
+		cart: cartTable,
+		products: productsTable,
+	})
 	.from(cartTable)
 	.where(eq(cartTable.userId, user.id))
 	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+
+// Load images for each product
+const cart = await Promise.all(
+	cartItems.map(async (item) => {
+		const [firstImage] = await db
+			.select({
+				image: imageTable,
+			})
+			.from(productImageTable)
+			.where(eq(productImageTable.productId, item.products.id))
+			.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+			.orderBy(productImageTable.priority)
+			.limit(1);
+
+		return {
+			...item,
+			image: firstImage?.image?.image || null,
+		};
+	})
+);
 ---
 <Layout title="Your Cart" navbar={true} cart={false}>
 	<main class="max-w-4xl mx-auto px-4 py-10 mt-25">

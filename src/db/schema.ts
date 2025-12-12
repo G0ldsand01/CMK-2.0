@@ -161,6 +161,61 @@ export const reviewsTable = pgTable(
 	],
 );
 
+export const securityLogsTable = pgTable(
+	'security_logs',
+	{
+		id: serial('id').primaryKey(),
+		event: text('event').notNull(),
+		userId: text('userId').notNull(),
+		details: jsonb('details'),
+		ip: text('ip'),
+		userAgent: text('user_agent'),
+		createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+	},
+	(table) => [
+		index('event_idx').on(table.event),
+		index('user_id_idx').on(table.userId),
+		index('created_at_idx').on(table.createdAt),
+	],
+);
+
+export const notificationsTable = pgTable(
+	'notifications',
+	{
+		id: serial('id').primaryKey(),
+		userId: text('userId')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		title: text('title').notNull(),
+		message: text('message').notNull(),
+		type: text('type').notNull().default('info'), // info, warning, error, success
+		read: boolean('read').notNull().default(false),
+		createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+	},
+	(table) => [
+		index('user_id_idx').on(table.userId),
+		index('read_idx').on(table.read),
+		index('created_at_idx').on(table.createdAt),
+	],
+);
+
+export const emailTemplatesTable = pgTable(
+	'email_templates',
+	{
+		id: serial('id').primaryKey(),
+		name: text('name').notNull(),
+		subject: text('subject').notNull(),
+		body: text('body').notNull(),
+		type: text('type').notNull().default('custom'), // order_confirmation, password_reset, welcome, custom
+		createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+		updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow(),
+	},
+	(table) => [
+		index('type_idx').on(table.type),
+		index('created_at_idx').on(table.createdAt),
+	],
+);
+
 export type UserRole = 'user' | 'admin';
 
 export const wishlistTable = pgTable('wishlist', {

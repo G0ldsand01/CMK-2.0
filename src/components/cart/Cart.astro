@@ -1,6 +1,6 @@
 ---
-import { eq } from 'drizzle-orm';
-import { cartTable, productsTable } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { cartTable, imageTable, productImageTable, productsTable } from '@/db/schema';
 import db from '@/lib/db';
 import InternalCart from './InternalCart';
 
@@ -32,11 +32,35 @@ if (!user) {
 	return null;
 }
 
-const cart = await db
-	.select()
+// Load cart items with product images
+const cartItems = await db
+	.select({
+		cart: cartTable,
+		products: productsTable,
+	})
 	.from(cartTable)
 	.where(eq(cartTable.userId, user.id))
 	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+
+// Load images for each product
+const cart = await Promise.all(
+	cartItems.map(async (item) => {
+		const [firstImage] = await db
+			.select({
+				image: imageTable,
+			})
+			.from(productImageTable)
+			.where(eq(productImageTable.productId, item.products.id))
+			.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+			.orderBy(productImageTable.priority)
+			.limit(1);
+
+		return {
+			...item,
+			image: firstImage?.image?.image || null,
+		};
+	})
+);
 ---
 <InternalCart newCart={cart} client:load classes={classes} variant={variant}>
 	<slot/>

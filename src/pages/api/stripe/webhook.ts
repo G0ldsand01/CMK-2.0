@@ -99,6 +99,7 @@ export const POST: APIRoute = async ({ request }) => {
 					break;
 				}
 
+				// Update order status and store payment intent ID in metadata if possible
 				const result = await db
 					.update(ordersTable)
 					.set({ status: 'paid' })
@@ -108,6 +109,8 @@ export const POST: APIRoute = async ({ request }) => {
 				log(
 					'Updated order status to paid for session:',
 					paymentIntent.metadata.sessionId,
+					'Payment Intent ID:',
+					paymentIntent.id,
 					'Update result:',
 					result,
 				);

@@ -3,7 +3,6 @@ import {
 	CircuitBoard,
 	Heart,
 	HelpCircle,
-	History,
 	HomeIcon,
 	Package,
 	Settings,
@@ -76,11 +75,6 @@ const data = {
 					icon: Package,
 				},
 				{
-					title: 'Order History',
-					url: '/dashboard/orders',
-					icon: History,
-				},
-				{
 					title: 'Wishlist',
 					url: '/dashboard/wishlist',
 					icon: Heart,
@@ -91,19 +85,9 @@ const data = {
 			title: 'Preferences',
 			items: [
 				{
-					title: 'Profile Settings',
-					url: '/dashboard/settings',
-					icon: User,
-				},
-				{
-					title: 'Account Settings',
+					title: 'Settings',
 					url: '/dashboard/settings',
 					icon: Settings,
-				},
-				{
-					title: 'Notifications',
-					url: '/dashboard/settings',
-					icon: Bell,
 				},
 			],
 		},

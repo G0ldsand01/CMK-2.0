@@ -1,0 +1,29 @@
+---
+import SettingsManager from '@/components/admin/settings/SettingsManager';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+---
+<AdminDashboardLayout
+	title="Settings"
+	breadcrumb={{
+  '/settings': 'Settings',
+}}
+>
+	<div class="space-y-6 p-6">
+		<div class="space-y-2">
+			<h1 class="text-3xl font-bold tracking-tight">Settings</h1>
+			<p class="text-muted-foreground text-lg">
+				Manage system settings and configuration
+			</p>
+		</div>
+
+		<SettingsManager client:load />
+	</div>
+</AdminDashboardLayout>
+

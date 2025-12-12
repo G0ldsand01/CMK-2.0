@@ -4,6 +4,7 @@ import { cartAtom } from '@/store';
 export type CartItem = {
 	products: typeof productsTable.$inferSelect;
 	cart: typeof cartTable.$inferSelect;
+	image?: string | null;
 };
 
 export function setCart(cart: CartItem[]) {
@@ -12,6 +13,7 @@ export function setCart(cart: CartItem[]) {
 		cartAtom.setKey(item.products.id.toString(), {
 			products: item.products,
 			cart: item.cart,
+			image: item.image || null,
 		});
 	}
 

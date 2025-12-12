@@ -5,6 +5,7 @@ import cmkLogo from "public/cmklogo.png";
 import Cart from "@/components/cart/Cart.astro";
 import CartItemCount from "@/components/cart/CartItemCount.tsx";
 import { HeaderUserMenu } from "./HeaderUserMenu";
+import NotificationBell from "./NotificationBell";
 import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
 import { getCurrentUser } from "@/lib/auth-server";
@@ -37,6 +38,7 @@ const user = await getCurrentUser(Astro.request as Request);
     user ? (
       <div id="auth-buttons" class="login">
         <div class="flex items-center gap-4">
+          <NotificationBell userId={user.id} client:load />
           <HeaderUserMenu
             userData={{
               id: user.id,
