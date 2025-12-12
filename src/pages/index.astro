@@ -37,7 +37,7 @@ const bestProducts = bestProductsActions.data || [];
       {
         bestProducts &&
           bestProducts.map((product) => (
-            <ProductCard product={product} server:defer />
+            <ProductCard product={product} client:load />
           ))
       }
     </div>

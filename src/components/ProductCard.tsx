@@ -1,6 +1,6 @@
 import { CDN_URL } from 'astro:env/client';
 import { ArrowRight, Tag } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type { ProductWithImages } from '@/store';
 import { ProductsContext } from './ProductGrid';
 import { Badge } from './ui/badge';
@@ -12,34 +12,62 @@ export default function ProductCard({
 }: {
 	product: ProductWithImages;
 }) {
-	const { categories } = useContext(ProductsContext);
+	const context = useContext(ProductsContext);
+	const categories = context?.categories || [];
 	const category = categories.find(
 		(category) => category.id === product.category,
 	);
 	const [imageLoaded, setImageLoaded] = useState(false);
+	const [hasError, setHasError] = useState(false);
+
+	// Set imageLoaded to true if no image exists, CDN_URL is missing, or after a timeout
+	useEffect(() => {
+		// Reset states when product changes
+		setImageLoaded(false);
+		setHasError(false);
+
+		if (!product.images?.[0]?.image || !CDN_URL) {
+			setImageLoaded(true);
+			return;
+		}
+
+		// Fallback: if image doesn't load within 2 seconds, hide spinner
+		const timeout = setTimeout(() => {
+			if (!imageLoaded) {
+				setImageLoaded(true);
+			}
+		}, 2000);
+
+		return () => clearTimeout(timeout);
+	}, [product.images, product.id]);
 
 	return (
 		<Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 border-border/50">
 			{/* Image Container */}
 			<div className="relative aspect-square bg-gradient-to-br from-muted/50 to-muted/30 overflow-hidden">
 				<div className="absolute inset-0 flex items-center justify-center p-6">
-					<img
-						src={
-							product.images?.[0]?.image
-								? `${CDN_URL}${product.images[0].image}`
-								: ''
-						}
-						alt={product.name}
-						width={300}
-						height={300}
-						className={`w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 ${
-							imageLoaded ? 'opacity-100' : 'opacity-0'
-						}`}
-						onLoad={() => setImageLoaded(true)}
-					/>
+					{product.images?.[0]?.image && CDN_URL ? (
+						<img
+							src={`${CDN_URL}/${product.images[0].image}`}
+							alt={product.name}
+							width={300}
+							height={300}
+							className={`w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 ${
+								imageLoaded ? 'opacity-100' : 'opacity-0'
+							}`}
+							onLoad={() => {
+								setImageLoaded(true);
+							}}
+							onError={(e) => {
+								console.error('Image failed to load:', e);
+								setImageLoaded(true);
+							}}
+							loading="lazy"
+						/>
+					) : null}
 				</div>
-				{!imageLoaded && (
-					<div className="absolute inset-0 flex items-center justify-center">
+				{!imageLoaded && product.images?.[0]?.image && CDN_URL && (
+					<div className="absolute inset-0 flex items-center justify-center bg-muted/20">
 						<div className="h-12 w-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
 					</div>
 				)}
