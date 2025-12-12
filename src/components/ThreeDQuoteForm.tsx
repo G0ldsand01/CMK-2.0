@@ -321,9 +321,7 @@ export default function ThreeDQuoteForm() {
 					/>
 					<p className="text-lg text-muted-foreground">
 						Estimated Cost:{' '}
-						<span className="text-green-500 font-bold">
-							{cost.toFixed(2)} $
-						</span>
+						<span className="text-primary font-bold">{cost.toFixed(2)} $</span>
 					</p>
 					<div className="flex justify-between">
 						<Button onClick={prev}>Previous</Button>

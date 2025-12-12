@@ -1,8 +1,9 @@
 ---
 import { eq } from 'drizzle-orm';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, ShoppingCart } from 'lucide-react';
 import FullPageCart from '@/components/cart/FullPageCart';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { cartTable, imageTable, productImageTable, productsTable } from '@/db/schema';
 import Layout from '@/layouts/Layout.astro';
 import db from '@/lib/db';
@@ -51,25 +52,36 @@ const cart = await Promise.all(
 );
 ---
 <Layout title="Your Cart" navbar={true} cart={false}>
-	<main class="max-w-4xl mx-auto px-4 py-10 mt-25">
-		<h1 class="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+	<main class="max-w-6xl mx-auto px-4 py-8 mt-25">
+		<div class="space-y-6">
+			{/* Header */}
+			<div class="text-center space-y-2">
+				<h1 class="text-4xl font-bold tracking-tight">Your Cart</h1>
+				<p class="text-muted-foreground text-lg">
+					Review your items and proceed to checkout
+				</p>
+			</div>
 
-		{
-      cart.length === 0 ? (
-        <p class="text-center text-gray-500">Your cart is empty.</p>
-        <div class="flex justify-center items-center mt-10">
-          <a href="/products">
-            <Button variant="outline" className="w-full">
-              <ShoppingBag />
-              <span class="ml-2"> Continue Shopping</span>
-            </Button>
-          </a>
-        </div>
-      ) : (
-        <div class="space-y-6">
-          <FullPageCart newCart={cart} client:load />
-        </div>
-      )
-    }
+			{/* Cart Content */}
+			{cart.length === 0 ? (
+				<Card>
+					<CardContent className="flex flex-col items-center justify-center py-16">
+						<ShoppingCart className="size-20 text-muted-foreground mb-6" />
+						<h2 class="text-2xl font-semibold mb-2">Your cart is empty</h2>
+						<p class="text-muted-foreground text-center mb-8 max-w-md">
+							Looks like you haven't added any items to your cart yet. Start shopping to fill it up!
+						</p>
+						<a href="/products">
+							<Button variant="default" size="lg" className="gap-2">
+								<ShoppingBag className="size-5" />
+								Continue Shopping
+							</Button>
+						</a>
+					</CardContent>
+				</Card>
+			) : (
+				<FullPageCart newCart={cart} client:load />
+			)}
+		</div>
 	</main>
 </Layout>

@@ -1,6 +1,7 @@
 import { actions } from 'astro:actions';
 import { Bell, Plus, Trash2, RefreshCw, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -9,17 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import {
 	Dialog,
 	DialogContent,
@@ -28,6 +18,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import {
 	Table,
 	TableBody,
@@ -36,6 +35,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 
 type Notification = {
 	id: number;
@@ -157,7 +157,7 @@ export default function NotificationsManager() {
 				);
 			case 'success':
 				return (
-					<Badge variant="outline" className="border-green-500 text-green-500">
+					<Badge variant="outline" className="border-primary text-primary">
 						Success
 					</Badge>
 				);

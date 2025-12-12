@@ -1,6 +1,7 @@
 import { actions } from 'astro:actions';
 import { Mail, Plus, Edit, Trash2, Save, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -9,8 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
 	Dialog,
 	DialogContent,
@@ -19,7 +18,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
 	Select,
 	SelectContent,
@@ -27,7 +27,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 
 type EmailTemplate = {
 	id: number;
@@ -161,7 +161,7 @@ export default function EmailTemplatesManager() {
 				);
 			case 'welcome':
 				return (
-					<Badge variant="outline" className="border-green-500 text-green-500">
+					<Badge variant="outline" className="border-primary text-primary">
 						Welcome
 					</Badge>
 				);

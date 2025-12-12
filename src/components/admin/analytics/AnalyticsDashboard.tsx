@@ -8,6 +8,7 @@ import {
 	TrendingUp,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import {
 	Card,
 	CardContent,
@@ -15,7 +16,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 type AnalyticsData = {
 	revenue: {
@@ -71,8 +71,8 @@ export default function AnalyticsDashboard({
 			value: `$${data.revenue?.total?.toFixed(2) || '0.00'}`,
 			icon: DollarSign,
 			description: 'Total revenue from all sales',
-			color: 'text-green-600',
-			bgColor: 'bg-green-500/10',
+			color: 'text-primary',
+			bgColor: 'bg-primary/10',
 		},
 		{
 			title: 'Total Customers',

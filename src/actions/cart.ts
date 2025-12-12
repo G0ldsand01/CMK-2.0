@@ -155,14 +155,19 @@ export const cart = {
 					);
 
 				const cart = await tx
-					.select()
+					.select({
+						cart: cartTable,
+						products: productsTable,
+					})
 					.from(cartTable)
 					.where(eq(cartTable.userId, user.id))
 					.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
 
+				const cartWithImages = await loadCartWithImages(cart);
+
 				return {
 					success: true,
-					cart: cart,
+					cart: cartWithImages,
 				};
 			});
 		},

@@ -9,6 +9,8 @@ import {
 	RefreshCw,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -16,10 +18,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -28,6 +26,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type LogEntry = {
 	id: string;
@@ -87,7 +87,7 @@ export default function SecurityLogsViewer({
 				);
 			case 'success':
 				return (
-					<Badge variant="outline" className="border-green-500 text-green-500">
+					<Badge variant="outline" className="border-primary text-primary">
 						Success
 					</Badge>
 				);

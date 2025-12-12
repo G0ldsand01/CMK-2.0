@@ -75,7 +75,7 @@ import Layout from '../layouts/Layout.astro';
 							</div> -->
 						</CardContent>
 					</Card>
-
+<!-- 
 					<Card>
 						<CardHeader>
 							<CardTitle>Business Hours</CardTitle>
@@ -96,7 +96,7 @@ import Layout from '../layouts/Layout.astro';
 								</div>
 							</div>
 						</CardContent>
-					</Card>
+					</Card> -->
 				</div>
 
 				{/* Contact Form */}
@@ -191,14 +191,14 @@ import Layout from '../layouts/Layout.astro';
 				if (response.ok) {
 					// Show success message
 					submitButton.innerHTML = '<span class="mr-2">✓</span>Message Sent!';
-					submitButton.classList.add('bg-green-500', 'hover:bg-green-600');
+					submitButton.classList.add('bg-primary', 'hover:bg-primary/90');
 					form.reset();
 					
 					// Reset button after 3 seconds
 					setTimeout(() => {
 						submitButton.disabled = false;
 						submitButton.innerHTML = originalText;
-						submitButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+						submitButton.classList.remove('bg-primary', 'hover:bg-primary/90');
 					}, 3000);
 				} else {
 					throw new Error('Failed to send message');

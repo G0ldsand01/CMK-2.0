@@ -1,109 +1,171 @@
 ---
+import { 
+	ArrowRight,
+	CheckCircle2, 
+	Home, 
+	Mail, 
+	Package, 
+	ShoppingBag,
+	Sparkles,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '../layouts/Layout.astro';
-import '../styles/index.css';
-import '../styles/products.css';
-import { Home, ShoppingBag } from 'lucide-react';
 ---
+
 <Layout title="Order Completed" navbar={false}>
-	<div class="container">
-		<div class="succes-message">
-			<div class="icon-wrapper">
-				<ShoppingBag color="var(--color-foreground)" size={64}/>
+	<div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
+		<div class="w-full max-w-2xl">
+			{/* Success Animation Card */}
+			<Card className="border-2 border-primary/20 shadow-2xl overflow-hidden">
+				<CardHeader className="text-center pb-4">
+					<div class="relative mx-auto mb-6">
+						{/* Success Icon */}
+						<div class="relative">
+							<div class="relative bg-background border-2 border-primary rounded-full p-6 flex items-center justify-center">
+								<CheckCircle2 className="size-16 text-primary" />
+							</div>
+						</div>
+						{/* Sparkle effects */}
+						<Sparkles className="absolute -top-2 -right-2 size-6 text-primary animate-bounce" style={{ animationDelay: '0.2s' }} />
+						<Sparkles className="absolute -bottom-2 -left-2 size-5 text-primary animate-bounce" style={{ animationDelay: '0.4s' }} />
+					</div>
+					<CardTitle className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+						Order Confirmed!
+					</CardTitle>
+					<CardDescription className="text-lg">
+						Thank you for your purchase
+					</CardDescription>
+				</CardHeader>
+				
+				<CardContent className="space-y-6 pt-6">
+					{/* Success Message */}
+					<div class="text-center space-y-3">
+						<p class="text-lg text-muted-foreground">
+							Your order has been successfully processed and confirmed.
+						</p>
+						<div class="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+							<Mail className="size-4" />
+							<span>A confirmation email has been sent to your email address.</span>
+						</div>
+					</div>
+
+					{/* Order Info Badge */}
+					<div class="flex items-center justify-center gap-2">
+						<Badge variant="secondary" className="px-4 py-2 text-sm">
+							<Package className="size-4 mr-2" />
+							Your order is being prepared
+						</Badge>
+					</div>
+
+					{/* Divider */}
+					<div class="border-t border-border"></div>
+
+					{/* Next Steps */}
+					<div class="space-y-3">
+						<h3 class="font-semibold text-lg">What's Next?</h3>
+						<div class="space-y-2 text-sm text-muted-foreground">
+							<div class="flex items-start gap-3">
+								<div class="size-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+									<span class="text-primary font-semibold text-xs">1</span>
+								</div>
+								<p>You'll receive an email confirmation with your order details</p>
+							</div>
+							<div class="flex items-start gap-3">
+								<div class="size-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+									<span class="text-primary font-semibold text-xs">2</span>
+								</div>
+								<p>We'll notify you when your order ships</p>
+							</div>
+							<div class="flex items-start gap-3">
+								<div class="size-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+									<span class="text-primary font-semibold text-xs">3</span>
+								</div>
+								<p>Track your order from your dashboard</p>
+							</div>
+						</div>
+					</div>
+
+					{/* Action Buttons */}
+					<div class="flex flex-col sm:flex-row gap-3 pt-4">
+						<a href="/">
+							<Button 
+								className="flex-1 gap-2 group w-full"
+								size="lg">
+								<Home className="size-4" />
+								Go to Home
+								<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+							</Button>
+						</a>
+						<a href="/dashboard/orders">
+							<Button 
+								variant="outline"
+								className="flex-1 gap-2 group w-full"
+								size="lg">
+								<ShoppingBag className="size-4" />
+								View Orders
+								<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+							</Button>
+						</a>
+					</div>
+
+					{/* Support Message */}
+					<div class="pt-4 border-t border-border">
+						<p class="text-center text-sm text-muted-foreground">
+							Need help? <a href="/contact" class="text-primary hover:underline font-medium">Contact our support team</a>
+						</p>
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* Thank You Message */}
+			<div class="mt-6 text-center">
+				<p class="text-muted-foreground">
+					Thank you for choosing <span class="font-semibold text-primary">CMK</span>!
+				</p>
 			</div>
-			<h1>Thank you for your order!</h1>
-			<h2>A confirmation email has been sent to your email address.</h2>
-			<p>Thank you for choosing CMK!</p>
-			<p>If you have any questions, feel free to contact our support team.</p>
-			<button>
-				<a href="/"
-					><div class="button-icon">
-						<Home/>
-						Go to Home
-					</div></a
-				>
-			</button>
 		</div>
 	</div>
 </Layout>
 
 <style>
-html,
-body {
-	height: 100%;
-	margin: 0;
-	overflow-y: auto;
-	font-family: "Poppins", sans-serif;
-	background-color: var(--color-background);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
+	@keyframes ping {
+		75%, 100% {
+			transform: scale(2);
+			opacity: 0;
+		}
+	}
+	
+	@keyframes pulse {
+		0%, 100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: .5;
+		}
+	}
 
-.container {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	padding: 20px;
-	width: 100%;
-}
+	.animate-ping {
+		animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+	}
 
-.succes-message {
-	background: var(--color-muted);
-	padding: 40px;
-	border-radius: 12px;
-	box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
-	max-width: 520px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
+	.animate-pulse {
+		animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
 
-.icon-wrapper {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	margin-bottom: 20px;
-	padding: 1em;
-}
-.button-icon {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-}
-h1 {
-	color: #27ae60;
-	margin-bottom: 20px;
-	font-size: 2.2em;
-	font-weight: 600;
-}
-h2 {
-	color: var(--color-foreground);
-	margin-bottom: 15px;
-	font-size: 1.6em;
-	font-weight: 500;
-}
-p {
-	font-size: 1em;
-	color: var(--color-foreground);
-	line-height: 1.5;
-}
-button {
-	margin-top: 2rem;
-	padding: 0.75rem 1.5rem;
-	background-color: #27ae60;
-	color: #f4f7f6;
-	border: solid 2px #27ae60;
-	border-radius: 0.5rem;
-	cursor: pointer;
-	transition: all 0.3s ease-in-out;
-	text-align: center;
-	display: block;
-}
-button:hover {
-	transform: scale(1.05);
-}
+	.animate-bounce {
+		animation: bounce 1s infinite;
+	}
+
+	@keyframes bounce {
+		0%, 100% {
+			transform: translateY(-25%);
+			animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+		}
+		50% {
+			transform: translateY(0);
+			animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+		}
+	}
 </style>

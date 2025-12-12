@@ -248,8 +248,8 @@ import Layout from "../layouts/Layout.astro";
   <!-- ================= SCRIPT ================= -->
   <script type="module">
     import * as THREE from "https://esm.sh/three@0.160.0";
-    import { STLLoader } from "https://esm.sh/three@0.160.0/examples/jsm/loaders/STLLoader.js";
     import { OrbitControls } from "https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+    import { STLLoader } from "https://esm.sh/three@0.160.0/examples/jsm/loaders/STLLoader.js";
 
     const steps = [...document.querySelectorAll(".step")];
     const prevBtn = document.getElementById("prev-btn");
@@ -692,7 +692,7 @@ import Layout from "../layouts/Layout.astro";
       left: 0;
       height: 100%;
       width: var(--progress, 0%);
-      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      background: linear-gradient(90deg, #3b82f6, var(--color-primary));
       border-radius: 999px;
       transition: width 0.45s ease;
     }
@@ -912,7 +912,7 @@ import Layout from "../layouts/Layout.astro";
       margin-top: 0.6rem;
     }
     .price {
-      color: #22c55e;
+      color: var(--color-primary);
       font-weight: 600;
     }
     .breakdown {
@@ -949,7 +949,7 @@ import Layout from "../layouts/Layout.astro";
       background: #3b82f6;
     }
     .btn.success {
-      background: #22c55e;
+      background: var(--color-primary);
     }
 
     .error {

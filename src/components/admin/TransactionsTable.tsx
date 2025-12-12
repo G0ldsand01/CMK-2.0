@@ -1,17 +1,19 @@
-import * as React from 'react';
 import {
-	ArrowUpDown,
-	ArrowUp,
 	ArrowDown,
+	ArrowUp,
+	ArrowUpDown,
+	CheckCircle2,
+	Clock,
+	Copy,
+	DollarSign,
 	Search,
 	X,
-	Copy,
-	CheckCircle2,
 	XCircle,
-	Clock,
-	DollarSign,
 } from 'lucide-react';
+import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
 	Table,
 	TableBody,
@@ -20,8 +22,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 type Transaction = {
 	id: string;
@@ -119,10 +119,10 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 	const statusConfig = {
 		succeeded: {
 			icon: CheckCircle2,
-			color: 'text-green-600 dark:text-green-400',
-			bgColor: 'bg-green-500/10 dark:bg-green-500/20',
+			color: 'text-primary dark:text-primary',
+			bgColor: 'bg-primary/10 dark:bg-primary/20',
 			badgeColor:
-				'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20',
+				'bg-primary/10 text-primary dark:text-primary border-primary/20',
 			label: 'Succeeded',
 		},
 		pending: {

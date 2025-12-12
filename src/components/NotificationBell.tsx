@@ -1,8 +1,8 @@
 import { actions } from 'astro:actions';
 import { Bell, Check, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
 // ScrollArea will be implemented inline for now
 
 type Notification = {
@@ -126,9 +127,9 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 			case 'warning':
 				return 'text-yellow-500';
 			case 'success':
-				return 'text-green-500';
+				return 'text-primary';
 			default:
-				return 'text-blue-500';
+				return 'text-primary';
 		}
 	};
 
@@ -146,7 +147,11 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 					)}
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-80">
+			<DropdownMenuContent
+				align="end"
+				className="w-80"
+				sideOffset={8}
+				style={{ zIndex: 1000 }}>
 				<DropdownMenuHeader>
 					<div className="flex items-center justify-between">
 						<DropdownMenuLabel>Notifications</DropdownMenuLabel>

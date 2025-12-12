@@ -7,6 +7,7 @@ import {
   Activity,
   TrendingUp,
 } from 'lucide-react';
+import { TransactionsTable } from '@/components/admin/TransactionsTable';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -20,7 +21,6 @@ import { Separator } from '@/components/ui/separator';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import { stripe } from '@/lib/stripe';
-import { TransactionsTable } from '@/components/admin/TransactionsTable';
 
 const user = await getCurrentUser(Astro.request);
 const { totalRevenue, newCustomers, activeAccounts, growthRate, latestOrders } =
@@ -204,8 +204,8 @@ async function fetchStripeMetrics() {
           value: `$${totalRevenue.toFixed(2)}`,
           trend: '+12.5%',
           icon: DollarSign,
-          iconColor: 'text-green-600 dark:text-green-400',
-          bgColor: 'bg-green-500/10 dark:bg-green-500/20',
+          iconColor: 'text-primary dark:text-primary',
+          bgColor: 'bg-primary/10 dark:bg-primary/20',
           description: 'Trending up this month',
           subtext: 'Revenue for the last 6 months',
           isPositive: true,
@@ -263,7 +263,7 @@ async function fetchStripeMetrics() {
               <div class="absolute right-4 top-4">
                 <Badge
                   variant={isPositive ? "default" : "secondary"}
-                  className={`flex gap-1 rounded-lg text-xs ${isPositive ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}
+                  className={`flex gap-1 rounded-lg text-xs ${isPositive ? 'bg-primary/10 text-primary dark:text-primary' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}
                 >
                   {isPositive ? <TrendingUpIcon className="size-3" /> : <TrendingDownIcon className="size-3" />} 
                   {trend}
