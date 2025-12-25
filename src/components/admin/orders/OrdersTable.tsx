@@ -69,6 +69,16 @@ type Order = {
 		label: string;
 		className?: string;
 	};
+	orderType?: 'normal' | '3dprint';
+	_3dPrintDetails?: {
+		filename: string;
+		material: string;
+		color: string;
+		infill: number | null;
+		volumeCm3: string | number | null;
+		printer: string | null;
+		fileUrl: string | null;
+	};
 };
 
 interface OrdersTableProps {
@@ -93,7 +103,13 @@ export default function OrdersTable({
 			order.user?.name?.toLowerCase().includes(query) ||
 			order.user?.email?.toLowerCase().includes(query) ||
 			order.stripeSessionId.toLowerCase().includes(query) ||
-			order.status.toLowerCase().includes(query);
+			order.status.toLowerCase().includes(query) ||
+			(order.orderType === '3dprint' &&
+				order._3dPrintDetails?.filename?.toLowerCase().includes(query)) ||
+			(order.orderType === '3dprint' &&
+				order._3dPrintDetails?.material?.toLowerCase().includes(query)) ||
+			(order.orderType === '3dprint' &&
+				order._3dPrintDetails?.color?.toLowerCase().includes(query));
 
 		const matchesStatus =
 			statusFilter === 'all' ||
@@ -324,7 +340,10 @@ export default function OrdersTable({
 										<div className="space-y-2 flex-1">
 											<div className="flex items-center gap-2 sm:gap-3 flex-wrap">
 												<CardTitle className="text-lg sm:text-xl font-bold">
-													Order #{order.id}
+													{order.orderType === '3dprint'
+														? '3D Print Order'
+														: 'Order'}{' '}
+													#{order.id}
 												</CardTitle>
 												<Badge
 													variant={order.statusInfo.variant}
@@ -380,48 +399,87 @@ export default function OrdersTable({
 									</span>
 								</div>
 
-								{Array.isArray(order.cartJSON) && order.cartJSON.length > 0 && (
+								{order.orderType === '3dprint' && order._3dPrintDetails ? (
 									<div className="space-y-2">
-										<h4 className="text-xs sm:text-sm font-semibold">
-											Order Items:
-										</h4>
-										<div className="space-y-2">
-											{order.cartJSON
-												.slice(0, 3)
-												.map((item: CartItem, idx: number) => {
-													const itemKey = `${order.id}-item-${idx}-${item.products?.name || idx}`;
-													return (
-														<div
-															key={itemKey}
-															className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-xs sm:text-sm p-2 sm:p-3 rounded-lg bg-muted/50 border border-border/50">
-															<span className="flex-1 font-medium break-words">
-																{item.products?.name || `Item ${idx + 1}`}
-															</span>
-															<div className="flex items-center gap-3 sm:gap-4 shrink-0">
-																<span className="text-muted-foreground">
-																	Qty: {item.cart?.quantity || 0}
-																</span>
-																{item.products?.price && (
-																	<span className="font-semibold text-primary">
-																		$
-																		{(
-																			Number(item.products.price) *
-																			(item.cart?.quantity || 0)
-																		).toFixed(2)}
-																	</span>
-																)}
-															</div>
-														</div>
-													);
-												})}
-											{order.cartJSON.length > 3 && (
-												<p className="text-xs sm:text-sm text-muted-foreground text-center pt-2">
-													+{order.cartJSON.length - 3} more item
-													{order.cartJSON.length - 3 !== 1 ? 's' : ''}
+										<div className="p-3 rounded-md bg-muted/50 border-l-4 border-l-primary">
+											<p className="text-sm font-medium mb-2">3D Print Order</p>
+											<div className="space-y-1 text-xs sm:text-sm">
+												<p>
+													<strong>File:</strong>{' '}
+													{order._3dPrintDetails.filename}
 												</p>
-											)}
+												<p>
+													<strong>Material:</strong>{' '}
+													{order._3dPrintDetails.material} -{' '}
+													{order._3dPrintDetails.color}
+												</p>
+												{order._3dPrintDetails.infill && (
+													<p>
+														<strong>Infill:</strong>{' '}
+														{order._3dPrintDetails.infill}%
+													</p>
+												)}
+												{order._3dPrintDetails.printer && (
+													<p>
+														<strong>Printer:</strong>{' '}
+														{order._3dPrintDetails.printer}
+													</p>
+												)}
+												{order._3dPrintDetails.volumeCm3 && (
+													<p>
+														<strong>Volume:</strong>{' '}
+														{Number(order._3dPrintDetails.volumeCm3).toFixed(1)}{' '}
+														cm³
+													</p>
+												)}
+											</div>
 										</div>
 									</div>
+								) : (
+									Array.isArray(order.cartJSON) &&
+									order.cartJSON.length > 0 && (
+										<div className="space-y-2">
+											<h4 className="text-xs sm:text-sm font-semibold">
+												Order Items:
+											</h4>
+											<div className="space-y-2">
+												{order.cartJSON
+													.slice(0, 3)
+													.map((item: CartItem, idx: number) => {
+														const itemKey = `${order.id}-item-${idx}-${item.products?.name || idx}`;
+														return (
+															<div
+																key={itemKey}
+																className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-xs sm:text-sm p-2 sm:p-3 rounded-lg bg-muted/50 border border-border/50">
+																<span className="flex-1 font-medium break-words">
+																	{item.products?.name || `Item ${idx + 1}`}
+																</span>
+																<div className="flex items-center gap-3 sm:gap-4 shrink-0">
+																	<span className="text-muted-foreground">
+																		Qty: {item.cart?.quantity || 0}
+																	</span>
+																	{item.products?.price && (
+																		<span className="font-semibold text-primary">
+																			$
+																			{(
+																				Number(item.products.price) *
+																				(item.cart?.quantity || 0)
+																			).toFixed(2)}
+																		</span>
+																	)}
+																</div>
+															</div>
+														);
+													})}
+												{order.cartJSON.length > 3 && (
+													<p className="text-xs sm:text-sm text-muted-foreground text-center pt-2">
+														+{order.cartJSON.length - 3} more item
+														{order.cartJSON.length - 3 !== 1 ? 's' : ''}
+													</p>
+												)}
+											</div>
+										</div>
+									)
 								)}
 
 								<div className="pt-3 sm:pt-4 border-t space-y-2 sm:space-y-3">

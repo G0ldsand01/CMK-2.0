@@ -5,7 +5,7 @@ import OrdersTable from '@/components/admin/orders/OrdersTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ordersTable, user } from '@/db/schema';
+import { ordersTable, threeDPrintOrdersTable, user } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
 import db from '@/lib/db';
@@ -16,7 +16,8 @@ if (!currentUser || currentUser.role !== 'admin') {
   return Astro.redirect('/login');
 }
 
-const orders = await db
+// Récupérer les commandes normales
+const normalOrders = await db
   .select({
     order: ordersTable,
     user: {
@@ -28,6 +29,12 @@ const orders = await db
   .from(ordersTable)
   .leftJoin(user, eq(ordersTable.userId, user.id))
   .orderBy(desc(ordersTable.createdAt));
+
+// Récupérer les commandes 3D
+const threeDOrders = await db
+  .select()
+  .from(threeDPrintOrdersTable)
+  .orderBy(desc(threeDPrintOrdersTable.createdAt));
 
 // Helper function to calculate order total
 const calculateOrderTotal = (cartJSON: any[]) => {
@@ -60,14 +67,61 @@ const countOrderItems = (cartJSON: any[]) => {
   return cartJSON.reduce((acc, item) => acc + (item.cart?.quantity || 0), 0);
 };
 
-// Format orders with user info and calculated totals
-const formattedOrders = orders.map(({ order, user: orderUser }) => ({
+// Formater les commandes normales
+const formattedNormalOrders = normalOrders.map(({ order, user: orderUser }) => ({
   ...order,
   user: orderUser,
   total: calculateOrderTotal(order.cartJSON),
   itemCount: countOrderItems(order.cartJSON),
   statusInfo: getStatusBadge(order.status),
+  orderType: 'normal' as const,
 }));
+
+// Formater les commandes 3D pour qu'elles soient compatibles avec le format des commandes normales
+const formatted3DOrders = threeDOrders.map((order) => ({
+  id: order.id,
+  userId: '', // Les commandes 3D n'ont pas de userId lié à la table user
+  stripeSessionId: order.stripeSessionId,
+  status: order.status,
+  cartJSON: [
+    {
+      products: {
+        name: `3D Print: ${order.filename}`,
+        price: Number(order.price),
+      },
+      cart: {
+        quantity: 1,
+      },
+    },
+  ] as any[],
+  createdAt: order.createdAt,
+  user: {
+    id: '',
+    name: order.customerName,
+    email: order.customerEmail,
+  },
+  total: Number(order.price),
+  itemCount: 1,
+  statusInfo: getStatusBadge(order.status),
+  orderType: '3dprint' as const,
+  // Informations supplémentaires pour les commandes 3D
+  _3dPrintDetails: {
+    filename: order.filename,
+    material: order.material,
+    color: order.color,
+    infill: order.infill,
+    volumeCm3: order.volumeCm3,
+    printer: order.printer,
+    fileUrl: order.fileUrl,
+  },
+}));
+
+// Combiner et trier toutes les commandes par date de création
+const allOrders = [...formattedNormalOrders, ...formatted3DOrders].sort(
+  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+);
+
+const formattedOrders = allOrders;
 ---
 
 <AdminDashboardLayout
