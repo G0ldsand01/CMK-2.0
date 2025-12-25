@@ -887,13 +887,31 @@ import Layout from "../layouts/Layout.astro";
           body: formData,
         });
         
-        const uploadJson = await uploadRes.json();
-        
-        if (!uploadJson.success || !uploadJson.url) {
-          errorBox.textContent = uploadJson.error || "Failed to upload file.";
+        if (!uploadRes.ok) {
+          const errorText = await uploadRes.text();
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = { error: errorText || `HTTP ${uploadRes.status} ${uploadRes.statusText}` };
+          }
+          errorBox.textContent = errorData.error || errorData.details || `Failed to upload file (${uploadRes.status})`;
           errorBox.classList.remove("hidden");
           nextBtn.disabled = false;
           nextBtn.textContent = "Checkout";
+          console.error("Upload error:", errorData);
+          return;
+        }
+        
+        const uploadJson = await uploadRes.json();
+        
+        if (!uploadJson.success || !uploadJson.url) {
+          const errorMsg = uploadJson.error || uploadJson.details || "Failed to upload file.";
+          errorBox.textContent = errorMsg;
+          errorBox.classList.remove("hidden");
+          nextBtn.disabled = false;
+          nextBtn.textContent = "Checkout";
+          console.error("Upload failed:", uploadJson);
           return;
         }
         

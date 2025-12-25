@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { upload3DFileToCDN } from '@/lib/cdn';
+import { put } from '@vercel/blob';
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
@@ -22,28 +22,34 @@ export const POST: APIRoute = async ({ request }) => {
 			);
 		}
 
-		// Convert File to Buffer
+		// Générer un nom de fichier unique
+		const timestamp = Date.now();
+		const randomString = Math.random().toString(36).substring(2, 15);
+		const fileExtension = file.name.split('.').pop() || 'stl';
+		const uniqueFilename = `3dprint/${timestamp}-${randomString}.${fileExtension}`;
+
+		// Convertir le fichier en buffer
 		const arrayBuffer = await file.arrayBuffer();
 		const buffer = Buffer.from(arrayBuffer);
 
-		// Upload to CDN
-		const result = await upload3DFileToCDN(buffer, file.name);
+		// Upload vers Vercel Blob Storage
+		const blob = await put(uniqueFilename, buffer, {
+			access: 'public',
+			contentType: file.type || 'application/octet-stream',
+		});
 
-		if (!result.success || !result.url) {
-			console.error('CDN upload failed:', result.error);
-			return new Response(
-				JSON.stringify({
-					error: result.error || 'Failed to upload file to CDN',
-					details: 'Please check your CDN configuration and try again.',
-				}),
-				{ status: 500, headers: { 'Content-Type': 'application/json' } },
-			);
-		}
+		console.log(
+			'✅ File uploaded to Vercel Blob:',
+			uniqueFilename,
+			'Size:',
+			file.size,
+			'bytes',
+		);
 
 		return new Response(
 			JSON.stringify({
 				success: true,
-				url: result.url,
+				url: blob.url,
 				filename: file.name,
 			}),
 			{ status: 200, headers: { 'Content-Type': 'application/json' } },

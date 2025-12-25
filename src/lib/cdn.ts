@@ -165,36 +165,72 @@ export async function upload3DFileToCDN(
 		const uploadUrl = `${baseUrl}/upload/`;
 
 		console.log('Uploading file to CDN:', uploadUrl);
+		console.log('File size:', fileBuffer.length, 'bytes');
+		console.log('Filename:', uniqueFilename);
+
 		const response = await axios.post(uploadUrl, formData, {
 			headers,
 			maxContentLength: Number.POSITIVE_INFINITY,
 			maxBodyLength: Number.POSITIVE_INFINITY,
+			timeout: 60000, // 60 secondes timeout
 		});
 
 		const responseData = response.data as CDNResponse;
+		console.log('CDN response:', response.status, responseData);
 
 		if (!responseData.success) {
-			throw new Error(responseData.message || 'Failed to upload file to CDN');
+			const errorMsg =
+				responseData.message ||
+				responseData.error ||
+				'Failed to upload file to CDN';
+			console.error('CDN returned error:', errorMsg);
+			throw new Error(errorMsg);
 		}
 
 		if (!responseData.url) {
+			console.error('CDN response missing URL:', responseData);
 			throw new Error('No file URL returned from CDN');
 		}
 
+		console.log('File uploaded successfully:', responseData.url);
 		return responseData;
 	} catch (error) {
 		console.error('Error uploading 3D file to CDN:', error);
 
 		if (error && typeof error === 'object' && 'response' in error) {
 			const axiosError = error as {
-				response?: { data?: { message?: string } };
+				response?: {
+					status?: number;
+					statusText?: string;
+					data?: { message?: string; error?: string };
+				};
 			};
+
+			const status = axiosError.response?.status;
+			const statusText = axiosError.response?.statusText;
+			const errorMessage =
+				axiosError.response?.data?.message ||
+				axiosError.response?.data?.error ||
+				`HTTP ${status} ${statusText}` ||
+				'Failed to upload file to CDN';
+
+			console.error('Axios error details:', {
+				status,
+				statusText,
+				data: axiosError.response?.data,
+			});
+
 			return {
 				success: false,
-				error:
-					axiosError.response?.data?.message || 'Failed to upload file to CDN',
+				error: errorMessage,
 			};
 		}
+
+		if (error instanceof Error) {
+			console.error('Error message:', error.message);
+			console.error('Error stack:', error.stack);
+		}
+
 		return {
 			success: false,
 			error:
