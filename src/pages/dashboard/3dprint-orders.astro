@@ -1,0 +1,182 @@
+---
+import { eq, desc } from 'drizzle-orm';
+import { threeDPrintOrdersTable } from '@/db/schema';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+import { stripe } from '@/lib/stripe';
+import db from '@/lib/db';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Package, Calendar, DollarSign, CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, Download } from 'lucide-react';
+
+const user = await getCurrentUser(Astro.request);
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+// Récupérer les commandes 3D de l'utilisateur (par email) - avec gestion d'erreur
+let threeDOrders = [];
+try {
+  threeDOrders = await db
+    .select()
+    .from(threeDPrintOrdersTable)
+    .where(eq(threeDPrintOrdersTable.customerEmail, user.email))
+    .orderBy(desc(threeDPrintOrdersTable.createdAt));
+} catch (error) {
+  console.warn('⚠️ Table 3dprint_orders does not exist yet. Run migration first:', error);
+  // La table n'existe pas encore
+}
+
+// Helper function to get status badge
+const getStatusBadge = (status: string) => {
+  const statusLower = status.toLowerCase();
+  if (statusLower === 'completed' || statusLower === 'paid') {
+    return { variant: 'default' as const, icon: CheckCircle2, label: 'Completed' };
+  } else if (statusLower === 'pending' || statusLower === 'processing') {
+    return { variant: 'secondary' as const, icon: Clock, label: 'Pending' };
+  } else if (statusLower === 'cancelled') {
+    return { variant: 'destructive' as const, icon: XCircle, label: 'Cancelled' };
+  } else if (statusLower === 'refunded') {
+    return { variant: 'outline' as const, icon: RefreshCw, label: 'Refunded', className: 'border-yellow-500 text-yellow-500' };
+  } else {
+    return { variant: 'outline' as const, icon: AlertCircle, label: status };
+  }
+};
+
+// Get download URLs from Stripe metadata
+const ordersWithDownloadUrls = await Promise.all(
+  threeDOrders.map(async (order) => {
+    let downloadUrl: string | null = order.fileUrl;
+    
+    // Try to get from Stripe metadata if fileUrl is not set
+    if (!downloadUrl && order.stripeSessionId) {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+        downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+      } catch (error) {
+        console.error('Error retrieving Stripe session:', error);
+      }
+    }
+    
+    return {
+      ...order,
+      downloadUrl,
+      statusInfo: getStatusBadge(order.status),
+    };
+  })
+);
+---
+
+<DashboardLayout
+  title="My 3D Print Orders"
+  breadcrumb={{
+    '/3dprint-orders': 'My 3D Print Orders',
+  }}
+>
+  <div class="space-y-6 p-6">
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight">My 3D Print Orders</h1>
+      <p class="text-muted-foreground">
+        View and track all your 3D printing orders
+      </p>
+    </div>
+
+    {ordersWithDownloadUrls.length === 0 ? (
+      <Card>
+        <CardContent class="flex flex-col items-center justify-center py-16">
+          <Package class="size-16 text-muted-foreground mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No 3D print orders yet</h3>
+          <p class="text-muted-foreground text-center mb-6">
+            When you place a 3D print order, it will appear here.
+          </p>
+          <a
+            href="/3dprint"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
+          >
+            Create 3D Print Quote
+          </a>
+        </CardContent>
+      </Card>
+    ) : (
+      <div class="space-y-4">
+        {ordersWithDownloadUrls.map((order) => {
+          const StatusIcon = order.statusInfo.icon;
+          const total = Number(order.price);
+          const dims = order.dims ? (typeof order.dims === 'string' ? JSON.parse(order.dims) : order.dims) : null;
+          
+          return (
+            <Card key={order.id} class="hover:shadow-lg transition-shadow border-l-4 border-l-primary">
+              <CardHeader>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <CardTitle class="text-xl">3D Print Order #{order.id}</CardTitle>
+                      <Badge variant={order.statusInfo.variant} class={`flex items-center gap-1 ${order.statusInfo.className || ''}`}>
+                        <StatusIcon class="size-3" />
+                        {order.statusInfo.label}
+                      </Badge>
+                    </div>
+                    <CardDescription class="flex items-center gap-2">
+                      <Calendar class="size-4" />
+                      {new Date(order.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </CardDescription>
+                  </div>
+                  <div class="flex items-center gap-2 text-lg font-semibold">
+                    <DollarSign class="size-5" />
+                    {total.toFixed(2)} CAD
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div class="space-y-4">
+                  <div class="p-3 rounded-md bg-muted/50">
+                    <div class="space-y-2 text-sm">
+                      <p><strong>File:</strong> {order.filename}</p>
+                      <p><strong>Material:</strong> {order.material} - {order.color}</p>
+                      {order.infill && <p><strong>Infill:</strong> {order.infill}%</p>}
+                      {order.printer && <p><strong>Printer:</strong> {order.printer}</p>}
+                      {dims && (
+                        <p><strong>Size:</strong> {dims.x} × {dims.y} × {dims.z} mm</p>
+                      )}
+                      {order.volumeCm3 && <p><strong>Volume:</strong> {Number(order.volumeCm3).toFixed(1)} cm³</p>}
+                      {order.notes && (
+                        <p class="mt-2 pt-2 border-t"><strong>Notes:</strong> {order.notes}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {order.downloadUrl && (
+                    <div class="pt-2 border-t">
+                      <a 
+                        href={order.downloadUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+                      >
+                        <Download class="size-4" />
+                        Download 3D Model
+                      </a>
+                    </div>
+                  )}
+                  
+                  <div class="pt-4 border-t">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-muted-foreground">Stripe Session ID:</span>
+                      <code class="text-xs bg-muted px-2 py-1 rounded">{order.stripeSessionId}</code>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+

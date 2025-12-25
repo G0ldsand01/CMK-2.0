@@ -4,6 +4,7 @@ import {
 	CheckCircle2,
 	Clock,
 	DollarSign,
+	Download,
 	Eye,
 	Filter,
 	Package,
@@ -481,6 +482,22 @@ export default function OrdersTable({
 										</div>
 									)
 								)}
+
+								{/* Download button for 3D print orders */}
+								{order.orderType === '3dprint' &&
+									order._3dPrintDetails?.fileUrl && (
+										<div className="pt-3 sm:pt-4 border-t">
+											<a
+												href={order._3dPrintDetails.fileUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="inline-flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline font-medium"
+												onClick={(e) => e.stopPropagation()}>
+												<Download className="size-3 sm:size-4" />
+												Download 3D Model
+											</a>
+										</div>
+									)}
 
 								<div className="pt-3 sm:pt-4 border-t space-y-2 sm:space-y-3">
 									<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
