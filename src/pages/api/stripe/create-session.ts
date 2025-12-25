@@ -10,8 +10,18 @@ const STORAGE_BASE_URL = import.meta.env.STORAGE_BASE_URL || '';
    🔧 URL HELPERS
 ====================== */
 
-// ✅ Retourne l’URL du site à partir de l’environnement
+// ✅ Retourne l'URL du site à partir de l'environnement
 function getSiteUrl(): string {
+	// Essayer WEBSITE_URL d'abord (variable d'environnement standard du projet)
+	const websiteUrl = import.meta.env.WEBSITE_URL?.trim();
+	if (
+		websiteUrl &&
+		(websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://'))
+	) {
+		return websiteUrl.replace(/\/$/, '');
+	}
+
+	// Essayer SITE ensuite
 	const envSite = import.meta.env.SITE?.trim();
 	if (
 		envSite &&
@@ -19,8 +29,14 @@ function getSiteUrl(): string {
 	) {
 		return envSite.replace(/\/$/, '');
 	}
-	// Fallback local
-	return 'http://localhost:4321';
+
+	// Fallback local seulement en développement
+	if (import.meta.env.MODE === 'development' || import.meta.env.DEV) {
+		return 'http://localhost:4321';
+	}
+
+	// En production, retourner une URL par défaut (sera remplacée par la détection depuis la requête)
+	return 'https://cmk-2-0-tau.vercel.app';
 }
 
 // ✅ Utilise une URL fournie dans la requête ou fallback vers celle du site
@@ -102,7 +118,40 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
-		const SITE_URL = getSiteUrlFromRequest(data);
+		// Essayer de détecter l'URL depuis la requête
+		let SITE_URL = getSiteUrlFromRequest(data);
+
+		// Si on n'a pas d'URL valide ou si c'est localhost, essayer de la construire depuis la requête
+		if (!SITE_URL || SITE_URL.includes('localhost')) {
+			// Essayer depuis les headers de la requête
+			const origin = request.headers.get('origin');
+			const referer = request.headers.get('referer');
+			const host = request.headers.get('host');
+
+			if (origin && !origin.includes('localhost')) {
+				try {
+					const url = new URL(origin);
+					SITE_URL = url.origin;
+				} catch {
+					// Ignorer l'erreur
+				}
+			} else if (referer && !referer.includes('localhost')) {
+				try {
+					const url = new URL(referer);
+					SITE_URL = url.origin;
+				} catch {
+					// Ignorer l'erreur
+				}
+			} else if (host && !host.includes('localhost')) {
+				// Construire depuis le host (en production, utiliser HTTPS)
+				const protocol =
+					import.meta.env.MODE === 'development' ? 'http' : 'https';
+				SITE_URL = `${protocol}://${host}`;
+			} else {
+				// Utiliser getSiteUrl() qui utilise WEBSITE_URL
+				SITE_URL = getSiteUrl();
+			}
+		}
 
 		// === File URL ===
 		// File will be uploaded later or provided separately
