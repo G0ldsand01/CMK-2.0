@@ -946,6 +946,17 @@ import Layout from "../layouts/Layout.astro";
         
         console.log("📤 Sending to Stripe with fileUrl:", uploadJson.url);
         
+        console.log("📤 Sending request to Stripe with body:", {
+          ...body,
+          fileUrl: body.fileUrl, // Log explicitement l'URL
+        });
+        
+        // Afficher un message de confirmation avec l'URL du fichier
+        errorBox.textContent = `✅ File uploaded: ${uploadJson.url}\n🔄 Creating Stripe session...`;
+        errorBox.classList.remove("hidden");
+        errorBox.classList.remove("text-destructive");
+        errorBox.classList.add("text-green-600", "bg-green-50", "dark:bg-green-950", "border-green-200", "dark:border-green-800");
+        
         const res = await fetch("/api/stripe/create-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -953,11 +964,25 @@ import Layout from "../layouts/Layout.astro";
         });
         
         const json = await res.json();
+        console.log("📥 Response from Stripe API:", json);
+        console.log("📁 File URL that was sent:", body.fileUrl);
+        
         if (json.url) {
+          console.log("✅ Stripe session created successfully!");
+          console.log("🔗 Redirecting to:", json.url);
+          
+          // Afficher le message final
+          errorBox.textContent = `✅ File: ${uploadJson.url}\n✅ Stripe session created!\n🔄 Redirecting to Stripe...`;
+          
+          // Délai pour permettre de voir les informations
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
           window.location.href = json.url;
         } else {
+          console.error("❌ Stripe checkout failed:", json);
           errorBox.textContent = json.error || "Stripe checkout failed.";
-          errorBox.classList.remove("hidden");
+          errorBox.classList.remove("text-green-600", "bg-green-50", "dark:bg-green-950", "border-green-200", "dark:border-green-800");
+          errorBox.classList.add("text-destructive", "bg-destructive/10", "border-destructive/20");
           nextBtn.disabled = false;
           nextBtn.textContent = "Checkout";
         }
