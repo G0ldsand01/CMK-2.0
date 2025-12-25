@@ -10,7 +10,10 @@
 		"check": "pnpm biome check --write .",
 		"format": "pnpm biome format --write .",
 		"prepare": "husky",
-		"upi": "pnpm update --interactive"
+		"upi": "pnpm update --interactive",
+		"migrate:3dprint": "node scripts/apply-3dprint-migration.mjs",
+		"drizzle:push": "drizzle-kit push",
+		"drizzle:generate": "drizzle-kit generate"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.2",
