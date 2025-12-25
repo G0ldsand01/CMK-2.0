@@ -1,7 +1,10 @@
 import type { APIRoute } from 'astro';
-import { ordersTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { ordersTable, threeDPrintOrdersTable } from '@/db/schema';
 import db from '@/lib/db';
 import { stripe } from '@/lib/stripe';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Optionnel : base pour tes fichiers hébergés
 const STORAGE_BASE_URL = import.meta.env.STORAGE_BASE_URL || '';
@@ -228,6 +231,44 @@ export const POST: APIRoute = async ({ request }) => {
 		console.log('📋 Full description:', description);
 		console.log('📁 File URL in metadata:', fileUrl);
 
+		// === Create Order First ===
+		let orderId: number | null = null;
+		try {
+			const [newOrder] = await db
+				.insert(threeDPrintOrdersTable)
+				.values({
+					customerEmail: data.email,
+					customerName: customerFullName,
+					firstName: data.firstName,
+					lastName: data.lastName,
+					phone: data.phone || null,
+					address: data.address || null,
+					city: data.city || null,
+					state: data.state || null,
+					zip: data.zip || null,
+					country: data.country || null,
+					status: 'pending',
+					stripeSessionId: 'pending', // Will be updated after session creation
+					filename: data.filename,
+					material,
+					color,
+					infill: data.infill ? Number(data.infill) : null,
+					volumeCm3: data.volumeCm3 ? Number(data.volumeCm3) : null,
+					dims: data.dims ? JSON.stringify(data.dims) : null,
+					printer: printer || null,
+					price: priceNumber.toString(),
+					fileUrl: fileUrl || null,
+					notes: data.notes || null,
+					createdAt: new Date(),
+				})
+				.returning({ id: threeDPrintOrdersTable.id });
+
+			orderId = newOrder.id;
+			console.log('✅ 3D Print order created with ID:', orderId);
+		} catch (dbErr) {
+			console.warn('⚠️ Database insert warning:', dbErr);
+		}
+
 		const session = await stripe.checkout.sessions.create({
 			mode: 'payment',
 			payment_method_types: ['card'],
@@ -246,6 +287,7 @@ export const POST: APIRoute = async ({ request }) => {
 				},
 			],
 			metadata: {
+				orderType: '3dprint',
 				firstName: data.firstName,
 				lastName: data.lastName,
 				email: data.email,
@@ -263,8 +305,10 @@ export const POST: APIRoute = async ({ request }) => {
 				filename: data.filename,
 				filesize: data.filesize?.toString() || '',
 				volumeCm3: data.volumeCm3?.toString() || '',
+				dimensions: data.dims ? JSON.stringify(data.dims) : '',
 				file_url: fileUrl || '',
 				download_url: fileUrl || '', // For easy access in receipt
+				order_id: orderId?.toString() || '',
 			},
 			success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${SITE_URL}/cancel`,
@@ -273,25 +317,43 @@ export const POST: APIRoute = async ({ request }) => {
 			},
 		});
 
-		// === Database Save ===
-		try {
-			await db.insert(ordersTable).values({
-				customerEmail: data.email,
-				customerName: customerFullName,
-				status: 'pending',
-				stripeSessionId: session.id,
-				filename: data.filename,
-				material,
-				color,
-				infill: data.infill ? Number(data.infill) : null,
-				volumeCm3: data.volumeCm3 ? Number(data.volumeCm3) : null,
-				price: priceNumber,
-				fileUrl: fileUrl || null,
-				notes: data.notes || null,
-				createdAt: new Date(),
-			});
-		} catch (dbErr) {
-			console.warn('⚠️ Database insert warning:', dbErr);
+		// === Update Order with Session ID ===
+		if (orderId) {
+			try {
+				await db
+					.update(threeDPrintOrdersTable)
+					.set({ stripeSessionId: session.id })
+					.where(eq(threeDPrintOrdersTable.id, orderId));
+
+				// Organiser le fichier par numéro de commande et créer un fichier d'informations
+				if (fileUrl) {
+					await organizeOrderFiles(orderId, fileUrl, {
+						customerEmail: data.email,
+						customerName: customerFullName,
+						firstName: data.firstName,
+						lastName: data.lastName,
+						phone: data.phone || '',
+						address: data.address || '',
+						city: data.city || '',
+						state: data.state || '',
+						zip: data.zip || '',
+						country: data.country || '',
+						filename: data.filename,
+						material,
+						color,
+						infill: data.infill ? Number(data.infill) : null,
+						volumeCm3: data.volumeCm3 ? Number(data.volumeCm3) : null,
+						dims: data.dims || null,
+						printer: printer || null,
+						price: priceNumber,
+						notes: data.notes || null,
+						fileUrl,
+						stripeSessionId: session.id,
+					});
+				}
+			} catch (updateErr) {
+				console.warn('⚠️ Order update warning:', updateErr);
+			}
 		}
 
 		// === Success ===

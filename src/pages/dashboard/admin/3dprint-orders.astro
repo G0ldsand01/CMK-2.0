@@ -1,0 +1,189 @@
+---
+import { desc, eq } from 'drizzle-orm';
+import { Download, Package, Calendar, DollarSign, CheckCircle2, Clock, XCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { threeDPrintOrdersTable } from '@/db/schema';
+import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
+import { getCurrentUser } from '@/lib/auth-server';
+import { stripe } from '@/lib/stripe';
+import db from '@/lib/db';
+
+const currentUser = await getCurrentUser(Astro.request);
+if (!currentUser || currentUser.role !== 'admin') {
+  return Astro.redirect('/login');
+}
+
+const orders = await db
+  .select()
+  .from(threeDPrintOrdersTable)
+  .orderBy(desc(threeDPrintOrdersTable.createdAt));
+
+// Helper function to get status badge
+const getStatusBadge = (status: string) => {
+  const statusLower = status.toLowerCase();
+  if (statusLower === 'completed' || statusLower === 'paid') {
+    return { variant: 'default' as const, icon: CheckCircle2, label: 'Completed' };
+  } else if (statusLower === 'pending' || statusLower === 'processing') {
+    return { variant: 'secondary' as const, icon: Clock, label: 'Pending' };
+  } else if (statusLower === 'cancelled') {
+    return { variant: 'destructive' as const, icon: XCircle, label: 'Cancelled' };
+  } else if (statusLower === 'refunded') {
+    return { variant: 'outline' as const, icon: RefreshCw, label: 'Refunded', className: 'border-yellow-500 text-yellow-500' };
+  } else {
+    return { variant: 'outline' as const, icon: AlertCircle, label: status };
+  }
+};
+
+// Get download URLs from Stripe metadata
+const ordersWithDownloadUrls = await Promise.all(
+  orders.map(async (order) => {
+    let downloadUrl: string | null = order.fileUrl;
+    
+    // Try to get from Stripe metadata if fileUrl is not set
+    if (!downloadUrl && order.stripeSessionId) {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+        downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+      } catch (error) {
+        console.error('Error retrieving Stripe session:', error);
+      }
+    }
+    
+    return {
+      ...order,
+      downloadUrl,
+      statusInfo: getStatusBadge(order.status),
+    };
+  })
+);
+---
+
+<AdminDashboardLayout
+  title="3D Print Orders"
+  breadcrumb={{
+    '/3dprint-orders': '3D Print Orders',
+  }}
+>
+  <div class="space-y-4 sm:space-y-6 p-4 sm:p-6">
+    <div class="space-y-2">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">3D Print Orders</h1>
+      <p class="text-muted-foreground text-sm sm:text-lg">
+        View and manage all 3D printing orders
+      </p>
+    </div>
+
+    <div class="grid gap-4 sm:gap-6">
+      {ordersWithDownloadUrls.length > 0 ? (
+        ordersWithDownloadUrls.map((order) => {
+          const StatusIcon = order.statusInfo.icon;
+          const dims = order.dims ? (typeof order.dims === 'string' ? JSON.parse(order.dims) : order.dims) : null;
+          
+          return (
+            <Card key={order.id} class="hover:shadow-md transition-shadow">
+              <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <CardTitle class="text-lg sm:text-xl flex items-center gap-2">
+                      <Package class="size-4 sm:size-5" />
+                      Order #{order.id} - {order.filename}
+                    </CardTitle>
+                    <CardDescription class="mt-1">
+                      {order.customerName} ({order.customerEmail})
+                    </CardDescription>
+                  </div>
+                  <Badge variant={order.statusInfo.variant} class={`flex items-center gap-1.5 text-xs sm:text-sm ${order.statusInfo.className || ''}`}>
+                    <StatusIcon class="size-3" />
+                    {order.statusInfo.label}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-1">Customer</p>
+                    <p class="font-medium text-sm sm:text-base">{order.customerName}</p>
+                    <p class="text-xs text-muted-foreground">{order.customerEmail}</p>
+                    {order.phone && (
+                      <p class="text-xs text-muted-foreground">{order.phone}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-1">Print Details</p>
+                    <p class="text-xs sm:text-sm"><strong>Material:</strong> {order.material}</p>
+                    <p class="text-xs sm:text-sm"><strong>Color:</strong> {order.color}</p>
+                    <p class="text-xs sm:text-sm"><strong>Infill:</strong> {order.infill ? `${order.infill}%` : 'N/A'}</p>
+                    {order.printer && (
+                      <p class="text-xs sm:text-sm"><strong>Printer:</strong> {order.printer}</p>
+                    )}
+                    {dims && (
+                      <p class="text-xs sm:text-sm"><strong>Size:</strong> {dims.x} × {dims.y} × {dims.z} mm</p>
+                    )}
+                    {order.volumeCm3 && (
+                      <p class="text-xs sm:text-sm"><strong>Volume:</strong> {Number(order.volumeCm3).toFixed(1)} cm³</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-1">Order Info</p>
+                    <p class="text-xs sm:text-sm flex items-center gap-1">
+                      <Calendar class="size-3" />
+                      {new Date(order.createdAt).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                    <p class="text-xs sm:text-sm flex items-center gap-1 mt-1">
+                      <DollarSign class="size-3" />
+                      <span class="font-semibold">${Number(order.price).toFixed(2)} CAD</span>
+                    </p>
+                    {order.downloadUrl && (
+                      <a 
+                        href={order.downloadUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:underline font-medium mt-2"
+                      >
+                        <Download class="size-3 sm:size-4" />
+                        Download Model
+                      </a>
+                    )}
+                  </div>
+                </div>
+                
+                {order.notes && (
+                  <div class="mt-4 pt-4 border-t">
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-1">Notes</p>
+                    <p class="text-xs sm:text-sm">{order.notes}</p>
+                  </div>
+                )}
+                
+                {order.downloadUrl && (
+                  <div class="mt-4 pt-4 border-t">
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-1">File URL</p>
+                    <code class="text-[10px] sm:text-xs bg-muted px-2 py-1 rounded-md font-mono border border-border block break-all">
+                      {order.downloadUrl}
+                    </code>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })
+      ) : (
+        <Card>
+          <CardContent class="py-12 text-center">
+            <Package class="size-12 sm:size-16 text-muted-foreground mx-auto mb-4" />
+            <p class="text-sm sm:text-base text-muted-foreground">No 3D print orders found</p>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  </div>
+</AdminDashboardLayout>
+

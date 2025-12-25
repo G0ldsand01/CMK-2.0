@@ -9,6 +9,7 @@ import {
   Clock, 
   DollarSign, 
   Download,
+  FileText,
   Package, 
   RefreshCw, 
   XCircle,
@@ -21,6 +22,7 @@ import {
   ordersTable, 
   productImageTable,
   productsTable, 
+  threeDPrintOrdersTable,
   user as userTable,
 } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
@@ -35,7 +37,8 @@ if (!currentUser || currentUser.role !== 'admin') {
 
 const { id } = Astro.params;
 
-const [order] = await db
+// Essayer de trouver dans ordersTable d'abord
+let [order] = await db
   .select({
     id: ordersTable.id,
     status: ordersTable.status,
@@ -47,66 +50,108 @@ const [order] = await db
   .from(ordersTable)
   .where(eq(ordersTable.id, Number(id)));
 
+let is3DPrintOrder = false;
+let threeDOrder = null;
+let downloadUrl: string | null = null;
+let orderInfoUrl: string | null = null;
+
+// Si pas trouvé, essayer dans threeDPrintOrdersTable
 if (!order) {
+  [threeDOrder] = await db
+    .select()
+    .from(threeDPrintOrdersTable)
+    .where(eq(threeDPrintOrdersTable.id, Number(id)));
+  
+  if (threeDOrder) {
+    is3DPrintOrder = true;
+    downloadUrl = threeDOrder.fileUrl;
+    orderInfoUrl = `/uploads/3dprint/order-${threeDOrder.id}/order-info.json`;
+    
+    // Try to get from Stripe metadata if fileUrl is not set
+    if (!downloadUrl && threeDOrder.stripeSessionId) {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(threeDOrder.stripeSessionId);
+        downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+      } catch (error) {
+        console.error('Error retrieving Stripe session:', error);
+      }
+    }
+  }
+}
+
+if (!order && !threeDOrder) {
   return Astro.redirect('/dashboard/admin/orders');
 }
 
-// Récupérer les métadonnées de la session Stripe pour obtenir le lien de téléchargement
-let downloadUrl: string | null = null;
-try {
-  const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
-  downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
-} catch (error) {
-  console.error('Error retrieving Stripe session:', error);
+// Si c'est une commande 3D, utiliser threeDOrder, sinon utiliser order
+let orderUser: Array<{ id: string; name: string; email: string }> = [];
+let orderItems: any[] = [];
+let totalPrice = 0;
+
+if (is3DPrintOrder && threeDOrder) {
+  // Pour les commandes 3D, on a déjà les infos client dans threeDOrder
+  orderUser = [{
+    id: '',
+    name: threeDOrder.customerName,
+    email: threeDOrder.customerEmail,
+  }];
+  totalPrice = Number(threeDOrder.price);
+} else if (order) {
+  // Récupérer les métadonnées de la session Stripe pour obtenir le lien de téléchargement
+  try {
+    const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+    downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+  } catch (error) {
+    console.error('Error retrieving Stripe session:', error);
+  }
+
+  // Get user info
+  orderUser = await db
+    .select({
+      id: userTable.id,
+      name: userTable.name,
+      email: userTable.email,
+    })
+    .from(userTable)
+    .where(eq(userTable.id, order.userId))
+    .limit(1);
+
+  // Extract product IDs
+  const productIds = order.cartJSON.map((item) => item.products.id);
+  const products = await db
+    .select()
+    .from(productsTable)
+    .where(inArray(productsTable.id, productIds));
+
+  // Load images for each product
+  const orderItemsWithImages = await Promise.all(
+    order.cartJSON.map(async (item) => {
+      const product = products.find((p) => p.id === item.products.id);
+      if (!product) return null;
+
+      const [firstImage] = await db
+        .select({
+          image: imageTable,
+        })
+        .from(productImageTable)
+        .where(eq(productImageTable.productId, product.id))
+        .leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+        .orderBy(productImageTable.priority)
+        .limit(1);
+
+      return {
+        ...item,
+        product,
+        image: firstImage?.image?.image || null,
+      };
+    })
+  );
+
+  orderItems = orderItemsWithImages.filter((item) => item !== null);
+  totalPrice = orderItems.reduce((sum, item) => {
+    return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
+  }, 0);
 }
-
-// Get user info
-const orderUser = await db
-  .select({
-    id: userTable.id,
-    name: userTable.name,
-    email: userTable.email,
-  })
-  .from(userTable)
-  .where(eq(userTable.id, order.userId))
-  .limit(1);
-
-// Extract product IDs
-const productIds = order.cartJSON.map((item) => item.products.id);
-const products = await db
-  .select()
-  .from(productsTable)
-  .where(inArray(productsTable.id, productIds));
-
-// Load images for each product
-const orderItemsWithImages = await Promise.all(
-  order.cartJSON.map(async (item) => {
-    const product = products.find((p) => p.id === item.products.id);
-    if (!product) return null;
-
-    const [firstImage] = await db
-      .select({
-        image: imageTable,
-      })
-      .from(productImageTable)
-      .where(eq(productImageTable.productId, product.id))
-      .leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
-      .orderBy(productImageTable.priority)
-      .limit(1);
-
-    return {
-      ...item,
-      product,
-      image: firstImage?.image?.image || null,
-    };
-  })
-);
-
-const orderItems = orderItemsWithImages.filter((item) => item !== null);
-
-const totalPrice = orderItems.reduce((sum, item) => {
-  return sum + (Number(item.product?.price) || 0) * item.cart.quantity;
-}, 0);
 
 // Helper function to get status badge
 const getStatusBadge = (status: string) => {
@@ -124,8 +169,12 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-const statusInfo = getStatusBadge(order.status);
+const currentOrder = is3DPrintOrder ? threeDOrder : order;
+const statusInfo = getStatusBadge(currentOrder?.status || 'pending');
 const StatusIcon = statusInfo.icon;
+const orderId = currentOrder?.id || Number(id);
+const orderDate = currentOrder?.createdAt || new Date();
+const stripeSessionId = currentOrder?.stripeSessionId || '';
 ---
 
 <AdminDashboardLayout
@@ -140,7 +189,7 @@ const StatusIcon = statusInfo.icon;
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
       <div class="space-y-2 flex-1 min-w-0">
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Order #{order.id}</h1>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Order #{orderId}</h1>
           <Badge variant={statusInfo.variant} class={`flex items-center gap-1.5 text-xs sm:text-sm ${statusInfo.className || ''}`}>
             <StatusIcon class="size-3" />
             {statusInfo.label}
@@ -161,19 +210,49 @@ const StatusIcon = statusInfo.icon;
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       {/* Main Content */}
       <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-        {/* Order Items */}
+        {/* Order Items or 3D Print Details */}
         <Card>
           <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
             <CardTitle class="flex items-center gap-2 text-lg sm:text-xl">
               <Package class="size-4 sm:size-5" />
-              Order Items
+              {is3DPrintOrder ? '3D Print Details' : 'Order Items'}
             </CardTitle>
             <CardDescription class="text-xs sm:text-sm">
-              {orderItems.length} item{orderItems.length !== 1 ? 's' : ''} in this order
+              {is3DPrintOrder 
+                ? `3D Print Order - ${threeDOrder?.filename || 'Unknown file'}`
+                : `${orderItems.length} item${orderItems.length !== 1 ? 's' : ''} in this order`}
             </CardDescription>
           </CardHeader>
           <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6">
-            {orderItems.length > 0 ? (
+            {is3DPrintOrder && threeDOrder ? (
+              <div class="space-y-4">
+                <div class="p-4 rounded-lg border border-border bg-card">
+                  <h3 class="font-semibold text-base sm:text-lg mb-3">File Information</h3>
+                  <div class="space-y-2 text-sm">
+                    <p><strong>Filename:</strong> {threeDOrder.filename}</p>
+                    {threeDOrder.fileUrl && (
+                      <p><strong>File URL:</strong> <code class="text-xs bg-muted px-2 py-1 rounded break-all">{threeDOrder.fileUrl}</code></p>
+                    )}
+                  </div>
+                </div>
+                <div class="p-4 rounded-lg border border-border bg-card">
+                  <h3 class="font-semibold text-base sm:text-lg mb-3">Print Specifications</h3>
+                  <div class="grid grid-cols-2 gap-2 text-sm">
+                    <p><strong>Material:</strong> {threeDOrder.material}</p>
+                    <p><strong>Color:</strong> {threeDOrder.color}</p>
+                    <p><strong>Infill:</strong> {threeDOrder.infill ? `${threeDOrder.infill}%` : 'N/A'}</p>
+                    {threeDOrder.printer && <p><strong>Printer:</strong> {threeDOrder.printer}</p>}
+                    {threeDOrder.volumeCm3 && <p><strong>Volume:</strong> {Number(threeDOrder.volumeCm3).toFixed(1)} cm³</p>}
+                  </div>
+                </div>
+                {threeDOrder.notes && (
+                  <div class="p-4 rounded-lg border border-border bg-card">
+                    <h3 class="font-semibold text-base sm:text-lg mb-2">Customer Notes</h3>
+                    <p class="text-sm">{threeDOrder.notes}</p>
+                  </div>
+                )}
+              </div>
+            ) : orderItems.length > 0 ? (
               <div class="space-y-3 sm:space-y-4">
                 {orderItems.map((item) => (
                   <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors">
@@ -235,7 +314,7 @@ const StatusIcon = statusInfo.icon;
                 Order Date
               </span>
               <span class="font-medium break-words sm:break-normal">
-                {new Date(order.createdAt).toLocaleDateString('en-US', {
+                {new Date(orderDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -293,14 +372,47 @@ const StatusIcon = statusInfo.icon;
           <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-2 sm:space-y-3">
             <div>
               <p class="text-xs sm:text-sm text-muted-foreground mb-1">Order ID</p>
-              <p class="font-mono text-xs sm:text-sm font-medium">{order.id}</p>
+              <p class="font-mono text-xs sm:text-sm font-medium">{orderId}</p>
             </div>
             <div>
               <p class="text-xs sm:text-sm text-muted-foreground mb-1">Stripe Session ID</p>
               <code class="text-[10px] sm:text-xs bg-muted px-2 py-1 rounded-md font-mono border border-border block break-all">
-                {order.stripeSessionId}
+                {stripeSessionId}
               </code>
             </div>
+            {is3DPrintOrder && threeDOrder && (
+              <>
+                <div class="pt-2 border-t">
+                  <p class="text-xs sm:text-sm text-muted-foreground mb-1">Print Details</p>
+                  <p class="text-xs sm:text-sm"><strong>Material:</strong> {threeDOrder.material}</p>
+                  <p class="text-xs sm:text-sm"><strong>Color:</strong> {threeDOrder.color}</p>
+                  <p class="text-xs sm:text-sm"><strong>Infill:</strong> {threeDOrder.infill ? `${threeDOrder.infill}%` : 'N/A'}</p>
+                  {threeDOrder.printer && (
+                    <p class="text-xs sm:text-sm"><strong>Printer:</strong> {threeDOrder.printer}</p>
+                  )}
+                  {threeDOrder.volumeCm3 && (
+                    <p class="text-xs sm:text-sm"><strong>Volume:</strong> {Number(threeDOrder.volumeCm3).toFixed(1)} cm³</p>
+                  )}
+                  {threeDOrder.notes && (
+                    <p class="text-xs sm:text-sm mt-2"><strong>Notes:</strong> {threeDOrder.notes}</p>
+                  )}
+                </div>
+                {orderInfoUrl && (
+                  <div class="pt-2 border-t">
+                    <p class="text-xs sm:text-sm text-muted-foreground mb-2">Order Information File</p>
+                    <a 
+                      href={orderInfoUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:underline font-medium"
+                    >
+                      <FileText class="size-3 sm:size-4" />
+                      View Order Info JSON
+                    </a>
+                  </div>
+                )}
+              </>
+            )}
             {downloadUrl && (
               <div class="pt-2 border-t">
                 <p class="text-xs sm:text-sm text-muted-foreground mb-2">3D Model Download</p>

@@ -251,6 +251,42 @@ export const ordersTable = pgTable('orders', {
 	createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
 });
 
+// Table pour les commandes d'impression 3D
+export const threeDPrintOrdersTable = pgTable(
+	'3dprint_orders',
+	{
+		id: serial('id').primaryKey(),
+		customerEmail: text('customerEmail').notNull(),
+		customerName: text('customerName').notNull(),
+		firstName: text('firstName'),
+		lastName: text('lastName'),
+		phone: text('phone'),
+		address: text('address'),
+		city: text('city'),
+		state: text('state'),
+		zip: text('zip'),
+		country: text('country'),
+		stripeSessionId: text('stripeSessionId').notNull().unique(),
+		status: text('status').notNull().default('pending'),
+		filename: text('filename').notNull(),
+		fileUrl: text('fileUrl'),
+		material: text('material').notNull(),
+		color: text('color').notNull(),
+		infill: integer('infill'),
+		volumeCm3: numeric('volumeCm3'),
+		dims: jsonb('dims'),
+		printer: text('printer'),
+		price: numeric('price').notNull(),
+		notes: text('notes'),
+		createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
+	},
+	(table) => [
+		index('3dprint_orders_stripeSessionId_idx').on(table.stripeSessionId),
+		index('3dprint_orders_customerEmail_idx').on(table.customerEmail),
+		index('3dprint_orders_status_idx').on(table.status),
+	],
+);
+
 export const systemSettingsTable = pgTable(
 	'system_settings',
 	{
