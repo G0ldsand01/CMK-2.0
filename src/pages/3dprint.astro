@@ -915,6 +915,8 @@ import Layout from "../layouts/Layout.astro";
           return;
         }
         
+        console.log("✅ File uploaded successfully:", uploadJson.url);
+        
         // File uploaded successfully, now create Stripe session
         nextBtn.textContent = "Creating checkout...";
         
@@ -941,6 +943,8 @@ import Layout from "../layouts/Layout.astro";
           price: parseFloat(costEl.textContent),
           fileUrl: uploadJson.url, // Add the uploaded file URL
         };
+        
+        console.log("📤 Sending to Stripe with fileUrl:", uploadJson.url);
         
         const res = await fetch("/api/stripe/create-session", {
           method: "POST",

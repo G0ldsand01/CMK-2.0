@@ -157,6 +157,9 @@ export const POST: APIRoute = async ({ request }) => {
 		// File will be uploaded later or provided separately
 		let fileUrl = data.fileUrl || data.file_url || '';
 
+		console.log('📁 File URL received:', fileUrl);
+		console.log('🌐 SITE_URL:', SITE_URL);
+
 		// Convertir l'URL relative en URL absolue si nécessaire
 		if (
 			fileUrl &&
@@ -169,6 +172,7 @@ export const POST: APIRoute = async ({ request }) => {
 			} else {
 				fileUrl = `${SITE_URL}/${fileUrl}`;
 			}
+			console.log('📁 File URL converted to absolute:', fileUrl);
 		}
 
 		// === Metadata ===
@@ -182,16 +186,48 @@ export const POST: APIRoute = async ({ request }) => {
 		const customerFullName = `${data.firstName} ${data.lastName}`;
 
 		// Build description with file download link if available
+		// Stripe limite la description à 500 caractères, donc on doit être concis
 		let description = `Material: ${material} | Color: ${color} | Infill: ${infill} | Printer: ${printer} | Volume: ${volume}`;
 		if (data.notes) {
-			description += ` | Notes: ${data.notes}`;
+			const notesShort =
+				data.notes.length > 50
+					? data.notes.substring(0, 50) + '...'
+					: data.notes;
+			description += ` | Notes: ${notesShort}`;
 		}
+
+		// Ajouter l'URL du fichier si disponible
 		if (fileUrl) {
-			// Utiliser un format de lien cliquable pour Stripe
-			description += ` | Download: ${fileUrl}`;
+			// S'assurer que la description totale ne dépasse pas 500 caractères
+			const downloadText = ` | Download: ${fileUrl}`;
+			const maxLength = 500;
+
+			if (description.length + downloadText.length > maxLength) {
+				// Tronquer la description pour faire de la place pour l'URL
+				const availableSpace = maxLength - downloadText.length - 10; // 10 pour "..."
+				description = description.substring(0, availableSpace) + '...';
+			}
+
+			description += downloadText;
+			console.log(
+				'✅ File URL added to description. Total length:',
+				description.length,
+			);
+			console.log('📄 Description:', description);
+		} else {
+			console.warn(
+				'⚠️ No file URL provided, description will not include download link',
+			);
 		}
 
 		// === Stripe Session ===
+		console.log(
+			'🔗 Creating Stripe session with description length:',
+			description.length,
+		);
+		console.log('📋 Full description:', description);
+		console.log('📁 File URL in metadata:', fileUrl);
+
 		const session = await stripe.checkout.sessions.create({
 			mode: 'payment',
 			payment_method_types: ['card'],
@@ -227,8 +263,8 @@ export const POST: APIRoute = async ({ request }) => {
 				filename: data.filename,
 				filesize: data.filesize?.toString() || '',
 				volumeCm3: data.volumeCm3?.toString() || '',
-				file_url: fileUrl,
-				download_url: fileUrl, // For easy access in receipt
+				file_url: fileUrl || '',
+				download_url: fileUrl || '', // For easy access in receipt
 			},
 			success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${SITE_URL}/cancel`,
