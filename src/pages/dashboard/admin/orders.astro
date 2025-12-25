@@ -30,11 +30,17 @@ const normalOrders = await db
   .leftJoin(user, eq(ordersTable.userId, user.id))
   .orderBy(desc(ordersTable.createdAt));
 
-// Récupérer les commandes 3D
-const threeDOrders = await db
-  .select()
-  .from(threeDPrintOrdersTable)
-  .orderBy(desc(threeDPrintOrdersTable.createdAt));
+// Récupérer les commandes 3D (avec gestion d'erreur si la table n'existe pas encore)
+let threeDOrders = [];
+try {
+  threeDOrders = await db
+    .select()
+    .from(threeDPrintOrdersTable)
+    .orderBy(desc(threeDPrintOrdersTable.createdAt));
+} catch (error) {
+  console.warn('⚠️ Table 3dprint_orders does not exist yet. Run migration first:', error);
+  // La table n'existe pas encore, on continue avec les commandes normales seulement
+}
 
 // Helper function to calculate order total
 const calculateOrderTotal = (cartJSON: any[]) => {

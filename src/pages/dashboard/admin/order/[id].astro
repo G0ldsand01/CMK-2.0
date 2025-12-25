@@ -57,25 +57,30 @@ let orderInfoUrl: string | null = null;
 
 // Si pas trouvé, essayer dans threeDPrintOrdersTable
 if (!order) {
-  [threeDOrder] = await db
-    .select()
-    .from(threeDPrintOrdersTable)
-    .where(eq(threeDPrintOrdersTable.id, Number(id)));
-  
-  if (threeDOrder) {
-    is3DPrintOrder = true;
-    downloadUrl = threeDOrder.fileUrl;
-    orderInfoUrl = `/uploads/3dprint/order-${threeDOrder.id}/order-info.json`;
+  try {
+    [threeDOrder] = await db
+      .select()
+      .from(threeDPrintOrdersTable)
+      .where(eq(threeDPrintOrdersTable.id, Number(id)));
     
-    // Try to get from Stripe metadata if fileUrl is not set
-    if (!downloadUrl && threeDOrder.stripeSessionId) {
-      try {
-        const session = await stripe.checkout.sessions.retrieve(threeDOrder.stripeSessionId);
-        downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
-      } catch (error) {
-        console.error('Error retrieving Stripe session:', error);
+    if (threeDOrder) {
+      is3DPrintOrder = true;
+      downloadUrl = threeDOrder.fileUrl;
+      orderInfoUrl = `/uploads/3dprint/order-${threeDOrder.id}/order-info.json`;
+      
+      // Try to get from Stripe metadata if fileUrl is not set
+      if (!downloadUrl && threeDOrder.stripeSessionId) {
+        try {
+          const session = await stripe.checkout.sessions.retrieve(threeDOrder.stripeSessionId);
+          downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+        } catch (error) {
+          console.error('Error retrieving Stripe session:', error);
+        }
       }
     }
+  } catch (error) {
+    console.warn('⚠️ Table 3dprint_orders does not exist yet. Run migration first:', error);
+    // La table n'existe pas encore, on continue avec la recherche normale
   }
 }
 

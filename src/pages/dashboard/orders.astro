@@ -21,12 +21,18 @@ const normalOrders = await db
   .where(eq(ordersTable.userId, user.id))
   .orderBy(desc(ordersTable.createdAt));
 
-// Récupérer les commandes 3D de l'utilisateur (par email)
-const threeDOrders = await db
-  .select()
-  .from(threeDPrintOrdersTable)
-  .where(eq(threeDPrintOrdersTable.customerEmail, user.email))
-  .orderBy(desc(threeDPrintOrdersTable.createdAt));
+// Récupérer les commandes 3D de l'utilisateur (par email) - avec gestion d'erreur
+let threeDOrders = [];
+try {
+  threeDOrders = await db
+    .select()
+    .from(threeDPrintOrdersTable)
+    .where(eq(threeDPrintOrdersTable.customerEmail, user.email))
+    .orderBy(desc(threeDPrintOrdersTable.createdAt));
+} catch (error) {
+  console.warn('⚠️ Table 3dprint_orders does not exist yet. Run migration first:', error);
+  // La table n'existe pas encore, on continue avec les commandes normales seulement
+}
 
 // Helper function to calculate order total
 const calculateOrderTotal = (cartJSON: any[]) => {
