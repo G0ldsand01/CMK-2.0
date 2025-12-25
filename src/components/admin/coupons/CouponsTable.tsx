@@ -1,16 +1,8 @@
 import { actions } from 'astro:actions';
 import { Trash2, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -19,8 +11,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
 	Select,
 	SelectContent,
@@ -28,6 +20,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 
 type Coupon = {
 	id: string;
@@ -190,16 +190,19 @@ export default function CouponsTable({ initialCoupons }: CouponsTableProps) {
 	};
 
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<h2 className="text-2xl font-bold">Coupons</h2>
-				<Button onClick={() => setCreateDialogOpen(true)}>
+		<div className="space-y-4 sm:space-y-6">
+			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+				<h2 className="text-xl sm:text-2xl font-bold">Coupons</h2>
+				<Button
+					onClick={() => setCreateDialogOpen(true)}
+					className="w-full sm:w-auto">
 					<Plus className="size-4 mr-2" />
 					Create Coupon
 				</Button>
 			</div>
 
-			<div className="rounded-md border">
+			{/* Desktop Table View */}
+			<div className="hidden md:block rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow>
@@ -216,14 +219,29 @@ export default function CouponsTable({ initialCoupons }: CouponsTableProps) {
 					<TableBody>
 						{isLoading ? (
 							<TableRow>
-								<TableCell colSpan={8} className="text-center">
-									Loading...
+								<TableCell colSpan={8} className="text-center py-8">
+									<div className="flex items-center justify-center">
+										<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+										<span className="ml-2 text-muted-foreground">
+											Loading...
+										</span>
+									</div>
 								</TableCell>
 							</TableRow>
 						) : coupons.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={8} className="text-center">
-									No coupons found
+								<TableCell colSpan={8} className="text-center py-8">
+									<div className="flex flex-col items-center justify-center">
+										<p className="text-muted-foreground">No coupons found</p>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => setCreateDialogOpen(true)}
+											className="mt-4">
+											<Plus className="size-4 mr-2" />
+											Create Your First Coupon
+										</Button>
+									</div>
 								</TableCell>
 							</TableRow>
 						) : (
@@ -270,6 +288,94 @@ export default function CouponsTable({ initialCoupons }: CouponsTableProps) {
 						)}
 					</TableBody>
 				</Table>
+			</div>
+
+			{/* Mobile Card View */}
+			<div className="md:hidden space-y-3">
+				{isLoading ? (
+					<div className="flex items-center justify-center py-8">
+						<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+						<span className="ml-2 text-muted-foreground">Loading...</span>
+					</div>
+				) : coupons.length === 0 ? (
+					<div className="rounded-md border p-8 text-center">
+						<p className="text-muted-foreground mb-4">No coupons found</p>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setCreateDialogOpen(true)}
+							className="w-full">
+							<Plus className="size-4 mr-2" />
+							Create Your First Coupon
+						</Button>
+					</div>
+				) : (
+					coupons.map((coupon) => (
+						<div
+							key={coupon.id}
+							className="rounded-md border p-4 space-y-3 bg-card">
+							<div className="flex items-start justify-between gap-2">
+								<div className="flex-1 min-w-0">
+									<Badge
+										variant="outline"
+										className="font-mono text-xs sm:text-sm mb-2">
+										{coupon.code}
+									</Badge>
+									{coupon.name && (
+										<p className="text-sm font-medium mt-1">{coupon.name}</p>
+									)}
+								</div>
+								<Badge
+									variant={coupon.valid ? 'default' : 'secondary'}
+									className="shrink-0">
+									{coupon.valid ? 'Valid' : 'Invalid'}
+								</Badge>
+							</div>
+							<div className="grid grid-cols-2 gap-3 text-sm">
+								<div>
+									<p className="text-xs text-muted-foreground mb-1">Discount</p>
+									<p className="font-medium">{formatDiscount(coupon)}</p>
+								</div>
+								<div>
+									<p className="text-xs text-muted-foreground mb-1">Duration</p>
+									<p className="font-medium">{formatDuration(coupon)}</p>
+								</div>
+								<div>
+									<p className="text-xs text-muted-foreground mb-1">
+										Redemptions
+									</p>
+									<p className="font-medium">
+										{coupon.maxRedemptions
+											? `${coupon.timesRedeemed} / ${coupon.maxRedemptions}`
+											: coupon.timesRedeemed}
+									</p>
+								</div>
+								<div>
+									<p className="text-xs text-muted-foreground mb-1">Created</p>
+									<p className="font-medium">
+										{new Date(coupon.created).toLocaleDateString()}
+									</p>
+								</div>
+							</div>
+							<div className="flex justify-end pt-2 border-t">
+								<Button
+									variant="ghost"
+									size="sm"
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setCouponToDelete(coupon);
+										setDeleteDialogOpen(true);
+									}}
+									className="text-destructive hover:text-destructive hover:bg-destructive/10">
+									<Trash2 className="size-4 mr-2" />
+									Delete
+								</Button>
+							</div>
+						</div>
+					))
+				)}
 			</div>
 
 			{/* Create Coupon Dialog */}
@@ -348,7 +454,7 @@ export default function CouponsTable({ initialCoupons }: CouponsTableProps) {
 							</div>
 						) : (
 							<>
-								<div className="grid grid-cols-2 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 									<div className="space-y-2">
 										<Label htmlFor="amountOff">Amount Off *</Label>
 										<Input
@@ -468,24 +574,28 @@ export default function CouponsTable({ initialCoupons }: CouponsTableProps) {
 
 			{/* Delete Dialog */}
 			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<DialogContent>
+				<DialogContent className="w-[95vw] sm:w-full">
 					<DialogHeader>
-						<DialogTitle>Delete Coupon</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className="text-lg sm:text-xl">
+							Delete Coupon
+						</DialogTitle>
+						<DialogDescription className="text-sm">
 							Are you sure you want to delete the coupon "{couponToDelete?.code}
 							"? This action cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button
 							variant="outline"
-							onClick={() => setDeleteDialogOpen(false)}>
+							onClick={() => setDeleteDialogOpen(false)}
+							className="w-full sm:w-auto">
 							Cancel
 						</Button>
 						<Button
 							variant="destructive"
 							onClick={handleDeleteCoupon}
-							disabled={isLoading}>
+							disabled={isLoading}
+							className="w-full sm:w-auto">
 							Delete
 						</Button>
 					</DialogFooter>

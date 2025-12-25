@@ -80,7 +80,8 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 			} else {
 				alert(error.message || 'Failed to update user');
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error('Error updating user:', err);
 			alert('An error occurred while updating the user');
 		} finally {
 			setIsLoading(false);
@@ -123,7 +124,9 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 								/>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="email">Email *</Label>
+								<Label htmlFor="email" className="text-sm">
+									Email *
+								</Label>
 								<Input
 									id="email"
 									type="email"
@@ -136,9 +139,11 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 							</div>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
-								<Label htmlFor="firstName">First Name</Label>
+								<Label htmlFor="firstName" className="text-sm">
+									First Name
+								</Label>
 								<Input
 									id="firstName"
 									value={formData.firstName}
@@ -160,7 +165,9 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="phone">Phone</Label>
+							<Label htmlFor="phone" className="text-sm">
+								Phone
+							</Label>
 							<Input
 								id="phone"
 								type="tel"
@@ -172,7 +179,9 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="address">Address</Label>
+							<Label htmlFor="address" className="text-sm">
+								Address
+							</Label>
 							<Input
 								id="address"
 								value={formData.address}
@@ -182,9 +191,11 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 							/>
 						</div>
 
-						<div className="grid grid-cols-3 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<div className="space-y-2">
-								<Label htmlFor="city">City</Label>
+								<Label htmlFor="city" className="text-sm">
+									City
+								</Label>
 								<Input
 									id="city"
 									value={formData.city}
@@ -194,7 +205,9 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 								/>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="state">State/Province</Label>
+								<Label htmlFor="state" className="text-sm">
+									State/Province
+								</Label>
 								<Input
 									id="state"
 									value={formData.state}
@@ -216,7 +229,9 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="country">Country</Label>
+							<Label htmlFor="country" className="text-sm">
+								Country
+							</Label>
 							<Input
 								id="country"
 								value={formData.country}
@@ -226,9 +241,11 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 							/>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="space-y-2">
-								<Label htmlFor="role">Role</Label>
+								<Label htmlFor="role" className="text-sm">
+									Role
+								</Label>
 								<Select
 									value={formData.role}
 									onValueChange={(value: 'user' | 'admin') =>
@@ -264,16 +281,20 @@ export default function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 							</div>
 						</div>
 
-						<DialogFooter>
+						<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 							<Button
 								type="button"
 								variant="outline"
 								onClick={() => setOpen(false)}
-								disabled={isLoading}>
+								disabled={isLoading}
+								className="w-full sm:w-auto">
 								<X className="size-4 mr-2" />
 								Cancel
 							</Button>
-							<Button type="submit" disabled={isLoading}>
+							<Button
+								type="submit"
+								disabled={isLoading}
+								className="w-full sm:w-auto">
 								<Save className="size-4 mr-2" />
 								{isLoading ? 'Saving...' : 'Save Changes'}
 							</Button>

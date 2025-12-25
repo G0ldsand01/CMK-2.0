@@ -1,6 +1,6 @@
 import { actions } from 'astro:actions';
-import { Mail, Plus, Edit, Trash2, Save, RefreshCw } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Edit, Plus, RefreshCw, Save, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,7 +50,7 @@ export default function EmailTemplatesManager() {
 	const [templateToDelete, setTemplateToDelete] =
 		useState<EmailTemplate | null>(null);
 
-	const fetchTemplates = async () => {
+	const fetchTemplates = useCallback(async () => {
 		setIsLoading(true);
 		try {
 			const { data, error } = await actions.admin.emailTemplates.getTemplates(
@@ -60,16 +60,16 @@ export default function EmailTemplatesManager() {
 			if (!error && data) {
 				setTemplates(data.data || []);
 			}
-		} catch (error) {
-			console.error('Error fetching templates:', error);
+		} catch (err) {
+			console.error('Error fetching templates:', err);
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchTemplates();
-	}, []);
+	}, [fetchTemplates]);
 
 	const handleEdit = (template: EmailTemplate) => {
 		setEditingTemplate({ ...template });
@@ -113,7 +113,8 @@ export default function EmailTemplatesManager() {
 			setIsDialogOpen(false);
 			setEditingTemplate(null);
 			await fetchTemplates();
-		} catch (error) {
+		} catch (err) {
+			console.error('Error saving template:', err);
 			alert('An error occurred while saving the template');
 		} finally {
 			setIsLoading(false);
@@ -136,7 +137,8 @@ export default function EmailTemplatesManager() {
 				setTemplateToDelete(null);
 				await fetchTemplates();
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error('Error deleting template:', err);
 			alert('An error occurred while deleting the template');
 		} finally {
 			setIsLoading(false);
@@ -171,18 +173,19 @@ export default function EmailTemplatesManager() {
 	};
 
 	return (
-		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<h2 className="text-2xl font-bold">Email Templates</h2>
-				<div className="flex items-center gap-2">
+		<div className="space-y-4 sm:space-y-6">
+			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+				<h2 className="text-xl sm:text-2xl font-bold">Email Templates</h2>
+				<div className="flex items-center gap-2 w-full sm:w-auto">
 					<Button
 						variant="outline"
 						onClick={fetchTemplates}
-						disabled={isLoading}>
+						disabled={isLoading}
+						className="flex-1 sm:flex-initial">
 						<RefreshCw
 							className={`size-4 mr-2 ${isLoading ? 'animate-spin' : ''}`}
 						/>
-						Refresh
+						<span className="hidden sm:inline">Refresh</span>
 					</Button>
 					<Button
 						onClick={() => {
@@ -196,7 +199,8 @@ export default function EmailTemplatesManager() {
 								updatedAt: new Date(),
 							});
 							setIsDialogOpen(true);
-						}}>
+						}}
+						className="flex-1 sm:flex-initial">
 						<Plus className="size-4 mr-2" />
 						Create Template
 					</Button>
@@ -262,14 +266,14 @@ export default function EmailTemplatesManager() {
 
 			{/* Edit/Create Dialog */}
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-				<DialogContent className="max-w-2xl">
+				<DialogContent className="w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
 					<DialogHeader>
-						<DialogTitle>
+						<DialogTitle className="text-lg sm:text-xl">
 							{editingTemplate?.id
 								? 'Edit Email Template'
 								: 'Create Email Template'}
 						</DialogTitle>
-						<DialogDescription>
+						<DialogDescription className="text-sm">
 							{editingTemplate?.id
 								? 'Edit the email template. Use {{variable}} for dynamic content.'
 								: 'Create a new email template. Use {{variable}} for dynamic content.'}
@@ -371,25 +375,29 @@ export default function EmailTemplatesManager() {
 
 			{/* Delete Dialog */}
 			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<DialogContent>
+				<DialogContent className="w-[95vw] sm:w-full max-w-md">
 					<DialogHeader>
-						<DialogTitle>Delete Email Template</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className="text-lg sm:text-xl">
+							Delete Email Template
+						</DialogTitle>
+						<DialogDescription className="text-sm">
 							Are you sure you want to delete "{templateToDelete?.name}"? This
 							action cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button
 							variant="outline"
 							onClick={() => setDeleteDialogOpen(false)}
-							disabled={isLoading}>
+							disabled={isLoading}
+							className="w-full sm:w-auto">
 							Cancel
 						</Button>
 						<Button
 							variant="destructive"
 							onClick={handleDelete}
-							disabled={isLoading}>
+							disabled={isLoading}
+							className="w-full sm:w-auto">
 							{isLoading ? 'Deleting...' : 'Delete'}
 						</Button>
 					</DialogFooter>

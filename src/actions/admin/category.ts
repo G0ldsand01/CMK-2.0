@@ -103,4 +103,59 @@ export const category = {
 			}
 		},
 	}),
+
+	deleteCategory: defineAction({
+		input: z.object({
+			categoryId: z.number(),
+		}),
+		async handler(input, context) {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				// Check if category is used by any products
+				const { productsTable } = await import('@/db/schema');
+				const productsUsingCategory = await db
+					.select()
+					.from(productsTable)
+					.where(eq(productsTable.category, input.categoryId))
+					.limit(1);
+
+				if (productsUsingCategory.length > 0) {
+					throw new ActionError({
+						code: 'BAD_REQUEST',
+						message:
+							'Cannot delete category that is being used by products. Please reassign or delete those products first.',
+					});
+				}
+
+				await db
+					.delete(productCategoryTable)
+					.where(eq(productCategoryTable.id, input.categoryId));
+
+				return {
+					success: true,
+					message: 'Category deleted successfully',
+				};
+			} catch (error) {
+				if (error instanceof ActionError) {
+					throw error;
+				}
+				console.error('Error deleting category:', error);
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'Failed to delete category.',
+				});
+			}
+		},
+	}),
 };

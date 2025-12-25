@@ -184,7 +184,9 @@ export default function EditProductForm({
 										</FormControl>
 										<SelectContent>
 											{categories.map((category) => (
-												<SelectItem key={category.id} value={category.name}>
+												<SelectItem
+													key={category.id}
+													value={String(category.id)}>
 													{category.name}
 												</SelectItem>
 											))}

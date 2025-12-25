@@ -1,16 +1,8 @@
 import { actions } from 'astro:actions';
 import { Trash2, Star, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -19,6 +11,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 
 type Review = {
 	id: number;
@@ -153,8 +153,9 @@ export default function ReviewsTable({
 	};
 
 	return (
-		<div className="space-y-4">
-			<div className="rounded-md border">
+		<div className="space-y-4 sm:space-y-6">
+			{/* Desktop Table View */}
+			<div className="hidden md:block rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow>
@@ -195,14 +196,21 @@ export default function ReviewsTable({
 					<TableBody>
 						{isLoading ? (
 							<TableRow>
-								<TableCell colSpan={5} className="text-center">
-									Loading...
+								<TableCell colSpan={5} className="text-center py-8">
+									<div className="flex items-center justify-center">
+										<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+										<span className="ml-2 text-muted-foreground">
+											Loading...
+										</span>
+									</div>
 								</TableCell>
 							</TableRow>
 						) : reviews.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={5} className="text-center">
-									No reviews found
+								<TableCell colSpan={5} className="text-center py-8">
+									<div className="flex flex-col items-center justify-center">
+										<p className="text-muted-foreground">No reviews found</p>
+									</div>
 								</TableCell>
 							</TableRow>
 						) : (
@@ -257,6 +265,113 @@ export default function ReviewsTable({
 				</Table>
 			</div>
 
+			{/* Mobile Card View */}
+			<div className="md:hidden space-y-3">
+				{/* Sort Controls for Mobile */}
+				<div className="flex flex-wrap gap-2 p-3 rounded-md border bg-muted/30">
+					<Button
+						variant={sortBy === 'productId' ? 'default' : 'outline'}
+						size="sm"
+						className="h-8 gap-2 text-xs"
+						onClick={() => handleSort('productId')}>
+						Product {getSortIcon('productId')}
+					</Button>
+					<Button
+						variant={sortBy === 'rating' ? 'default' : 'outline'}
+						size="sm"
+						className="h-8 gap-2 text-xs"
+						onClick={() => handleSort('rating')}>
+						Rating {getSortIcon('rating')}
+					</Button>
+					<Button
+						variant={sortBy === 'createdAt' ? 'default' : 'outline'}
+						size="sm"
+						className="h-8 gap-2 text-xs"
+						onClick={() => handleSort('createdAt')}>
+						Date {getSortIcon('createdAt')}
+					</Button>
+				</div>
+
+				{isLoading ? (
+					<div className="flex items-center justify-center py-8">
+						<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+						<span className="ml-2 text-muted-foreground">Loading...</span>
+					</div>
+				) : reviews.length === 0 ? (
+					<div className="rounded-md border p-8 text-center">
+						<p className="text-muted-foreground">No reviews found</p>
+					</div>
+				) : (
+					reviews.map((review) => (
+						<div
+							key={review.id}
+							className="rounded-md border p-4 space-y-3 bg-card">
+							<div className="flex items-start justify-between gap-2">
+								<div className="flex-1 min-w-0">
+									<div className="mb-2">
+										<p className="text-xs text-muted-foreground mb-1">
+											Product
+										</p>
+										{review.product ? (
+											<p className="font-medium text-sm">
+												{review.product.name}
+											</p>
+										) : (
+											<p className="text-muted-foreground text-sm">
+												Product #{review.productId} (deleted)
+											</p>
+										)}
+									</div>
+									<div>
+										<p className="text-xs text-muted-foreground mb-1">User</p>
+										{review.user ? (
+											<div className="flex flex-col">
+												<span className="font-medium text-sm">
+													{review.user.name}
+												</span>
+												<span className="text-xs text-muted-foreground break-all">
+													{review.user.email}
+												</span>
+											</div>
+										) : (
+											<p className="text-muted-foreground text-sm">
+												User (deleted)
+											</p>
+										)}
+									</div>
+								</div>
+								<div className="shrink-0">
+									<p className="text-xs text-muted-foreground mb-1">Rating</p>
+									{renderStars(review.rating)}
+								</div>
+							</div>
+							<div className="flex items-center justify-between pt-2 border-t">
+								<div>
+									<p className="text-xs text-muted-foreground mb-1">Created</p>
+									<p className="text-sm">
+										{new Date(review.createdAt).toLocaleDateString()}
+									</p>
+								</div>
+								<Button
+									variant="ghost"
+									size="sm"
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setReviewToDelete(review);
+										setDeleteDialogOpen(true);
+									}}
+									className="text-destructive hover:text-destructive hover:bg-destructive/10">
+									<Trash2 className="size-4 mr-2" />
+									Delete
+								</Button>
+							</div>
+						</div>
+					))
+				)}
+			</div>
+
 			{/* Pagination */}
 			{totalPages > 1 && (
 				<div className="flex items-center justify-between">
@@ -289,24 +404,28 @@ export default function ReviewsTable({
 
 			{/* Delete Dialog */}
 			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<DialogContent>
+				<DialogContent className="w-[95vw] sm:w-full">
 					<DialogHeader>
-						<DialogTitle>Delete Review</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className="text-lg sm:text-xl">
+							Delete Review
+						</DialogTitle>
+						<DialogDescription className="text-sm">
 							Are you sure you want to delete this review? This action cannot be
 							undone.
 						</DialogDescription>
 					</DialogHeader>
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button
 							variant="outline"
-							onClick={() => setDeleteDialogOpen(false)}>
+							onClick={() => setDeleteDialogOpen(false)}
+							className="w-full sm:w-auto">
 							Cancel
 						</Button>
 						<Button
 							variant="destructive"
 							onClick={handleDeleteReview}
-							disabled={isLoading}>
+							disabled={isLoading}
+							className="w-full sm:w-auto">
 							Delete
 						</Button>
 					</DialogFooter>

@@ -1,13 +1,30 @@
 ---
+import { eq } from 'drizzle-orm';
+import SettingsManager from '@/components/settings/SettingsManager';
+import { account } from '@/db/schema';
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
-import SettingsManager from '@/components/settings/SettingsManager';
+import db from '@/lib/db';
 
 const user = await getCurrentUser(Astro.request);
 
 if (!user) {
   return Astro.redirect('/login');
 }
+
+// Get user accounts to check for password and linked providers
+const userAccounts = await db
+  .select({
+    providerId: account.providerId,
+    hasPassword: account.password,
+  })
+  .from(account)
+  .where(eq(account.userId, user.id));
+
+const hasPassword = userAccounts.some((acc) => acc.providerId === 'credential' && acc.hasPassword);
+const linkedProviders = userAccounts
+  .filter((acc) => acc.providerId !== 'credential')
+  .map((acc) => acc.providerId);
 ---
 
 <DashboardLayout
@@ -16,14 +33,19 @@ if (!user) {
     '/settings': 'Settings',
   }}
 >
-  <div class="space-y-6 p-6">
+  <div class="space-y-4 sm:space-y-6 p-4 sm:p-6">
     <div class="space-y-2">
-      <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
-      <p class="text-muted-foreground">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
+      <p class="text-muted-foreground text-sm sm:text-base">
         Manage your account settings and preferences
       </p>
     </div>
 
-    <SettingsManager user={JSON.parse(JSON.stringify(user))} client:load />
+    <SettingsManager 
+      user={JSON.parse(JSON.stringify(user))} 
+      hasPassword={hasPassword}
+      linkedProviders={linkedProviders}
+      client:load 
+    />
   </div>
 </DashboardLayout>

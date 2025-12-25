@@ -2,7 +2,8 @@ import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
 import type { APIRoute } from 'astro';
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
-import { ordersTable } from '@/db/schema';
+import { logSecurityEvent } from '@/actions/index';
+import { notificationsTable, ordersTable } from '@/db/schema';
 import db from '@/lib/db';
 import { log, logError } from '@/lib/log';
 import { stripe } from '@/lib/stripe';
@@ -67,6 +68,20 @@ export const POST: APIRoute = async ({ request }) => {
 					break;
 				}
 
+				// Get order before updating to check if status was already paid
+				const orderBeforeUpdate = await db
+					.select()
+					.from(ordersTable)
+					.where(eq(ordersTable.stripeSessionId, session.id))
+					.limit(1);
+
+				if (!orderBeforeUpdate[0]) {
+					logError('Order not found for session:', session.id);
+					break;
+				}
+
+				const wasAlreadyPaid = orderBeforeUpdate[0].status === 'paid';
+
 				const result = await db
 					.update(ordersTable)
 					.set({ status: 'paid' })
@@ -77,6 +92,42 @@ export const POST: APIRoute = async ({ request }) => {
 					'Update result:',
 					result,
 				);
+
+				// Log payment success and create notification (only if status wasn't already paid)
+				if (!wasAlreadyPaid) {
+					await logSecurityEvent(
+						'PAYMENT_SUCCESS',
+						orderBeforeUpdate[0].userId,
+						{
+							orderId: orderBeforeUpdate[0].id,
+							stripeSessionId: session.id,
+							customerEmail: session.customer_email,
+							amountTotal: session.amount_total
+								? session.amount_total / 100
+								: null,
+						},
+						request.headers.get('x-forwarded-for') || null,
+						request.headers.get('user-agent') || null,
+					);
+
+					// Create notification for the user
+					try {
+						await db.insert(notificationsTable).values({
+							userId: orderBeforeUpdate[0].userId,
+							title: 'Commande confirmée',
+							message: `Votre commande #${orderBeforeUpdate[0].id} a été confirmée et le paiement a été reçu.`,
+							type: 'success',
+							read: false,
+						});
+					} catch (notifErr) {
+						// Log but don't fail the webhook if notification creation fails
+						logError(
+							'Failed to create notification for order:',
+							orderBeforeUpdate[0].id,
+							notifErr,
+						);
+					}
+				}
 				break;
 			}
 
@@ -99,6 +150,25 @@ export const POST: APIRoute = async ({ request }) => {
 					break;
 				}
 
+				// Get order before updating to check if status was already paid
+				const orderBeforeUpdate = await db
+					.select()
+					.from(ordersTable)
+					.where(
+						eq(ordersTable.stripeSessionId, paymentIntent.metadata.sessionId),
+					)
+					.limit(1);
+
+				if (!orderBeforeUpdate[0]) {
+					logError(
+						'Order not found for session:',
+						paymentIntent.metadata.sessionId,
+					);
+					break;
+				}
+
+				const wasAlreadyPaid = orderBeforeUpdate[0].status === 'paid';
+
 				// Update order status and store payment intent ID in metadata if possible
 				const result = await db
 					.update(ordersTable)
@@ -114,6 +184,40 @@ export const POST: APIRoute = async ({ request }) => {
 					'Update result:',
 					result,
 				);
+
+				// Log payment success and create notification (only if status wasn't already paid)
+				if (!wasAlreadyPaid) {
+					await logSecurityEvent(
+						'PAYMENT_SUCCESS',
+						paymentIntent.metadata.userId || orderBeforeUpdate[0].userId,
+						{
+							orderId: orderBeforeUpdate[0].id,
+							stripeSessionId: paymentIntent.metadata.sessionId,
+							paymentIntentId: paymentIntent.id,
+							amount: paymentIntent.amount ? paymentIntent.amount / 100 : null,
+						},
+						request.headers.get('x-forwarded-for') || null,
+						request.headers.get('user-agent') || null,
+					);
+
+					// Create notification for the user
+					try {
+						await db.insert(notificationsTable).values({
+							userId: orderBeforeUpdate[0].userId,
+							title: 'Commande confirmée',
+							message: `Votre commande #${orderBeforeUpdate[0].id} a été confirmée et le paiement a été reçu.`,
+							type: 'success',
+							read: false,
+						});
+					} catch (notifErr) {
+						// Log but don't fail the webhook if notification creation fails
+						logError(
+							'Failed to create notification for order:',
+							orderBeforeUpdate[0].id,
+							notifErr,
+						);
+					}
+				}
 				break;
 			}
 
@@ -148,6 +252,32 @@ export const POST: APIRoute = async ({ request }) => {
 					'Update result:',
 					result,
 				);
+
+				// Log payment failure
+				const order = await db
+					.select()
+					.from(ordersTable)
+					.where(
+						eq(ordersTable.stripeSessionId, paymentIntent.metadata.sessionId),
+					)
+					.limit(1);
+
+				if (order[0]) {
+					await logSecurityEvent(
+						'PAYMENT_FAILED',
+						paymentIntent.metadata.userId || 'unknown',
+						{
+							orderId: order[0].id,
+							stripeSessionId: paymentIntent.metadata.sessionId,
+							paymentIntentId: paymentIntent.id,
+							amount: paymentIntent.amount ? paymentIntent.amount / 100 : null,
+							error:
+								paymentIntent.last_payment_error?.message || 'Unknown error',
+						},
+						request.headers.get('x-forwarded-for') || null,
+						request.headers.get('user-agent') || null,
+					);
+				}
 				break;
 			}
 

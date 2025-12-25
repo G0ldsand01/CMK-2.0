@@ -113,6 +113,7 @@ export const productsTable = pgTable(
 			.notNull()
 			.$type<ProductType>()
 			.default('products'),
+		visible: boolean('visible').notNull().default(true),
 	},
 	(table) => [
 		index('product_name_idx').on(table.name),
@@ -249,3 +250,19 @@ export const ordersTable = pgTable('orders', {
 	cartJSON: jsonb('cartJSON').notNull().$type<CartItem[]>(),
 	createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
 });
+
+export const systemSettingsTable = pgTable(
+	'system_settings',
+	{
+		id: serial('id').primaryKey(),
+		key: text('key').notNull().unique(),
+		value: text('value').notNull(),
+		description: text('description'),
+		updatedAt: timestamp('updated_at', { mode: 'date' })
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+		updatedBy: text('updated_by').references(() => user.id),
+	},
+	(table) => [index('settings_key_idx').on(table.key)],
+);

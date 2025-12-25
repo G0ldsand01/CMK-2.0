@@ -1,6 +1,7 @@
 import { actions } from 'astro:actions';
 import { Package, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +11,14 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
 	Table,
@@ -31,13 +40,43 @@ interface CategoriesTableProps {
 
 export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 	const [categories, setCategories] = useState<Category[]>(initialCategories);
-	const [isLoading, _setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+		null,
+	);
 
-	const handleDelete = async (categoryId: number) => {
-		// Implement delete functionality
-		console.log('Delete category:', categoryId);
+	const handleDeleteClick = (category: Category) => {
+		setCategoryToDelete(category);
+		setDeleteDialogOpen(true);
+	};
+
+	const handleDeleteConfirm = async () => {
+		if (!categoryToDelete) return;
+
+		setIsLoading(true);
+		try {
+			const { error } = await actions.admin.category.deleteCategory({
+				categoryId: categoryToDelete.id,
+			});
+
+			if (!error) {
+				toast.success('Category deleted successfully');
+				setDeleteDialogOpen(false);
+				setCategoryToDelete(null);
+				// Refresh categories
+				await handleCategoryUpdated();
+			} else {
+				toast.error(error.message || 'Failed to delete category');
+			}
+		} catch (error) {
+			console.error('Error deleting category:', error);
+			toast.error('An error occurred while deleting the category');
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const handleCategoryUpdated = async () => {
@@ -186,7 +225,7 @@ export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 													<Button
 														variant="ghost"
 														size="icon"
-														onClick={() => handleDelete(category.id)}
+														onClick={() => handleDeleteClick(category)}
 														className="text-destructive hover:text-destructive hover:bg-destructive/10">
 														<Trash2 className="h-4 w-4" />
 													</Button>
@@ -200,6 +239,36 @@ export function CategoriesTable({ initialCategories }: CategoriesTableProps) {
 					</CardContent>
 				</Card>
 			)}
+
+			{/* Delete Confirmation Dialog */}
+			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Delete Category</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to delete "{categoryToDelete?.name}"? This
+							action cannot be undone. If this category is used by any products,
+							you will need to reassign or delete those products first.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => {
+								setDeleteDialogOpen(false);
+								setCategoryToDelete(null);
+							}}>
+							Cancel
+						</Button>
+						<Button
+							variant="destructive"
+							onClick={handleDeleteConfirm}
+							disabled={isLoading}>
+							Delete
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

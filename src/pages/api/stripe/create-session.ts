@@ -24,7 +24,7 @@ function getSiteUrl(): string {
 }
 
 // ✅ Utilise une URL fournie dans la requête ou fallback vers celle du site
-function getSiteUrlFromRequest(data?: any): string {
+function getSiteUrlFromRequest(data?: Record<string, unknown>): string {
 	const candidate = (
 		data?.siteUrl ||
 		data?.url ||
@@ -77,7 +77,14 @@ export const POST: APIRoute = async ({ request }) => {
 		const data = await request.json();
 
 		// === Validation ===
-		const required = ['firstName', 'lastName', 'email', 'price', 'filename'];
+		const required = [
+			'firstName',
+			'lastName',
+			'email',
+			'phone',
+			'price',
+			'filename',
+		];
 		for (const key of required) {
 			if (!data[key]) {
 				return new Response(
@@ -98,10 +105,8 @@ export const POST: APIRoute = async ({ request }) => {
 		const SITE_URL = getSiteUrlFromRequest(data);
 
 		// === File URL ===
-		const fileUrl =
-			STORAGE_BASE_URL && data.filename
-				? `${STORAGE_BASE_URL.replace(/\/$/, '')}/${data.filename}`
-				: '';
+		// File will be uploaded later or provided separately
+		const fileUrl = data.fileUrl || data.file_url || '';
 
 		// === Metadata ===
 		const material = data.material || 'PLA';
@@ -112,6 +117,15 @@ export const POST: APIRoute = async ({ request }) => {
 			? `${Number(data.volumeCm3).toFixed(1)} cm³`
 			: 'N/A';
 		const customerFullName = `${data.firstName} ${data.lastName}`;
+
+		// Build description with file download link if available
+		let description = `Material: ${material} | Color: ${color} | Infill: ${infill} | Printer: ${printer} | Volume: ${volume}`;
+		if (data.notes) {
+			description += ` | Notes: ${data.notes}`;
+		}
+		if (fileUrl) {
+			description += ` | Download: ${fileUrl}`;
+		}
 
 		// === Stripe Session ===
 		const session = await stripe.checkout.sessions.create({
@@ -124,7 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
 						currency: 'cad',
 						product_data: {
 							name: `3D Print for ${customerFullName}: ${data.filename}`,
-							description: `Material: ${material} | Color: ${color} | Infill: ${infill} | Printer: ${printer} | Volume: ${volume}`,
+							description,
 						},
 						unit_amount: Math.round(priceNumber * 100),
 					},
@@ -135,6 +149,7 @@ export const POST: APIRoute = async ({ request }) => {
 				firstName: data.firstName,
 				lastName: data.lastName,
 				email: data.email,
+				phone: data.phone || '',
 				address: data.address || '',
 				city: data.city || '',
 				state: data.state || '',
@@ -149,9 +164,13 @@ export const POST: APIRoute = async ({ request }) => {
 				filesize: data.filesize?.toString() || '',
 				volumeCm3: data.volumeCm3?.toString() || '',
 				file_url: fileUrl,
+				download_url: fileUrl, // For easy access in receipt
 			},
 			success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${SITE_URL}/cancel`,
+			invoice_creation: {
+				enabled: true,
+			},
 		});
 
 		// === Database Save ===

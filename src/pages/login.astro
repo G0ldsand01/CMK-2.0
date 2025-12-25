@@ -4,8 +4,13 @@ import '@styles/global.css';
 import { LoginPage } from '@/components/LoginPage';
 
 const user = Astro.locals.user;
+const redirectUrl = Astro.url.searchParams.get('redirect') || '/dashboard';
 
 if (user) {
+	// Validate redirect URL to prevent open redirect
+	if (redirectUrl.startsWith('/') && !redirectUrl.startsWith('//')) {
+		return Astro.redirect(redirectUrl);
+	}
 	return Astro.redirect('/dashboard');
 }
 ---

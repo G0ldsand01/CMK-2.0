@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { desc, eq, like, count, and, or } from 'drizzle-orm';
+import { and, count, desc, eq, like, or } from 'drizzle-orm';
 import { securityLogsTable } from '@/db/schema';
 import { authServer } from '@/lib/auth-server';
 import db from '@/lib/db';
@@ -40,7 +40,12 @@ export const logs = {
 				// Build where conditions
 				const conditions = [];
 				if (input.search) {
-					conditions.push(like(securityLogsTable.event, `%${input.search}%`));
+					conditions.push(
+						or(
+							like(securityLogsTable.event, `%${input.search}%`),
+							like(securityLogsTable.userId, `%${input.search}%`),
+						),
+					);
 				}
 				if (input.eventType) {
 					conditions.push(eq(securityLogsTable.event, input.eventType));
@@ -59,18 +64,20 @@ export const logs = {
 				const total = totalResult[0]?.count || 0;
 
 				// Get logs
-				let query = db
-					.select()
-					.from(securityLogsTable)
-					.orderBy(desc(securityLogsTable.createdAt))
-					.limit(input.limit)
-					.offset(input.offset);
-
-				if (whereClause) {
-					query = query.where(whereClause) as any;
-				}
-
-				const logs = await query;
+				const logs = whereClause
+					? await db
+							.select()
+							.from(securityLogsTable)
+							.where(whereClause)
+							.orderBy(desc(securityLogsTable.createdAt))
+							.limit(input.limit)
+							.offset(input.offset)
+					: await db
+							.select()
+							.from(securityLogsTable)
+							.orderBy(desc(securityLogsTable.createdAt))
+							.limit(input.limit)
+							.offset(input.offset);
 
 				const formattedLogs = logs.map((log) => ({
 					id: log.id.toString(),
@@ -81,8 +88,8 @@ export const logs = {
 					userAgent: log.userAgent,
 					timestamp:
 						log.createdAt instanceof Date
-							? log.createdAt
-							: new Date(log.createdAt),
+							? log.createdAt.toISOString()
+							: new Date(log.createdAt).toISOString(),
 					severity: getSeverity(log.event),
 				}));
 

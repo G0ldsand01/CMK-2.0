@@ -1,247 +1,397 @@
 ---
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import Layout from "../layouts/Layout.astro";
 ---
 <Layout title="3D Print Quote Service" navbar={true}>
-  <main class="page">
-    <div id="quote-root" class="card">
-      <header class="card-header">
-        <h1>3D Print Quote Service</h1>
-        <p>Upload your model, select filament, and get an instant estimate.</p>
-        <div class="progress-strip" id="progress-strip"></div>
-        <p id="error-box" class="error hidden"></p>
-      </header>
+  <main class="max-w-6xl mx-auto px-4 py-8 mt-25">
+    <div class="space-y-6">
+      {/* Header */}
+      <div class="text-center space-y-2">
+        <h1 class="text-4xl font-bold tracking-tight">3D Print Quote Service</h1>
+        <p class="text-muted-foreground text-lg">
+          Upload your model, select filament, and get an instant estimate.
+        </p>
+      </div>
 
-      <form id="quote-form" class="form">
-        <div class="step-indicator">
-          <span id="step-label">Step 1 of 3 — Customer Info</span>
-        </div>
-
-        <!-- ================= STEP 1 ================= -->
-        <section class="step step-1 active">
-          <div class="form-inner">
-            <div class="row two">
-              <div class="field">
-                <label for="firstName">First name *</label>
-                <input id="firstName" class="input" required />
-              </div>
-              <div class="field">
-                <label for="lastName">Last name *</label>
-                <input id="lastName" class="input" required />
-              </div>
+      <Card className="shadow-lg">
+        <CardHeader>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle className="text-2xl">3D Printing Quote</CardTitle>
+              <CardDescription id="step-label" className="mt-1">Step 1 of 3 — Customer Info</CardDescription>
             </div>
-
-            <div class="row full">
-              <div class="field">
-                <label for="email">Email *</label>
-                <input id="email" type="email" class="input" required />
-              </div>
-            </div>
-
-            <div class="row full">
-              <div class="field">
-                <label for="address">Address *</label>
-                <input
-                  id="address"
-                  class="input"
-                  required
-                  placeholder="Street number, road"
-                />
-              </div>
-            </div>
-
-            <div class="row two">
-              <div class="field">
-                <label for="city">City *</label>
-                <input id="city" class="input" required />
-              </div>
-              <div class="field">
-                <label for="zip">Postal / ZIP *</label>
-                <input id="zip" class="input" required />
-              </div>
-            </div>
-
-            <div class="row two">
-              <div class="field">
-                <label for="state">Province / State *</label>
-                <input id="state" class="input" required />
-              </div>
-              <div class="field">
-                <label for="country">Country *</label>
-                <input id="country" value="Canada" class="input" required />
-              </div>
+            <div class="w-full sm:w-64 h-2 bg-muted rounded-full overflow-hidden">
+              <div class="h-full bg-primary transition-all duration-500" id="progress-strip" style="width: 33.33%"></div>
             </div>
           </div>
-        </section>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <p id="error-box" class="text-destructive text-sm mb-4 hidden bg-destructive/10 p-3 rounded-md border border-destructive/20"></p>
 
-        <!-- ================= STEP 2 ================= -->
-        <section class="step step-2 hidden">
-          <div class="form-inner wide">
-            <div class="row full">
-              <div class="field">
-                <label for="modelFile">Upload 3D Model *</label>
-                <input
-                  id="modelFile"
-                  type="file"
-                  accept=".stl,.3mf,.obj,.glb,.gltf,.fbx"
-                  class="fileinput"
-                  required
-                />
-                <p class="note">Supports .stl, .3mf, .obj, .glb, .gltf, .fbx</p>
-              </div>
-            </div>
-
-            <!-- Filament horizontal -->
-            <div class="row full">
-              <label>Filament *</label>
-              <div id="filament-carousel" class="filament-carousel">
-                <button
-                  type="button"
-                  class="filament-chip active"
-                  data-name="PLA Basic White"
-                  data-color="#f5f5f5"
-                >
-                  <span class="chip-color" style="background:#f5f5f5"
-                  ></span><span class="chip-name">PLA Basic White</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PLA Basic Black"
-                  data-color="#1a1a1a"
-                >
-                  <span class="chip-color" style="background:#1a1a1a"
-                  ></span><span class="chip-name">PLA Basic Black</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PLA Basic Gray"
-                  data-color="#7d7d7d"
-                >
-                  <span class="chip-color" style="background:#7d7d7d"
-                  ></span><span class="chip-name">PLA Basic Gray</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PLA Basic Blue"
-                  data-color="#004fce"
-                >
-                  <span class="chip-color" style="background:#004fce"
-                  ></span><span class="chip-name">PLA Basic Blue</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PLA Basic Red"
-                  data-color="#bb2b2b"
-                >
-                  <span class="chip-color" style="background:#bb2b2b"
-                  ></span><span class="chip-name">PLA Basic Red</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PLA Basic Green"
-                  data-color="#108b1b"
-                >
-                  <span class="chip-color" style="background:#108b1b"
-                  ></span><span class="chip-name">PLA Basic Green</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="PETG Transparent"
-                  data-color="#d0d6dc"
-                >
-                  <span class="chip-color" style="background:#d0d6dc"
-                  ></span><span class="chip-name">PETG Transparent</span>
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="ABS Black"
-                  data-color="#111"
-                >
-                  <span class="chip-color" style="background:#111"></span><span
-                    class="chip-name">ABS Black</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="filament-chip"
-                  data-name="TPU Transparent"
-                  data-color="#e0e0e0"
-                >
-                  <span class="chip-color" style="background:#e0e0e0"
-                  ></span><span class="chip-name">TPU Transparent</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="row two">
-              <div class="field">
-                <label for="infill">Infill (%)</label>
-                <div class="infill-row">
-                  <input
-                    id="infill"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="15"
-                  />
-                  <span id="infill-value">15%</span>
+          <form id="quote-form" class="space-y-6">
+            <!-- ================= STEP 1 ================= -->
+            <section class="step step-1">
+              <div class="space-y-5">
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div class="space-y-2">
+                    <Label htmlFor="firstName" className="text-sm font-semibold">First name *</Label>
+                    <Input id="firstName" required className="h-10" />
+                  </div>
+                  <div class="space-y-2">
+                    <Label htmlFor="lastName" className="text-sm font-semibold">Last name *</Label>
+                    <Input id="lastName" required className="h-10" />
+                  </div>
                 </div>
-                <p class="note">
-                  15–25 % is good for most cosmetic / functional parts.
-                </p>
+
+                <div class="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-semibold">Email *</Label>
+                  <Input id="email" type="email" required className="h-10" />
+                </div>
+
+                <div class="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-semibold">Phone *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    required
+                    placeholder="+1 (555) 123-4567"
+                    className="h-10"
+                  />
+                </div>
+
+                <div class="space-y-2">
+                  <Label htmlFor="address" className="text-sm font-semibold">Address *</Label>
+                  <Input
+                    id="address"
+                    required
+                    placeholder="Street number, road"
+                    className="h-10"
+                  />
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div class="space-y-2">
+                    <Label htmlFor="city" className="text-sm font-semibold">City *</Label>
+                    <Input id="city" required className="h-10" />
+                  </div>
+                  <div class="space-y-2">
+                    <Label htmlFor="zip" className="text-sm font-semibold">Postal / ZIP *</Label>
+                    <Input id="zip" required className="h-10" />
+                  </div>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div class="space-y-2">
+                    <Label htmlFor="state" className="text-sm font-semibold">Province / State *</Label>
+                    <Input id="state" required className="h-10" />
+                  </div>
+                  <div class="space-y-2">
+                    <Label htmlFor="country" className="text-sm font-semibold">Country *</Label>
+                    <Input id="country" value="Canada" required className="h-10" />
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
 
-            <div class="row full">
-              <div class="field">
-                <label for="notes">Notes / special instructions</label>
-                <textarea
-                  id="notes"
-                  rows="3"
-                  class="input"
-                  placeholder="Ex : color brand, supports, orientation..."
-                ></textarea>
+            <!-- ================= STEP 2 ================= -->
+            <section class="step step-2 hidden">
+              <div class="space-y-6">
+                <div class="space-y-2">
+                  <Label htmlFor="modelFile">Upload 3D Model *</Label>
+                  <Input
+                    id="modelFile"
+                    type="file"
+                    accept=".stl,.3mf,.obj,.glb,.gltf,.fbx"
+                    required
+                  />
+                  <p class="text-xs text-muted-foreground">Supports .stl, .3mf, .obj, .glb, .gltf, .fbx</p>
+                </div>
+
+                <!-- Filament Selection -->
+                <div class="space-y-3">
+                  <Label className="text-sm font-semibold">Material & Color *</Label>
+                  <div id="filament-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                    <!-- PLA Colors -->
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-primary bg-primary/10 text-sm font-medium transition-all hover:scale-105 hover:shadow-md cursor-pointer"
+                      data-name="PLA Basic White"
+                      data-color="#f5f5f5"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#f5f5f5"></span>
+                      <span class="text-xs text-center font-medium">PLA White</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Black"
+                      data-color="#1a1a1a"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#1a1a1a"></span>
+                      <span class="text-xs text-center font-medium">PLA Black</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Gray"
+                      data-color="#7d7d7d"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#7d7d7d"></span>
+                      <span class="text-xs text-center font-medium">PLA Gray</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Blue"
+                      data-color="#004fce"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#004fce"></span>
+                      <span class="text-xs text-center font-medium">PLA Blue</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Red"
+                      data-color="#bb2b2b"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#bb2b2b"></span>
+                      <span class="text-xs text-center font-medium">PLA Red</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Green"
+                      data-color="#108b1b"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#108b1b"></span>
+                      <span class="text-xs text-center font-medium">PLA Green</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Yellow"
+                      data-color="#fbbf24"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#fbbf24"></span>
+                      <span class="text-xs text-center font-medium">PLA Yellow</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Orange"
+                      data-color="#f97316"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#f97316"></span>
+                      <span class="text-xs text-center font-medium">PLA Orange</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Purple"
+                      data-color="#9333ea"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#9333ea"></span>
+                      <span class="text-xs text-center font-medium">PLA Purple</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Pink"
+                      data-color="#ec4899"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#ec4899"></span>
+                      <span class="text-xs text-center font-medium">PLA Pink</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Brown"
+                      data-color="#92400e"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#92400e"></span>
+                      <span class="text-xs text-center font-medium">PLA Brown</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PLA Basic Cyan"
+                      data-color="#06b6d4"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#06b6d4"></span>
+                      <span class="text-xs text-center font-medium">PLA Cyan</span>
+                    </button>
+                    <!-- PETG Colors -->
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PETG Transparent"
+                      data-color="#d0d6dc"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#d0d6dc"></span>
+                      <span class="text-xs text-center font-medium">PETG Clear</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PETG Blue"
+                      data-color="#2563eb"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#2563eb"></span>
+                      <span class="text-xs text-center font-medium">PETG Blue</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="PETG Black"
+                      data-color="#0f172a"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#0f172a"></span>
+                      <span class="text-xs text-center font-medium">PETG Black</span>
+                    </button>
+                    <!-- ABS Colors -->
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="ABS Black"
+                      data-color="#111"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#111"></span>
+                      <span class="text-xs text-center font-medium">ABS Black</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="ABS White"
+                      data-color="#f8f9fa"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#f8f9fa"></span>
+                      <span class="text-xs text-center font-medium">ABS White</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="ABS Red"
+                      data-color="#dc2626"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#dc2626"></span>
+                      <span class="text-xs text-center font-medium">ABS Red</span>
+                    </button>
+                    <!-- TPU Colors -->
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="TPU Transparent"
+                      data-color="#e0e0e0"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#e0e0e0"></span>
+                      <span class="text-xs text-center font-medium">TPU Clear</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="filament-chip flex flex-col items-center gap-2 p-3 rounded-lg border-2 border-input bg-background text-sm font-medium transition-all hover:scale-105 hover:shadow-md hover:border-primary/50 cursor-pointer"
+                      data-name="TPU Black"
+                      data-color="#1f2937"
+                    >
+                      <span class="w-10 h-10 rounded-full border-2 border-foreground/20 shadow-md" style="background:#1f2937"></span>
+                      <span class="text-xs text-center font-medium">TPU Black</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <Label htmlFor="infill">Infill (%)</Label>
+                  <div class="flex items-center gap-4">
+                    <input
+                      id="infill"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value="15"
+                      class="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                    />
+                    <span id="infill-value" class="text-sm font-medium w-12 text-center">15%</span>
+                  </div>
+                  <p class="text-xs text-muted-foreground">
+                    15–25 % is good for most cosmetic / functional parts.
+                  </p>
+                </div>
+
+                <div class="space-y-2">
+                  <Label htmlFor="notes">Notes / special instructions</Label>
+                  <Textarea
+                    id="notes"
+                    rows="3"
+                    placeholder="Ex : color brand, supports, orientation..."
+                  />
+                </div>
               </div>
+            </section>
+
+            <!-- ================= STEP 3 ================= -->
+            <section class="step step-3 hidden">
+              <div class="space-y-6">
+                <div class="text-center space-y-3">
+                  <h2 class="text-2xl font-bold">Model Preview</h2>
+                  <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg border border-primary/20">
+                    <span class="text-muted-foreground">Estimated cost:</span>
+                    <span id="cost" class="text-primary font-bold text-xl">0.00 $</span>
+                  </div>
+                  <div id="cost-breakdown" class="text-sm text-muted-foreground mt-2"></div>
+                </div>
+                
+                <div class="space-y-4">
+                  <div class="flex items-center justify-center gap-4 flex-wrap">
+                    <button id="center-model-btn" type="button" class="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" title="Center model on bed">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="2" x2="12" y2="6"></line>
+                        <line x1="12" y1="18" x2="12" y2="22"></line>
+                        <line x1="2" y1="12" x2="6" y2="12"></line>
+                        <line x1="18" y1="12" x2="22" y2="12"></line>
+                      </svg>
+                      Center on Bed
+                    </button>
+                    <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-md border border-input hover:bg-accent transition-colors">
+                      <input type="checkbox" id="toggle-ruler" checked class="h-4 w-4 rounded border-input accent-primary" />
+                      <span class="text-sm font-medium">Show Ruler</span>
+                    </label>
+                  </div>
+                  
+                  <div class="relative w-full bg-muted rounded-lg overflow-hidden aspect-square border border-border shadow-inner">
+                    <div id="loading" class="absolute inset-0 flex items-center justify-center bg-muted/80 backdrop-blur-sm z-20 hidden">
+                      <div class="flex flex-col items-center gap-2">
+                        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-sm font-medium text-foreground">Loading model...</span>
+                      </div>
+                    </div>
+                    <canvas id="stl-canvas" class="w-full h-full"></canvas>
+                    <div id="ruler-overlay" class="absolute inset-0 pointer-events-none z-10"></div>
+                  </div>
+                </div>
+
+                <div class="text-center p-3 bg-muted/50 rounded-lg border border-border">
+                  <p id="size-line" class="text-sm font-medium text-foreground">
+                    Detected size: —
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <!-- ACTIONS -->
+            <div class="flex justify-between gap-4 pt-6 border-t">
+              <button id="prev-btn" type="button" class="inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Previous
+              </button>
+              <button id="next-btn" type="button" class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
+                Next
+              </button>
             </div>
-          </div>
-        </section>
-
-        <!-- ================= STEP 3 ================= -->
-        <section class="step step-3 hidden">
-          <h2 class="viewer-title">Model Preview</h2>
-          <p class="price-line">
-            Estimated cost: <span id="cost" class="price">0.00 $</span>
-          </p>
-          <div id="cost-breakdown" class="breakdown" style="margin: 1rem;">
-          </div>
-          <div class="viewer">
-            <div class="loading" id="loading"></div>
-            <canvas id="stl-canvas"></canvas>
-          </div>
-
-          <p id="size-line" class="size-line" style="margin: 1rem;">
-            Detected size: —
-          </p>
-          <!-- <p id="viewer-status" class="status">Load a model to preview.</p> -->
-        </section>
-
-        <!-- ACTIONS -->
-        <div class="actions">
-          <button id="prev-btn" type="button" class="btn" disabled>
-            Previous
-          </button>
-          <button id="next-btn" type="button" class="btn primary">Next</button>
-          <button id="checkout-btn" type="button" class="btn success hidden">
-            Checkout
-          </button>
-        </div>
-      </form>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   </main>
 
@@ -254,18 +404,15 @@ import Layout from "../layouts/Layout.astro";
     const steps = [...document.querySelectorAll(".step")];
     const prevBtn = document.getElementById("prev-btn");
     const nextBtn = document.getElementById("next-btn");
-    const checkoutBtn = document.getElementById("checkout-btn");
     const strip = document.getElementById("progress-strip");
-    const stepLabel = document.getElementById("step-label");
     const fileInput = document.getElementById("modelFile");
     const errorBox = document.getElementById("error-box");
     const canvas = document.getElementById("stl-canvas");
     const loading = document.getElementById("loading");
-    const viewerStatus = document.getElementById("viewer-status");
     const sizeLine = document.getElementById("size-line");
     const costEl = document.getElementById("cost");
     const breakdown = document.getElementById("cost-breakdown");
-    const filamentCarousel = document.getElementById("filament-carousel");
+    const filamentGrid = document.getElementById("filament-grid");
     const infillSlider = document.getElementById("infill");
     const infillValue = document.getElementById("infill-value");
 
@@ -273,6 +420,7 @@ import Layout from "../layouts/Layout.astro";
     const firstName = document.getElementById("firstName");
     const lastName = document.getElementById("lastName");
     const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
     const address = document.getElementById("address");
     const city = document.getElementById("city");
     const state = document.getElementById("state");
@@ -282,33 +430,58 @@ import Layout from "../layouts/Layout.astro";
 
     let step = 0;
     let file = null;
-    let scene, camera, renderer, controls, mesh;
+    let scene, camera, renderer, controls, mesh, bed, bedHelper;
     let lastVolume = 0;
     let lastDims = { x: 0, y: 0, z: 0 };
     let lastPrinter = "Unknown size";
     let selectedMaterial = { name: "PLA Basic White", color: "#f5f5f5" };
+    let bedSize = { x: 220, y: 220, z: 250 }; // Default bed size (Ender 3)
+    const centerModelBtn = document.getElementById("center-model-btn");
+    const toggleRuler = document.getElementById("toggle-ruler");
+    const rulerOverlay = document.getElementById("ruler-overlay");
 
     /* === STEP NAVIGATION === */
     function setProgress(i) {
       const pct = ((i + 1) / steps.length) * 100;
-      strip.style.setProperty("--progress", pct + "%");
+      strip.style.width = pct + "%";
     }
 
     function showStep(i) {
       steps.forEach((s, idx) => {
-        s.classList.toggle("active", idx === i);
-        s.classList.toggle("hidden", idx !== i);
+        if (idx === i) {
+          s.classList.add("active");
+          s.classList.remove("hidden");
+        } else {
+          s.classList.remove("active");
+          s.classList.add("hidden");
+        }
       });
       step = i;
-      stepLabel.textContent =
-        i === 0
-          ? "Step 1 of 3 — Customer Info"
-          : i === 1
-            ? "Step 2 of 3 — Print Details"
-            : "Step 3 of 3 — Preview & Checkout";
+      const stepLabelEl = document.getElementById("step-label");
+      if (stepLabelEl) {
+        stepLabelEl.textContent =
+          i === 0
+            ? "Step 1 of 3 — Customer Info"
+            : i === 1
+              ? "Step 2 of 3 — Print Details"
+              : "Step 3 of 3 — Preview & Checkout";
+      }
+      
+      // Button logic:
+      // Step 1: Previous disabled, Next enabled
+      // Step 2: Previous enabled, Next enabled
+      // Step 3: Previous enabled, Next becomes "Checkout"
+      
       prevBtn.disabled = i === 0;
-      nextBtn.classList.toggle("hidden", i === steps.length - 1);
-      checkoutBtn.classList.toggle("hidden", i !== steps.length - 1);
+      
+      if (i === steps.length - 1) {
+        // Last step: change Next button to Checkout
+        nextBtn.textContent = "Checkout";
+      } else {
+        // Not last step: show Next
+        nextBtn.textContent = "Next";
+      }
+      
       setProgress(i);
       if (i === 2 && file) loadModel(file);
     }
@@ -320,6 +493,7 @@ import Layout from "../layouts/Layout.astro";
           "firstName",
           "lastName",
           "email",
+          "phone",
           "address",
           "city",
           "state",
@@ -346,69 +520,34 @@ import Layout from "../layouts/Layout.astro";
     prevBtn.onclick = () => {
       if (step > 0) showStep(step - 1);
     };
-    nextBtn.onclick = () => {
-      if (validate(step) && step < steps.length - 1) showStep(step + 1);
+    
+    nextBtn.onclick = async () => {
+      // If on last step, do checkout
+      if (step === steps.length - 1) {
+        await handleCheckout();
+      } else {
+        // Otherwise, go to next step
+        if (validate(step)) {
+          showStep(step + 1);
+        }
+      }
     };
 
-    /* === FILAMENT CAROUSEL (AUTO-CENTER + DRAG + TOUCH) === */
-    let isDragging = false,
-      startX,
-      scrollLeft;
-
-    // mouse drag
-    filamentCarousel.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      startX = e.pageX - filamentCarousel.offsetLeft;
-      scrollLeft = filamentCarousel.scrollLeft;
-    });
-    filamentCarousel.addEventListener("mouseleave", () => (isDragging = false));
-    filamentCarousel.addEventListener("mouseup", () => (isDragging = false));
-    filamentCarousel.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - filamentCarousel.offsetLeft;
-      const walk = (x - startX) * 1.2;
-      filamentCarousel.scrollLeft = scrollLeft - walk;
-    });
-
-    // touch drag
-    filamentCarousel.addEventListener("touchstart", (e) => {
-      startX = e.touches[0].pageX;
-      scrollLeft = filamentCarousel.scrollLeft;
-    });
-    filamentCarousel.addEventListener(
-      "touchmove",
-      (e) => {
-        const x = e.touches[0].pageX;
-        const walk = (x - startX) * 1.2;
-        filamentCarousel.scrollLeft = scrollLeft - walk;
-      },
-      { passive: true }
-    );
-
-    // auto-center selected chip
-    function centerChip(chip) {
-      const chipRect = chip.getBoundingClientRect();
-      const containerRect = filamentCarousel.getBoundingClientRect();
-      const offset =
-        chipRect.left -
-        containerRect.left -
-        (containerRect.width / 2 - chipRect.width / 2);
-      filamentCarousel.scrollBy({ left: offset, behavior: "smooth" });
-    }
-
-    // click handler
-    filamentCarousel.querySelectorAll(".filament-chip").forEach((chip) => {
+    /* === FILAMENT SELECTION === */
+    filamentGrid.querySelectorAll(".filament-chip").forEach((chip) => {
       chip.addEventListener("click", () => {
-        filamentCarousel
-          .querySelectorAll(".filament-chip")
-          .forEach((c) => c.classList.remove("active"));
-        chip.classList.add("active");
+        // Remove active state from all chips
+        filamentGrid.querySelectorAll(".filament-chip").forEach((c) => {
+          c.classList.remove("border-primary", "bg-primary/10");
+          c.classList.add("border-input", "bg-background");
+        });
+        // Add active state to clicked chip
+        chip.classList.add("border-primary", "bg-primary/10");
+        chip.classList.remove("border-input", "bg-background");
         selectedMaterial = {
-          name: chip.dataset.name,
-          color: chip.dataset.color,
+          name: chip.dataset.name || "PLA Basic White",
+          color: chip.dataset.color || "#f5f5f5",
         };
-        centerChip(chip);
         if (mesh) mesh.material.color.set(selectedMaterial.color);
         if (lastVolume) updateEstimate();
       });
@@ -431,7 +570,8 @@ import Layout from "../layouts/Layout.astro";
       const est = estimateCost(
         lastVolume,
         selectedMaterial.name,
-        Number(infillSlider.value)
+        Number(infillSlider.value),
+        lastDims
       );
 
       // Add handling time (0.5h setup + real-life 24h post-print delay)
@@ -454,8 +594,9 @@ import Layout from "../layouts/Layout.astro";
 
       // Display only what’s relevant to the user
       costEl.textContent = est.total.toFixed(2) + " $";
+      const setupFeeText = est.setupFee ? ` • Setup fee: $${est.setupFee.toFixed(2)} (based on model size)` : '';
       breakdown.textContent = `Estimated print time: ${timeText} ⏱️ 
-  • Ready for shipping or pickup after ${formattedCompletion} (Time may vary depending on your location and demand).`;
+  • Ready for shipping or pickup after ${formattedCompletion} (Time may vary depending on your location and demand).${setupFeeText}`;
     }
 
     /* === THREE.JS MODEL LOADING === */
@@ -476,14 +617,117 @@ import Layout from "../layouts/Layout.astro";
       const dir = new THREE.DirectionalLight(0xffffff, 1);
       dir.position.set(3, 2, 5);
       scene.add(ambient, dir);
+      
+      // Create print bed
+      createPrintBed();
+      
       controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
+      controls.target.set(0, 0, 0);
+      
       const loop = () => {
         requestAnimationFrame(loop);
         controls.update();
+        updateRuler();
         renderer.render(scene, camera);
       };
       loop();
+    }
+
+    function createPrintBed() {
+      if (bed) {
+        scene.remove(bed);
+        if (bedHelper) scene.remove(bedHelper);
+      }
+      
+      // Create bed plane
+      const bedGeometry = new THREE.PlaneGeometry(bedSize.x, bedSize.y);
+      const bedMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2a2a2a,
+        roughness: 0.8,
+        metalness: 0.1,
+        side: THREE.DoubleSide,
+      });
+      bed = new THREE.Mesh(bedGeometry, bedMaterial);
+      bed.rotation.x = -Math.PI / 2;
+      bed.position.y = 0;
+      scene.add(bed);
+      
+      // Add bed grid helper
+      bedHelper = new THREE.GridHelper(
+        Math.max(bedSize.x, bedSize.y),
+        20,
+        0x444444,
+        0x666666
+      );
+      bedHelper.position.y = 0.1;
+      scene.add(bedHelper);
+    }
+
+    function centerModelOnBed() {
+      if (!mesh) return;
+      
+      const box = new THREE.Box3().setFromObject(mesh);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      
+      // Center model horizontally (x and z) and place bottom on bed (y=0)
+      const offset = new THREE.Vector3(
+        -center.x,  // Center X
+        -box.min.y, // Place bottom on bed (y=0)
+        -center.z   // Center Z
+      );
+      mesh.position.copy(offset);
+      
+      // Update camera to view centered model
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const modelHeight = size.y;
+      camera.position.set(maxDim * 1.3, modelHeight * 0.6, maxDim * 1.5);
+      controls.target.set(0, modelHeight / 2, 0);
+      controls.update();
+    }
+
+    function updateRuler() {
+      if (!mesh || !rulerOverlay) return;
+      
+      if (!toggleRuler || !toggleRuler.checked) {
+        rulerOverlay.style.display = "none";
+        return;
+      }
+      
+      rulerOverlay.style.display = "block";
+      
+      // Get model bounding box
+      const box = new THREE.Box3().setFromObject(mesh);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      
+      // Project model center to screen
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      center.project(camera);
+      
+      const x = (center.x * 0.5 + 0.5) * canvas.clientWidth;
+      const y = (center.y * -0.5 + 0.5) * canvas.clientHeight;
+      
+      // Create ruler HTML with dimensions
+      const rulerHtml = `
+        <div class="ruler-x" style="left: ${x}px; top: ${y}px;">
+          <div class="ruler-label">X: ${size.x.toFixed(1)}mm</div>
+          <div class="ruler-line"></div>
+        </div>
+        <div class="ruler-y" style="left: ${x}px; top: ${y}px;">
+          <div class="ruler-label">Y: ${size.y.toFixed(1)}mm</div>
+          <div class="ruler-line"></div>
+        </div>
+        <div class="ruler-z" style="left: ${x}px; top: ${y}px;">
+          <div class="ruler-label">Z: ${size.z.toFixed(1)}mm</div>
+          <div class="ruler-line"></div>
+        </div>
+      `;
+      rulerOverlay.innerHTML = rulerHtml;
     }
 
     async function loadModel(file) {
@@ -504,30 +748,43 @@ import Layout from "../layouts/Layout.astro";
         metalness: 0.1,
       });
       mesh = new THREE.Mesh(geometry, material);
-      const box = geometry.boundingBox;
+      scene.add(mesh);
+      
+      // Calculate dimensions and center on bed
+      const box = new THREE.Box3().setFromObject(mesh);
       const size = new THREE.Vector3();
       box.getSize(size);
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      mesh.position.sub(center);
-      scene.add(mesh);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      camera.position.set(maxDim * 1.3, maxDim * 1.1, maxDim * 1.5);
-      controls.target.set(0, 0, 0);
-      controls.update();
+      
+      // Center model on bed
+      centerModelOnBed();
 
       lastDims = {
         x: Number(size.x.toFixed(1)),
         y: Number(size.y.toFixed(1)),
         z: Number(size.z.toFixed(1)),
       };
-      if (size.x <= 180 && size.y <= 180 && size.z <= 180)
+      if (size.x <= 180 && size.y <= 180 && size.z <= 180) {
         lastPrinter = "A1 Mini (180×180×180)";
-      else if (size.x <= 220 && size.y <= 220 && size.z <= 220)
+        bedSize = { x: 180, y: 180, z: 180 };
+      } else if (size.x <= 220 && size.y <= 220 && size.z <= 220) {
         lastPrinter = "Ender 3 (220×220×220)";
-      else if (size.x <= 256 && size.y <= 256 && size.z <= 256)
+        bedSize = { x: 220, y: 220, z: 220 };
+      } else if (size.x <= 256 && size.y <= 256 && size.z <= 256) {
         lastPrinter = "Bambu A1 (256×256×256)";
-      else lastPrinter = "Too large / custom";
+        bedSize = { x: 256, y: 256, z: 256 };
+      } else {
+        lastPrinter = "Too large / custom";
+        bedSize = { x: 300, y: 300, z: 300 }; // Default large bed
+      }
+      
+      // Update bed size
+      createPrintBed();
+      
+      // Center model on bed automatically
+      setTimeout(() => {
+        centerModelOnBed();
+        updateRuler();
+      }, 100);
 
       sizeLine.textContent = `Detected size: ${lastDims.x} × ${lastDims.y} × ${lastDims.z} mm — Printer: ${lastPrinter}`;
       const vol = calcVolume(geometry);
@@ -559,7 +816,7 @@ import Layout from "../layouts/Layout.astro";
       return Math.abs(volume) / 1000;
     }
 
-    function estimateCost(vol, mat, infill) {
+    function estimateCost(vol, mat, infill, dims) {
       let p = { density: 1.24, pricePerKg: 25 };
       if (mat.includes("PETG")) p = { density: 1.27, pricePerKg: 30 };
       if (mat.includes("ABS")) p = { density: 1.04, pricePerKg: 28 };
@@ -571,466 +828,265 @@ import Layout from "../layouts/Layout.astro";
       const timeHours = (vol / speed) * infillFactor;
       const timeCost = timeHours * 3.5;
       const energyCost = (0.12 * 120 * timeHours) / 1000;
-      const total = (materialCost + timeCost + energyCost) * 1.15;
-      return { materialCost, timeHours, energyCost, total };
+      
+      // Base cost calculation
+      const baseCost = materialCost + timeCost + energyCost;
+      
+      // Add overhead (setup, post-processing, packaging, handling)
+      const overhead = baseCost * 0.20; // 20% for setup, post-processing, packaging
+      
+      // Proportional setup fee based on model size (volume in cm³)
+      // Small models (< 10 cm³): $5 base fee
+      // Medium models (10-50 cm³): $5 + $0.50 per cm³ above 10
+      // Large models (> 50 cm³): $25 + $0.30 per cm³ above 50
+      let setupFee = 0;
+      if (vol < 10) {
+        setupFee = 5.00;
+      } else if (vol <= 50) {
+        setupFee = 5.00 + (vol - 10) * 0.50;
+      } else {
+        setupFee = 25.00 + (vol - 50) * 0.30;
+      }
+      
+      // Calculate total with profit margin (2.5x markup for better profit)
+      let total = (baseCost + overhead) * 2.5;
+      
+      // Add proportional setup fee
+      total += setupFee;
+      
+      // Ensure minimum Stripe requirement (0.50 CAD)
+      const STRIPE_MINIMUM = 0.50;
+      if (total < STRIPE_MINIMUM) {
+        total = STRIPE_MINIMUM;
+      }
+      
+      return { materialCost, timeHours, energyCost, setupFee, total };
     }
 
     /* === CHECKOUT === */
-    checkoutBtn.onclick = async () => {
+    async function handleCheckout() {
+      // Validate all steps
       if (!validate(0) || !validate(1) || !file) {
-        showStep(0);
+        // Go to first invalid step
+        if (!validate(0)) showStep(0);
+        else if (!validate(1)) showStep(1);
         return;
       }
-      const humanColor = selectedMaterial.name.split(" ").pop();
-      const body = {
-        firstName: firstName.value.trim(),
-        lastName: lastName.value.trim(),
-        email: email.value.trim(),
-        address: address.value.trim(),
-        city: city.value.trim(),
-        state: state.value.trim(),
-        zip: zip.value.trim(),
-        country: country.value.trim(),
-        material: selectedMaterial.name,
-        color: humanColor,
-        infill: infillSlider.value,
-        notes: notes.value,
-        filename: file.name,
-        volumeCm3: lastVolume,
-        dims: lastDims,
-        printer: lastPrinter.replace(/mm/g, "").trim(),
-        price: parseFloat(costEl.textContent),
-      };
+      
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Creating checkout...";
+      errorBox.classList.add("hidden");
+      
       try {
+        // Create Stripe session directly (no CDN upload)
+        const humanColor = selectedMaterial.name.split(" ").pop();
+        const body = {
+          firstName: firstName.value.trim(),
+          lastName: lastName.value.trim(),
+          email: email.value.trim(),
+          phone: phone.value.trim(),
+          address: address.value.trim(),
+          city: city.value.trim(),
+          state: state.value.trim(),
+          zip: zip.value.trim(),
+          country: country.value.trim(),
+          material: selectedMaterial.name,
+          color: humanColor,
+          infill: infillSlider.value,
+          notes: notes.value,
+          filename: file.name,
+          volumeCm3: lastVolume,
+          dims: lastDims,
+          printer: lastPrinter.replace(/mm/g, "").trim(),
+          price: parseFloat(costEl.textContent),
+        };
+        
         const res = await fetch("/api/stripe/create-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+        
         const json = await res.json();
-        if (json.url) window.location.href = json.url;
-        else {
+        if (json.url) {
+          window.location.href = json.url;
+        } else {
           errorBox.textContent = json.error || "Stripe checkout failed.";
           errorBox.classList.remove("hidden");
+          nextBtn.disabled = false;
+          nextBtn.textContent = "Checkout";
         }
-      } catch {
-        errorBox.textContent = "Stripe request failed.";
+      } catch (err) {
+        errorBox.textContent = err instanceof Error ? err.message : "Request failed.";
         errorBox.classList.remove("hidden");
+        nextBtn.disabled = false;
+        nextBtn.textContent = "Checkout";
       }
-    };
+    }
 
-    showStep(0);
+      // Center model button
+      if (centerModelBtn) {
+        centerModelBtn.onclick = () => {
+          centerModelOnBed();
+          updateRuler();
+        };
+      }
+      
+      // Toggle ruler
+      if (toggleRuler) {
+        toggleRuler.addEventListener("change", () => {
+          updateRuler();
+        });
+      }
+      
+      // Handle window resize
+      window.addEventListener("resize", () => {
+        if (renderer && camera) {
+          camera.aspect = canvas.clientWidth / canvas.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        }
+      });
+
+      // Initialize buttons state on page load
+      prevBtn.disabled = true;
+      nextBtn.textContent = "Next";
+      
+      showStep(0);
   </script>
 
   <!-- ================= STYLE ================= -->
   <style>
-    .page {
-      min-height: 100vh;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      background: radial-gradient(circle at 30% 20%, #0f1013, #060708 90%);
-      padding: 7vh 1rem 4vh;
-      box-sizing: border-box;
-    }
-
-    .card {
-      margin: 6rem 0;
-      width: min(95%, 60rem);
-      background: rgba(19, 20, 25, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      border-radius: 1rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(10px);
-      color: #fff;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.45s ease;
-      animation: fadeInUp 0.5s ease both;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .card-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      text-align: center;
-      padding: 1.8rem 1.2rem 1.2rem;
-    }
-    .card-header h1 {
-      font-size: clamp(1.6rem, 3vw, 2rem);
-      font-weight: 700;
-    }
-    .card-header p {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.55);
-      margin-top: 0.3rem;
-    }
-
-    .progress-strip {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      position: relative;
-      overflow: hidden;
-      border-radius: 999px;
-    }
-    .progress-strip::after {
-      content: "";
+    .ruler-overlay {
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
       height: 100%;
-      width: var(--progress, 0%);
-      background: linear-gradient(90deg, #3b82f6, var(--color-primary));
-      border-radius: 999px;
-      transition: width 0.45s ease;
+      pointer-events: none;
+      z-index: 10;
     }
-
-    .form {
-      max-width: 52rem;
-      width: 90%;
+    .ruler-x,
+    .ruler-y,
+    .ruler-z {
+      position: absolute;
+      pointer-events: none;
+    }
+    .ruler-x {
+      transform: translate(-50%, -50%);
+    }
+    .ruler-x .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: hsl(var(--primary));
       margin: 0 auto;
-      padding: 2.4rem 2rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.8rem;
-      position: relative;
+      box-shadow: 0 0 4px hsl(var(--primary) / 0.8);
     }
-
-    .step-indicator {
-      text-align: center;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 0.5rem;
+    .ruler-y {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .ruler-y .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: #10b981;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(16, 185, 129, 0.8);
+    }
+    .ruler-z {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    .ruler-z .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: #f59e0b;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(245, 158, 11, 0.8);
+    }
+    .ruler-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      white-space: nowrap;
+      font-weight: 600;
     }
 
     .step {
-      opacity: 0;
-      transform: translateX(25px);
-      transition: all 0.35s ease;
-      pointer-events: none;
-      visibility: hidden;
-      position: absolute;
-      width: 100%;
+      display: none;
     }
     .step.active {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: auto;
-      visibility: visible;
-      position: relative;
-    }
-
-    .form-inner {
-      width: 90%;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
-    }
-    .form-inner.wide {
-      width: 90%;
-      max-width: 64rem;
-    }
-
-    .row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .row.two > .field {
-      flex: 1 1 0;
-    }
-    .row.full > .field {
-      width: 100%;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-    .field label {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .input,
-    .fileinput,
-    textarea {
-      background: #16171b;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 0.5rem;
-      padding: 0.6rem 0.9rem;
-      font-size: 0.92rem;
-      color: #fff;
-      outline: none;
-      transition: all 0.25s ease;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .input:focus,
-    textarea:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18);
-    }
-
-    .fileinput {
-      border: 2px dashed rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.01);
-      text-align: center;
-      cursor: pointer;
-      padding: 1.3rem 0.8rem;
-      font-size: 0.9rem;
-      transition: all 0.25s ease;
-    }
-    .fileinput:hover {
-      border-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.05);
-    }
-    .fileinput::file-selector-button {
-      display: none;
-    }
-
-    .note {
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.35);
-    }
-
-    /* === FILAMENT CAROUSEL (DESKTOP + MOBILE SCROLL FIX) === */
-    /* ===== NEW RESPONSIVE FILAMENT CAROUSEL ===== */
-    .filament-carousel {
-      display: flex;
-      gap: 0.8rem;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      overscroll-behavior-x: contain;
-      padding: 0.8rem 0.4rem 0.9rem;
-      margin: 0 -0.8rem;
-      touch-action: pan-x;
-      user-select: none;
-    }
-
-    .filament-carousel::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filament-chip {
-      flex: 0 0 auto;
-      scroll-snap-align: center;
-      min-width: 135px;
-      max-width: 180px;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.55rem 0.9rem;
-      border-radius: 0.6rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: #fff;
-      font-size: 0.8rem;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .filament-chip:hover {
-      background: rgba(59, 130, 246, 0.08);
-      border-color: rgba(59, 130, 246, 0.4);
-    }
-    .filament-chip.active {
-      border-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.18);
-      box-shadow: 0 0 8px rgba(59, 130, 246, 0.35);
-    }
-
-    .chip-color {
-      width: 1.2rem;
-      height: 1.2rem;
-      border-radius: 0.3rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .step-2,
-    .form-inner.wide,
-    .row.full,
-    .form {
-      overflow: visible !important;
-    }
-
-    /* === VIEWER / PRICE SECTIONS === */
-    .viewer-title {
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    .viewer {
-      width: 100%;
-      background: #d9dadb;
-      border-radius: 0.6rem;
-      overflow: hidden;
-      aspect-ratio: 1/1;
-      position: relative;
-    }
-    .viewer canvas {
-      width: 100%;
-      height: 100%;
       display: block;
     }
-    .loading {
+
+
+
+    /* === VIEWER === */
+    #loading {
+      z-index: 10;
+    }
+    .ruler-overlay {
       position: absolute;
-      inset: 0;
-      display: none;
-      background: rgba(0, 0, 0, 0.05);
-      place-items: center;
-      color: #000;
-      font-weight: 500;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
     }
-
-    .size-line {
-      text-align: center;
-      font-size: 0.78rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 0.4rem;
+    .ruler-x,
+    .ruler-y,
+    .ruler-z {
+      position: absolute;
+      pointer-events: none;
     }
-
-    .price-line {
-      text-align: center;
-      margin-top: 0.6rem;
+    .ruler-x {
+      transform: translate(-50%, -50%);
     }
-    .price {
-      color: var(--color-primary);
+    .ruler-x .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: #3b82f6;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(59, 130, 246, 0.8);
+    }
+    .ruler-y {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .ruler-y .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: #10b981;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(16, 185, 129, 0.8);
+    }
+    .ruler-z {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    .ruler-z .ruler-line {
+      width: 2px;
+      height: 60px;
+      background: #f59e0b;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(245, 158, 11, 0.8);
+    }
+    .ruler-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      white-space: nowrap;
       font-weight: 600;
     }
-    .breakdown {
-      text-align: center;
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.45);
-      margin-top: 0.3rem;
-    }
 
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.8rem;
-      margin-top: 2rem;
-    }
-    .btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      border-radius: 0.45rem;
-      color: #fff;
-      font-size: 0.85rem;
-      padding: 0.6rem 1.4rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-    .btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    .btn.primary {
-      background: #3b82f6;
-    }
-    .btn.success {
-      background: var(--color-primary);
-    }
-
-    .error {
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
-      color: #f87171;
-    }
-    .hidden {
-      display: none;
-    }
-
-    /* === STEP 1 WIDER === */
-    .step-1 .form-inner {
-      width: 90%;
-      max-width: 64rem;
-    }
-    /* === MOBILE RESPONSIVE === */
-    /* === MOBILE PORTRAIT FIX: ENABLE TRUE HORIZONTAL SCROLL === */
-    @media (max-width: 768px) {
-      .form {
-        width: 95%;
-        max-width: 64rem;
-        padding: 1.6rem 1rem 1.6rem !important;
-        margin: 0 !important;
-        overflow: visible !important;
-        contain: none !important;
-      }
-      /* Make steps static so nested scroll zones receive touch events */
-      .step {
-        position: relative !important;
-        overflow: visible !important;
-        transform: none !important;
-      }
-
-      .form,
-      .form-inner,
-      .form-inner.wide,
-      .step-2,
-      .row.full {
-        overflow: visible !important;
-        contain: none !important;
-        transform: none !important;
-      }
-
-      /* Dedicated scroll zone for carousel */
-      .filament-carousel {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 0.6rem;
-        padding: 0.7rem 0.3rem 0.8rem;
-        overflow-x: scroll !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        scroll-snap-type: x proximity !important;
-        overscroll-behavior-x: contain !important;
-        touch-action: pan-x !important;
-        user-select: none !important;
-        pointer-events: all !important;
-        position: relative !important;
-        z-index: 10 !important;
-      }
-
-      .filament-carousel::-webkit-scrollbar {
-        display: none;
-      }
-
-      /* Each filament chip remains scroll-snap aligned */
-      .filament-chip {
-        flex: 0 0 auto;
-        scroll-snap-align: center;
-        min-width: 120px;
-        font-size: 0.75rem;
-        padding: 0.5rem 0.7rem;
-      }
-
-      /* Body and html remain scrollable vertically */
-      html,
-      body {
-        touch-action: pan-y !important;
-        overscroll-behavior: contain !important;
-      }
-    }
   </style>
 </Layout>

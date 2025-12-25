@@ -196,52 +196,62 @@ export default function OrdersTable({
 	};
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4 sm:space-y-6">
 			{/* Statistics Cards */}
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+			<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
 				<Card>
-					<CardContent className="p-4">
+					<CardContent className="p-3 sm:p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm text-muted-foreground">Total Orders</p>
-								<p className="text-2xl font-bold">{stats.total}</p>
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									Total Orders
+								</p>
+								<p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
 							</div>
-							<Package className="size-8 text-muted-foreground" />
+							<Package className="size-6 sm:size-8 text-muted-foreground shrink-0" />
 						</div>
 					</CardContent>
 				</Card>
 				<Card>
-					<CardContent className="p-4">
+					<CardContent className="p-3 sm:p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm text-muted-foreground">Total Revenue</p>
-								<p className="text-2xl font-bold">
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									Total Revenue
+								</p>
+								<p className="text-xl sm:text-2xl font-bold">
 									${stats.totalRevenue.toFixed(2)}
 								</p>
 							</div>
-							<DollarSign className="size-8 text-muted-foreground" />
+							<DollarSign className="size-6 sm:size-8 text-muted-foreground shrink-0" />
 						</div>
 					</CardContent>
 				</Card>
 				<Card>
-					<CardContent className="p-4">
+					<CardContent className="p-3 sm:p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm text-muted-foreground">Pending</p>
-								<p className="text-2xl font-bold">{stats.pending}</p>
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									Pending
+								</p>
+								<p className="text-xl sm:text-2xl font-bold">{stats.pending}</p>
 							</div>
-							<Clock className="size-8 text-muted-foreground" />
+							<Clock className="size-6 sm:size-8 text-muted-foreground shrink-0" />
 						</div>
 					</CardContent>
 				</Card>
 				<Card>
-					<CardContent className="p-4">
+					<CardContent className="p-3 sm:p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm text-muted-foreground">Completed</p>
-								<p className="text-2xl font-bold">{stats.completed}</p>
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									Completed
+								</p>
+								<p className="text-xl sm:text-2xl font-bold">
+									{stats.completed}
+								</p>
 							</div>
-							<CheckCircle2 className="size-8 text-muted-foreground" />
+							<CheckCircle2 className="size-6 sm:size-8 text-muted-foreground shrink-0" />
 						</div>
 					</CardContent>
 				</Card>
@@ -250,20 +260,20 @@ export default function OrdersTable({
 			{/* Filters */}
 			<Card>
 				<CardContent className="p-4">
-					<div className="flex flex-col sm:flex-row gap-4">
+					<div className="flex flex-col gap-4">
 						<div className="relative flex-1">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4 text-muted-foreground" />
 							<Input
-								placeholder="Search by order ID, customer name, email, or status..."
+								placeholder="Search orders..."
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 								className="pl-10"
 							/>
 						</div>
 						<div className="flex items-center gap-2">
-							<Filter className="size-4 text-muted-foreground" />
+							<Filter className="size-4 text-muted-foreground shrink-0" />
 							<Select value={statusFilter} onValueChange={setStatusFilter}>
-								<SelectTrigger className="w-[180px]">
+								<SelectTrigger className="flex-1 sm:w-[180px]">
 									<SelectValue placeholder="Filter by status" />
 								</SelectTrigger>
 								<SelectContent>
@@ -290,7 +300,7 @@ export default function OrdersTable({
 								? 'No orders found'
 								: 'No orders yet'}
 						</h3>
-						<p className="text-muted-foreground text-center">
+						<p className="text-muted-foreground text-center px-4">
 							{searchQuery || statusFilter !== 'all'
 								? 'Try adjusting your search or filter criteria'
 								: 'Orders will appear here when customers make purchases'}
@@ -298,9 +308,9 @@ export default function OrdersTable({
 					</CardContent>
 				</Card>
 			) : (
-				<div className="space-y-4">
-					<div className="flex items-center justify-between mb-4">
-						<p className="text-sm text-muted-foreground">
+				<div className="space-y-3 sm:space-y-4">
+					<div className="flex items-center justify-between mb-2 sm:mb-4 px-1">
+						<p className="text-xs sm:text-sm text-muted-foreground">
 							Showing {filteredOrders.length} of {orders.length} orders
 						</p>
 					</div>
@@ -308,53 +318,63 @@ export default function OrdersTable({
 						<Card
 							key={order.id}
 							className="hover:shadow-lg transition-all duration-200 hover:border-primary/20">
-							<CardHeader className="pb-4">
-								<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-									<div className="space-y-2">
-										<div className="flex items-center gap-3 flex-wrap">
-											<CardTitle className="text-xl font-bold">
-												Order #{order.id}
-											</CardTitle>
-											<Badge
-												variant={order.statusInfo.variant}
-												className={`flex items-center gap-1.5 px-2.5 py-1 ${order.statusInfo.className || ''}`}>
-												<StatusIcon statusInfo={order.statusInfo} />
-												{order.statusInfo.label}
-											</Badge>
-										</div>
-										<div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-											<CardDescription className="flex items-center gap-2 m-0">
-												<Calendar className="size-4" />
-												{new Date(order.createdAt).toLocaleDateString('en-US', {
-													year: 'numeric',
-													month: 'short',
-													day: 'numeric',
-													hour: '2-digit',
-													minute: '2-digit',
-												})}
-											</CardDescription>
-											{order.user && (
+							<CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6 pt-4 sm:pt-6">
+								<div className="flex flex-col gap-3 sm:gap-4">
+									<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+										<div className="space-y-2 flex-1">
+											<div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+												<CardTitle className="text-lg sm:text-xl font-bold">
+													Order #{order.id}
+												</CardTitle>
+												<Badge
+													variant={order.statusInfo.variant}
+													className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 text-xs sm:text-sm ${order.statusInfo.className || ''}`}>
+													<StatusIcon statusInfo={order.statusInfo} />
+													{order.statusInfo.label}
+												</Badge>
+											</div>
+											<div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
 												<CardDescription className="flex items-center gap-2 m-0">
-													<UserIcon className="size-4" />
-													<span className="font-medium">{order.user.name}</span>
-													<span className="text-muted-foreground">
-														({order.user.email})
+													<Calendar className="size-3 sm:size-4 shrink-0" />
+													<span className="break-words">
+														{new Date(order.createdAt).toLocaleDateString(
+															'en-US',
+															{
+																year: 'numeric',
+																month: 'short',
+																day: 'numeric',
+																hour: '2-digit',
+																minute: '2-digit',
+															},
+														)}
 													</span>
 												</CardDescription>
-											)}
+												{order.user && (
+													<CardDescription className="flex items-center gap-2 m-0">
+														<UserIcon className="size-3 sm:size-4 shrink-0" />
+														<span className="font-medium break-words">
+															{order.user.name}
+														</span>
+														<span className="text-muted-foreground break-all">
+															({order.user.email})
+														</span>
+													</CardDescription>
+												)}
+											</div>
 										</div>
-									</div>
-									<div className="flex items-center gap-2 text-2xl font-bold text-primary">
-										<DollarSign className="size-6" />${order.total.toFixed(2)}
-										<span className="text-sm font-normal text-muted-foreground ml-1">
-											CAD
-										</span>
+										<div className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-primary shrink-0">
+											<DollarSign className="size-5 sm:size-6" />$
+											{order.total.toFixed(2)}
+											<span className="text-xs sm:text-sm font-normal text-muted-foreground ml-1">
+												CAD
+											</span>
+										</div>
 									</div>
 								</div>
 							</CardHeader>
-							<CardContent className="space-y-4">
-								<div className="flex items-center gap-2 text-sm">
-									<Package className="size-4 text-muted-foreground" />
+							<CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6 pb-4 sm:pb-6">
+								<div className="flex items-center gap-2 text-xs sm:text-sm">
+									<Package className="size-3 sm:size-4 text-muted-foreground shrink-0" />
 									<span className="text-muted-foreground">
 										{order.itemCount} item{order.itemCount !== 1 ? 's' : ''}
 									</span>
@@ -362,7 +382,9 @@ export default function OrdersTable({
 
 								{Array.isArray(order.cartJSON) && order.cartJSON.length > 0 && (
 									<div className="space-y-2">
-										<h4 className="text-sm font-semibold">Order Items:</h4>
+										<h4 className="text-xs sm:text-sm font-semibold">
+											Order Items:
+										</h4>
 										<div className="space-y-2">
 											{order.cartJSON
 												.slice(0, 3)
@@ -371,11 +393,11 @@ export default function OrdersTable({
 													return (
 														<div
 															key={itemKey}
-															className="flex items-center justify-between text-sm p-3 rounded-lg bg-muted/50 border border-border/50">
-															<span className="flex-1 font-medium">
+															className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-xs sm:text-sm p-2 sm:p-3 rounded-lg bg-muted/50 border border-border/50">
+															<span className="flex-1 font-medium break-words">
 																{item.products?.name || `Item ${idx + 1}`}
 															</span>
-															<div className="flex items-center gap-4">
+															<div className="flex items-center gap-3 sm:gap-4 shrink-0">
 																<span className="text-muted-foreground">
 																	Qty: {item.cart?.quantity || 0}
 																</span>
@@ -393,7 +415,7 @@ export default function OrdersTable({
 													);
 												})}
 											{order.cartJSON.length > 3 && (
-												<p className="text-sm text-muted-foreground text-center pt-2">
+												<p className="text-xs sm:text-sm text-muted-foreground text-center pt-2">
 													+{order.cartJSON.length - 3} more item
 													{order.cartJSON.length - 3 !== 1 ? 's' : ''}
 												</p>
@@ -402,19 +424,24 @@ export default function OrdersTable({
 									</div>
 								)}
 
-								<div className="pt-4 border-t space-y-3">
-									<div className="flex items-center justify-between text-sm">
-										<span className="text-muted-foreground">
+								<div className="pt-3 sm:pt-4 border-t space-y-2 sm:space-y-3">
+									<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
+										<span className="text-muted-foreground shrink-0">
 											Stripe Session ID:
 										</span>
-										<code className="text-xs bg-muted px-2.5 py-1 rounded-md font-mono border border-border">
+										<code className="text-[10px] sm:text-xs bg-muted px-2 sm:px-2.5 py-1 rounded-md font-mono border border-border break-all">
 											{order.stripeSessionId}
 										</code>
 									</div>
-									<div className="flex items-center gap-2 pt-2">
-										<a href={`/dashboard/admin/order/${order.id}`}>
-											<Button variant="outline" size="sm" className="gap-2">
-												<Eye className="size-4" />
+									<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2">
+										<a
+											href={`/dashboard/admin/order/${order.id}`}
+											className="flex-1 sm:flex-initial">
+											<Button
+												variant="outline"
+												size="sm"
+												className="gap-2 w-full sm:w-auto">
+												<Eye className="size-3 sm:size-4" />
 												View Details
 											</Button>
 										</a>
@@ -428,8 +455,8 @@ export default function OrdersTable({
 														setRefundDialogOpen(true);
 														setRefundError(null);
 													}}
-													className="gap-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/20">
-													<RefreshCw className="size-4" />
+													className="gap-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 w-full sm:w-auto">
+													<RefreshCw className="size-3 sm:size-4" />
 													Refund
 												</Button>
 											)}

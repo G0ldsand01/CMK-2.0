@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { eq, desc, count, and } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 import { notificationsTable } from '@/db/schema';
 import { authServer } from '@/lib/auth-server';
 import db from '@/lib/db';
@@ -8,8 +8,8 @@ import db from '@/lib/db';
 export const notifications = {
 	getNotifications: defineAction({
 		input: z.object({
-			limit: z.number().optional().default(20),
-			offset: z.number().optional().default(0),
+			limit: z.number().int().min(1).max(100).optional().default(20),
+			offset: z.number().int().min(0).optional().default(0),
 			unreadOnly: z.boolean().optional().default(false),
 		}),
 		async handler(input, context) {

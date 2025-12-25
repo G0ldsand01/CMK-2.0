@@ -164,15 +164,15 @@ export const products = {
 
 			try {
 				// Upload image to CDN
-				// const cdnResponse = await uploadToCDN(input.image);
+				const cdnResponse = await uploadToCDN(input.image);
 
-				// if (!cdnResponse.success || !cdnResponse.url) {
-				// 	throw new Error(
-				// 		cdnResponse.message || 'Failed to upload image to CDN',
-				// 	);
-				// }
+				if (!cdnResponse.success || !cdnResponse.url) {
+					throw new Error(
+						cdnResponse.message || 'Failed to upload image to CDN',
+					);
+				}
 
-				// Create the product with the image URL
+				// Create the product first
 				const [product] = await db
 					.insert(productsTable)
 					.values({
@@ -184,14 +184,32 @@ export const products = {
 					})
 					.returning();
 
+				// Create image entry in database
+				const [image] = await db
+					.insert(imageTable)
+					.values({
+						image: cdnResponse.url,
+					})
+					.returning();
+
+				// Link image to product with priority 0 (first image)
+				await db.insert(productImageTable).values({
+					productId: product.id,
+					image: image.id,
+					priority: 0,
+				});
+
+				// Update product thumbnail
+				await updateProductThumbnail(product.id);
+
 				return product;
 			} catch (error) {
 				console.error('Error creating product:', error);
-				return {
-					success: false,
-					error:
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message:
 						error instanceof Error ? error.message : 'Failed to create product',
-				};
+				});
 			}
 		},
 	}),
@@ -349,6 +367,96 @@ export const products = {
 			} catch (error) {
 				console.error('Error updating product image:', error);
 				return { success: false, error: 'Failed to update product image' };
+			}
+		},
+	}),
+
+	deleteProduct: defineAction({
+		input: z.object({
+			productId: z.number(),
+		}),
+		handler: async (input, context) => {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				// Delete product images first (cascade should handle this, but being explicit)
+				await db
+					.delete(productImageTable)
+					.where(eq(productImageTable.productId, input.productId));
+
+				// Delete the product
+				await db
+					.delete(productsTable)
+					.where(eq(productsTable.id, input.productId));
+
+				logSecurityEvent('PRODUCT_DELETED', user.id, {
+					productId: input.productId,
+				});
+
+				return {
+					success: true,
+					message: 'Product deleted successfully',
+				};
+			} catch (error) {
+				console.error('Error deleting product:', error);
+				throw new ActionError({
+					code: 'INTERNAL_ERROR',
+					message: 'Failed to delete product',
+				});
+			}
+		},
+	}),
+
+	toggleProductVisibility: defineAction({
+		input: z.object({
+			productId: z.number(),
+			visible: z.boolean(),
+		}),
+		handler: async (input, context) => {
+			const session = await authServer.api.getSession({
+				headers: context.request.headers,
+			});
+
+			const user = session?.user;
+			if (!user || user.role !== 'admin') {
+				logSecurityEvent('UNAUTHORIZED_ACCESS', 'anonymous', {
+					ip: context.request.headers.get('x-forwarded-for'),
+				});
+				throw new ActionError({
+					code: 'UNAUTHORIZED',
+					message: 'User must be logged in and be an admin.',
+				});
+			}
+
+			try {
+				await db
+					.update(productsTable)
+					.set({ visible: input.visible })
+					.where(eq(productsTable.id, input.productId));
+
+				return {
+					success: true,
+					visible: input.visible,
+				};
+			} catch (error) {
+				console.error('Error toggling product visibility:', error);
+				throw new ActionError({
+					code: 'INTERNAL_ERROR',
+					message: 'Failed to toggle product visibility',
+				});
 			}
 		},
 	}),

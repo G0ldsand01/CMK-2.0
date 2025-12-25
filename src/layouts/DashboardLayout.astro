@@ -17,7 +17,8 @@ const session = await authServer.api.getSession({
 const user = session?.user;
 
 if (!user) {
-  return Astro.redirect('/login');
+  const currentUrl = Astro.url.pathname + Astro.url.search;
+  return Astro.redirect(`/login?redirect=${encodeURIComponent(currentUrl)}`);
 }
 
 const userData = {

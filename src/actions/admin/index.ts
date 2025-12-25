@@ -1,13 +1,14 @@
-import { category } from './category';
-import { products } from './products';
-import { users } from './users';
-import { coupons } from './coupons';
-import { reviews } from './reviews';
 import { analytics } from './analytics';
-import { reports } from './reports';
+import { category } from './category';
+import { coupons } from './coupons';
+import { emailTemplates } from './email-templates';
 import { logs } from './logs';
 import { notifications as adminNotifications } from './notifications';
-import { emailTemplates } from './email-templates';
+import { products } from './products';
+import { reports } from './reports';
+import { reviews } from './reviews';
+import { settings } from './settings';
+import { users } from './users';
 
 export const admin = {
 	category,
@@ -20,4 +21,5 @@ export const admin = {
 	logs,
 	notifications: adminNotifications,
 	emailTemplates,
+	settings,
 };

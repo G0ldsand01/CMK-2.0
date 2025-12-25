@@ -124,49 +124,49 @@ const StatusIcon = statusInfo.icon;
     [`/order/${id}`]: `Order #${id}`,
   }}
 >
-  <div class="max-w-7xl mx-auto px-4 py-8 pt-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pt-20 sm:pt-30">
     {/* Header */}
-    <div class="flex items-center justify-between mb-6">
-      <div class="space-y-2">
-        <div class="flex items-center gap-3">
-          <h1 class="text-3xl font-bold tracking-tight">Order #{order.id}</h1>
-          <Badge variant={statusInfo.variant} class={`flex items-center gap-1.5 ${statusInfo.className || ''}`}>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
+      <div class="space-y-2 flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Order #{order.id}</h1>
+          <Badge variant={statusInfo.variant} class={`flex items-center gap-1.5 text-xs sm:text-sm ${statusInfo.className || ''}`}>
             <StatusIcon class="size-3" />
             {statusInfo.label}
           </Badge>
         </div>
-        <p class="text-muted-foreground text-lg">
+        <p class="text-muted-foreground text-sm sm:text-lg">
           View order details and manage order status
         </p>
       </div>
-      <a href="/dashboard/admin/orders">
-        <Button variant="outline" class="gap-2">
+      <a href="/dashboard/admin/orders" class="w-full sm:w-auto">
+        <Button variant="outline" class="gap-2 w-full sm:w-auto">
           <ArrowLeft class="size-4" />
           Back to Orders
         </Button>
       </a>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       {/* Main Content */}
-      <div class="lg:col-span-2 space-y-6">
+      <div class="lg:col-span-2 space-y-4 sm:space-y-6">
         {/* Order Items */}
         <Card>
-          <CardHeader>
-            <CardTitle class="flex items-center gap-2">
-              <Package class="size-5" />
+          <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+            <CardTitle class="flex items-center gap-2 text-lg sm:text-xl">
+              <Package class="size-4 sm:size-5" />
               Order Items
             </CardTitle>
-            <CardDescription>
+            <CardDescription class="text-xs sm:text-sm">
               {orderItems.length} item{orderItems.length !== 1 ? 's' : ''} in this order
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6">
             {orderItems.length > 0 ? (
-              <div class="space-y-4">
+              <div class="space-y-3 sm:space-y-4">
                 {orderItems.map((item) => (
-                  <div class="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors">
-                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center shrink-0 border border-border/50">
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center shrink-0 border border-border/50">
                       {item.image ? (
                         <img
                           src={`${CDN_URL}/${item.image}`}
@@ -174,15 +174,15 @@ const StatusIcon = statusInfo.icon;
                           class="w-full h-full object-contain p-2"
                         />
                       ) : (
-                        <Package class="size-8 text-muted-foreground" />
+                        <Package class="size-6 sm:size-8 text-muted-foreground" />
                       )}
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="font-semibold text-lg mb-1">{item.product?.name || 'Unknown Product'}</h3>
-                      <p class="text-sm text-muted-foreground mb-2">
+                    <div class="flex-1 min-w-0 w-full sm:w-auto">
+                      <h3 class="font-semibold text-base sm:text-lg mb-1 line-clamp-2">{item.product?.name || 'Unknown Product'}</h3>
+                      <p class="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">
                         {item.product?.description || 'No description available'}
                       </p>
-                      <div class="flex items-center gap-4 text-sm">
+                      <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                         <span class="text-muted-foreground">
                           Quantity: <span class="font-medium text-foreground">{item.cart.quantity}</span>
                         </span>
@@ -191,9 +191,9 @@ const StatusIcon = statusInfo.icon;
                         </span>
                       </div>
                     </div>
-                    <div class="text-right">
-                      <p class="text-sm text-muted-foreground mb-1">Subtotal</p>
-                      <p class="text-xl font-bold text-primary">
+                    <div class="text-left sm:text-right w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0">
+                      <p class="text-xs sm:text-sm text-muted-foreground mb-1">Subtotal</p>
+                      <p class="text-lg sm:text-xl font-bold text-primary">
                         ${(item.cart.quantity * Number(item.product?.price || 0)).toFixed(2)}
                       </p>
                     </div>
@@ -201,9 +201,9 @@ const StatusIcon = statusInfo.icon;
                 ))}
               </div>
             ) : (
-              <div class="text-center py-12">
-                <Package class="size-16 text-muted-foreground mx-auto mb-4" />
-                <p class="text-muted-foreground">No products found for this order</p>
+              <div class="text-center py-8 sm:py-12">
+                <Package class="size-12 sm:size-16 text-muted-foreground mx-auto mb-4" />
+                <p class="text-sm sm:text-base text-muted-foreground">No products found for this order</p>
               </div>
             )}
           </CardContent>
@@ -211,19 +211,19 @@ const StatusIcon = statusInfo.icon;
       </div>
 
       {/* Sidebar */}
-      <div class="space-y-6">
+      <div class="space-y-4 sm:space-y-6">
         {/* Order Summary */}
         <Card>
-          <CardHeader>
-            <CardTitle>Order Summary</CardTitle>
+          <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+            <CardTitle class="text-lg sm:text-xl">Order Summary</CardTitle>
           </CardHeader>
-          <CardContent class="space-y-4">
-            <div class="flex items-center justify-between text-sm">
+          <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 text-xs sm:text-sm">
               <span class="text-muted-foreground flex items-center gap-2">
-                <Calendar class="size-4" />
+                <Calendar class="size-3 sm:size-4 shrink-0" />
                 Order Date
               </span>
-              <span class="font-medium">
+              <span class="font-medium break-words sm:break-normal">
                 {new Date(order.createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -233,22 +233,22 @@ const StatusIcon = statusInfo.icon;
                 })}
               </span>
             </div>
-            <div class="border-t pt-4">
-              <div class="flex items-center justify-between mb-2">
+            <div class="border-t pt-3 sm:pt-4">
+              <div class="flex items-center justify-between mb-2 text-xs sm:text-sm">
                 <span class="text-muted-foreground">Subtotal</span>
                 <span class="font-medium">${totalPrice.toFixed(2)}</span>
               </div>
-              <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center justify-between mb-2 text-xs sm:text-sm">
                 <span class="text-muted-foreground">Tax</span>
                 <span class="font-medium">$0.00</span>
               </div>
               <div class="border-t pt-2 mt-2">
                 <div class="flex items-center justify-between">
-                  <span class="text-lg font-semibold flex items-center gap-2">
-                    <DollarSign class="size-5" />
+                  <span class="text-base sm:text-lg font-semibold flex items-center gap-2">
+                    <DollarSign class="size-4 sm:size-5" />
                     Total
                   </span>
-                  <span class="text-2xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+                  <span class="text-xl sm:text-2xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -258,17 +258,17 @@ const StatusIcon = statusInfo.icon;
         {/* Customer Info */}
         {orderUser.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
+            <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+              <CardTitle class="text-lg sm:text-xl">Customer Information</CardTitle>
             </CardHeader>
-            <CardContent class="space-y-2">
+            <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-2">
               <div>
-                <p class="text-sm text-muted-foreground mb-1">Name</p>
-                <p class="font-medium">{orderUser[0].name}</p>
+                <p class="text-xs sm:text-sm text-muted-foreground mb-1">Name</p>
+                <p class="font-medium text-sm sm:text-base break-words">{orderUser[0].name}</p>
               </div>
               <div>
-                <p class="text-sm text-muted-foreground mb-1">Email</p>
-                <p class="font-medium">{orderUser[0].email}</p>
+                <p class="text-xs sm:text-sm text-muted-foreground mb-1">Email</p>
+                <p class="font-medium text-sm sm:text-base break-all">{orderUser[0].email}</p>
               </div>
             </CardContent>
           </Card>
@@ -276,17 +276,17 @@ const StatusIcon = statusInfo.icon;
 
         {/* Order Info */}
         <Card>
-          <CardHeader>
-            <CardTitle>Order Information</CardTitle>
+          <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+            <CardTitle class="text-lg sm:text-xl">Order Information</CardTitle>
           </CardHeader>
-          <CardContent class="space-y-3">
+          <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-2 sm:space-y-3">
             <div>
-              <p class="text-sm text-muted-foreground mb-1">Order ID</p>
-              <p class="font-mono text-sm font-medium">{order.id}</p>
+              <p class="text-xs sm:text-sm text-muted-foreground mb-1">Order ID</p>
+              <p class="font-mono text-xs sm:text-sm font-medium">{order.id}</p>
             </div>
             <div>
-              <p class="text-sm text-muted-foreground mb-1">Stripe Session ID</p>
-              <code class="text-xs bg-muted px-2 py-1 rounded-md font-mono border border-border block break-all">
+              <p class="text-xs sm:text-sm text-muted-foreground mb-1">Stripe Session ID</p>
+              <code class="text-[10px] sm:text-xs bg-muted px-2 py-1 rounded-md font-mono border border-border block break-all">
                 {order.stripeSessionId}
               </code>
             </div>
@@ -295,19 +295,19 @@ const StatusIcon = statusInfo.icon;
 
         {/* Actions */}
         <Card>
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
+          <CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+            <CardTitle class="text-lg sm:text-xl">Actions</CardTitle>
           </CardHeader>
-          <CardContent class="space-y-3">
+          <CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-2 sm:space-y-3">
             {order.status !== 'refunded' && order.status !== 'cancelled' && (
               <>
                 <form method="POST" action={`/api/orders/${order.id}/refund`} class="w-full">
                   <Button 
                     type="submit" 
                     variant="outline" 
-                    class="w-full gap-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/20"
+                    class="w-full gap-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 text-sm sm:text-base"
                   >
-                    <RefreshCw class="size-4" />
+                    <RefreshCw class="size-3 sm:size-4" />
                     Process Refund
                   </Button>
                 </form>
@@ -315,21 +315,21 @@ const StatusIcon = statusInfo.icon;
                   <Button 
                     type="submit" 
                     variant="destructive" 
-                    class="w-full gap-2"
+                    class="w-full gap-2 text-sm sm:text-base"
                   >
-                    <XCircle class="size-4" />
+                    <XCircle class="size-3 sm:size-4" />
                     Cancel Order
                   </Button>
                 </form>
               </>
             )}
             {order.status === 'refunded' && (
-              <div class="text-sm text-muted-foreground text-center py-2">
+              <div class="text-xs sm:text-sm text-muted-foreground text-center py-2">
                 This order has been refunded
               </div>
             )}
             {order.status === 'cancelled' && (
-              <div class="text-sm text-muted-foreground text-center py-2">
+              <div class="text-xs sm:text-sm text-muted-foreground text-center py-2">
                 This order has been cancelled
               </div>
             )}

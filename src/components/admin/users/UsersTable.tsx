@@ -13,17 +13,8 @@ import {
 	CheckCircle2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -33,6 +24,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
 	Select,
@@ -41,6 +33,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 import EditUserForm from './EditUserForm';
 
 type UserData = {
@@ -83,7 +83,6 @@ export default function UsersTable({
 		'createdAt',
 	);
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-	const [editingUser, setEditingUser] = useState<UserData | null>(null);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [userToDelete, setUserToDelete] = useState<UserData | null>(null);
 	const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
@@ -124,8 +123,8 @@ export default function UsersTable({
 				limit: itemsPerPage,
 				offset: (page - 1) * itemsPerPage,
 				search: search || searchQuery,
-				sortBy: (sort || sortBy) as any,
-				sortOrder: (order || sortOrder) as any,
+				sortBy: (sort || sortBy) as 'name' | 'email' | 'role' | 'createdAt',
+				sortOrder: (order || sortOrder) as 'asc' | 'desc',
 			});
 
 			if (!error && data) {
@@ -136,9 +135,9 @@ export default function UsersTable({
 				setError('Failed to fetch users');
 				setUsers([]);
 			}
-		} catch (error) {
-			if (error instanceof Error) {
-				setError(error.message);
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
 			} else {
 				setError('An error occurred while fetching users');
 			}
@@ -189,7 +188,8 @@ export default function UsersTable({
 				});
 				setTimeout(() => setToastMessage(null), 3000);
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error('Error deleting user:', err);
 			setToastMessage({
 				title: 'Error',
 				description: 'An error occurred while deleting the user',
@@ -309,8 +309,8 @@ export default function UsersTable({
 				)}
 			</div>
 
-			{/* Table */}
-			<div className="rounded-md border">
+			{/* Desktop Table View */}
+			<div className="hidden md:block rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow className="hover:bg-transparent">
@@ -398,9 +398,14 @@ export default function UsersTable({
 														src={user.image}
 														alt={user.name}
 														className="absolute inset-0 h-full w-full rounded-full object-cover z-20"
-														onError={(e) => {
+														onError={() => {
 															// Hide image on error
-															e.currentTarget.style.display = 'none';
+															const img = document.querySelector(
+																`img[alt="${user.name}"]`,
+															) as HTMLImageElement;
+															if (img) {
+																img.style.display = 'none';
+															}
 															// Show icon
 															const iconContainer = document.getElementById(
 																`icon-${user.id}`,
@@ -409,7 +414,7 @@ export default function UsersTable({
 																iconContainer.style.display = 'flex';
 															}
 														}}
-														onLoad={(e) => {
+														onLoad={() => {
 															// Hide icon when image loads successfully
 															const iconContainer = document.getElementById(
 																`icon-${user.id}`,
@@ -513,6 +518,142 @@ export default function UsersTable({
 				</Table>
 			</div>
 
+			{/* Mobile Card View */}
+			<div className="md:hidden space-y-3">
+				{isLoading ? (
+					<div className="text-center py-8 text-sm text-muted-foreground">
+						Loading...
+					</div>
+				) : users.length === 0 ? (
+					<div className="text-center py-8 text-sm text-muted-foreground">
+						No users found
+					</div>
+				) : (
+					users.map((user) => (
+						<div
+							key={user.id}
+							className="rounded-lg border bg-card p-4 space-y-3">
+							<div className="flex items-start justify-between gap-3">
+								<div className="flex items-center gap-3 flex-1 min-w-0">
+									<div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-muted overflow-hidden shrink-0">
+										<div
+											className="absolute inset-0 flex items-center justify-center bg-background rounded-full z-10"
+											id={`icon-mobile-${user.id}`}>
+											<CircleUserRound className="h-12 w-12 text-muted-foreground" />
+										</div>
+										{user.image &&
+										user.image !== null &&
+										user.image !== undefined &&
+										String(user.image).trim() !== '' &&
+										user.image !== 'null' &&
+										user.image !== 'undefined' ? (
+											<img
+												src={user.image}
+												alt={user.name}
+												className="absolute inset-0 h-full w-full rounded-full object-cover z-20"
+												onError={(e) => {
+													e.currentTarget.style.display = 'none';
+													const iconContainer = document.getElementById(
+														`icon-mobile-${user.id}`,
+													);
+													if (iconContainer) {
+														iconContainer.style.display = 'flex';
+													}
+												}}
+												onLoad={(e) => {
+													const iconContainer = document.getElementById(
+														`icon-mobile-${user.id}`,
+													);
+													if (iconContainer) {
+														iconContainer.style.display = 'none';
+													}
+												}}
+											/>
+										) : null}
+									</div>
+									<div className="flex flex-col min-w-0 flex-1">
+										<span className="font-medium text-sm sm:text-base truncate">
+											{user.name}
+										</span>
+										{(user.firstName || user.lastName) && (
+											<span className="text-xs text-muted-foreground truncate">
+												{user.firstName} {user.lastName}
+											</span>
+										)}
+										<div className="flex items-center gap-2 mt-1">
+											<Mail className="size-3 text-muted-foreground shrink-0" />
+											<span className="text-xs text-muted-foreground truncate">
+												{user.email}
+											</span>
+											{user.emailVerified && (
+												<CheckCircle2 className="size-3 text-green-600 shrink-0" />
+											)}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-wrap items-center gap-2 pt-2 border-t">
+								<Badge
+									variant={user.role === 'admin' ? 'default' : 'secondary'}
+									className="text-xs">
+									{user.role}
+								</Badge>
+								{user.hasPassword ? (
+									<Badge variant="outline" className="text-xs">
+										<Key className="size-3 mr-1" />
+										Password
+									</Badge>
+								) : (
+									<Badge variant="outline" className="text-xs">
+										{user.providerId || 'OAuth'}
+									</Badge>
+								)}
+								<span className="text-xs text-muted-foreground ml-auto">
+									{new Date(user.createdAt).toLocaleDateString()}
+								</span>
+							</div>
+							<div className="flex items-center gap-2 pt-2 border-t">
+								<EditUserForm
+									user={user}
+									onSuccess={() =>
+										fetchUsers(currentPage, searchQuery, sortBy, sortOrder)
+									}
+								/>
+								<Button
+									variant="outline"
+									size="sm"
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setUserToResetPassword(user);
+										setResetPasswordDialogOpen(true);
+									}}
+									title="Reset Password"
+									className="flex-1">
+									<Key className="size-4 mr-2" />
+									Reset Password
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setUserToDelete(user);
+										setDeleteDialogOpen(true);
+									}}
+									title="Delete User"
+									className="text-destructive">
+									<Trash2 className="size-4" />
+								</Button>
+							</div>
+						</div>
+					))
+				)}
+			</div>
+
 			{/* Pagination */}
 			{totalPages > 1 && (
 				<div className="flex items-center justify-between">
@@ -540,21 +681,27 @@ export default function UsersTable({
 
 			{/* Delete Dialog */}
 			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<DialogContent>
+				<DialogContent className="w-[95vw] sm:w-full max-w-md">
 					<DialogHeader>
-						<DialogTitle>Delete User</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className="text-lg sm:text-xl">
+							Delete User
+						</DialogTitle>
+						<DialogDescription className="text-sm">
 							Are you sure you want to delete {userToDelete?.name}? This action
 							cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button
 							variant="outline"
-							onClick={() => setDeleteDialogOpen(false)}>
+							onClick={() => setDeleteDialogOpen(false)}
+							className="w-full sm:w-auto">
 							Cancel
 						</Button>
-						<Button variant="destructive" onClick={handleDelete}>
+						<Button
+							variant="destructive"
+							onClick={handleDelete}
+							className="w-full sm:w-auto">
 							Delete
 						</Button>
 					</DialogFooter>
@@ -565,42 +712,53 @@ export default function UsersTable({
 			<Dialog
 				open={resetPasswordDialogOpen}
 				onOpenChange={setResetPasswordDialogOpen}>
-				<DialogContent>
+				<DialogContent className="w-[95vw] sm:w-full max-w-md">
 					<DialogHeader>
-						<DialogTitle>Reset Password</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className="text-lg sm:text-xl">
+							Reset Password
+						</DialogTitle>
+						<DialogDescription className="text-sm">
 							Reset password for {userToResetPassword?.name}
 						</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-4 py-4">
 						<div className="space-y-2">
-							<Label htmlFor="newPassword">New Password</Label>
+							<Label htmlFor="newPassword" className="text-sm">
+								New Password
+							</Label>
 							<Input
 								id="newPassword"
 								type="password"
 								value={newPassword}
 								onChange={(e) => setNewPassword(e.target.value)}
 								placeholder="Enter new password (min 8 characters)"
+								className="text-sm sm:text-base"
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="confirmPassword">Confirm Password</Label>
+							<Label htmlFor="confirmPassword" className="text-sm">
+								Confirm Password
+							</Label>
 							<Input
 								id="confirmPassword"
 								type="password"
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}
 								placeholder="Confirm new password"
+								className="text-sm sm:text-base"
 							/>
 						</div>
 					</div>
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button
 							variant="outline"
-							onClick={() => setResetPasswordDialogOpen(false)}>
+							onClick={() => setResetPasswordDialogOpen(false)}
+							className="w-full sm:w-auto">
 							Cancel
 						</Button>
-						<Button onClick={handleResetPassword}>Reset Password</Button>
+						<Button onClick={handleResetPassword} className="w-full sm:w-auto">
+							Reset Password
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

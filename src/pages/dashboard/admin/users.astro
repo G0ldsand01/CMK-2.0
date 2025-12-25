@@ -26,11 +26,11 @@ const users = data?.data || [];
 const totalUsers = data?.total || 0;
 ---
 <AdminDashboardLayout title="Users" breadcrumb={{ '/users': 'Manage Users' }}>
-  <div class="space-y-6 p-6">
+  <div class="space-y-4 sm:space-y-6 p-4 sm:p-6">
     <!-- Welcome Section -->
     <div class="space-y-2">
-      <h1 class="text-3xl font-bold tracking-tight">Manage Users</h1>
-      <p class="text-muted-foreground text-lg">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Manage Users</h1>
+      <p class="text-muted-foreground text-sm sm:text-base">
         View and manage all user accounts, roles, and permissions
       </p>
     </div>

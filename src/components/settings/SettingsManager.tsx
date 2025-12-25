@@ -1,6 +1,20 @@
 import { actions } from 'astro:actions';
-import { authClient } from '@/lib/auth-client';
+import {
+	CheckCircle2,
+	Key,
+	Link as LinkIcon,
+	Loader2,
+	Lock,
+	Mail,
+	MapPin,
+	Phone,
+	Save,
+	User,
+} from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -8,11 +22,17 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Mail, Phone, MapPin, Save, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
 
 type UserData = {
 	id: string;
@@ -30,13 +50,29 @@ type UserData = {
 
 interface SettingsManagerProps {
 	user: UserData;
+	hasPassword: boolean;
+	linkedProviders: string[];
 }
 
 export default function SettingsManager({
 	user: initialUser,
+	hasPassword: initialHasPassword,
+	linkedProviders: initialLinkedProviders,
 }: SettingsManagerProps) {
 	const [user, setUser] = useState<UserData>(initialUser);
 	const [isSaving, setIsSaving] = useState(false);
+	const [hasPassword, setHasPassword] = useState(initialHasPassword);
+	const [linkedProviders, setLinkedProviders] = useState<string[]>(
+		initialLinkedProviders,
+	);
+	const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
+		useState(false);
+	const [passwordData, setPasswordData] = useState({
+		currentPassword: '',
+		newPassword: '',
+		confirmPassword: '',
+	});
+	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const [formData, setFormData] = useState({
 		displayName: user.name || '',
 		firstName: user.firstName || '',
@@ -104,19 +140,89 @@ export default function SettingsManager({
 		}
 	};
 
+	const handleChangePassword = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		if (passwordData.newPassword !== passwordData.confirmPassword) {
+			toast.error('New passwords do not match');
+			return;
+		}
+
+		if (passwordData.newPassword.length < 8) {
+			toast.error('Password must be at least 8 characters long');
+			return;
+		}
+
+		setIsChangingPassword(true);
+
+		try {
+			// Use better-auth's changePassword method
+			// For users without password, currentPassword can be empty or we skip it
+			const result = await authClient.changePassword({
+				currentPassword: hasPassword ? passwordData.currentPassword : '',
+				newPassword: passwordData.newPassword,
+			});
+
+			if (result.error) {
+				toast.error(result.error.message || 'Failed to change password');
+			} else {
+				toast.success(
+					hasPassword
+						? 'Password changed successfully!'
+						: 'Password set successfully!',
+				);
+				setChangePasswordDialogOpen(false);
+				setPasswordData({
+					currentPassword: '',
+					newPassword: '',
+					confirmPassword: '',
+				});
+				if (!hasPassword) {
+					setHasPassword(true);
+				}
+			}
+		} catch (error) {
+			console.error('Error changing password:', error);
+			toast.error('An error occurred while changing password');
+		} finally {
+			setIsChangingPassword(false);
+		}
+	};
+
+	const getProviderIcon = (provider: string) => {
+		switch (provider.toLowerCase()) {
+			case 'google':
+				return '🔵';
+			case 'github':
+				return '⚫';
+			case 'discord':
+				return '💜';
+			default:
+				return '🔗';
+		}
+	};
+
+	const getProviderName = (provider: string) => {
+		return provider.charAt(0).toUpperCase() + provider.slice(1);
+	};
+
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4 sm:space-y-6">
 			{/* Profile Information */}
 			<Card>
-				<CardHeader>
+				<CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
 					<div className="flex items-center gap-2">
-						<User className="size-5" />
-						<CardTitle>Profile Information</CardTitle>
+						<User className="size-4 sm:size-5" />
+						<CardTitle className="text-lg sm:text-xl">
+							Profile Information
+						</CardTitle>
 					</div>
-					<CardDescription>Update your personal information</CardDescription>
+					<CardDescription className="text-xs sm:text-sm">
+						Update your personal information
+					</CardDescription>
 				</CardHeader>
-				<CardContent>
-					<form onSubmit={handleSubmit} className="space-y-6">
+				<CardContent class="px-4 sm:px-6 pb-4 sm:pb-6">
+					<form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
 						<div className="grid gap-4 md:grid-cols-2">
 							<div className="space-y-2">
 								<Label htmlFor="displayName">Display Name *</Label>
@@ -291,7 +397,7 @@ export default function SettingsManager({
 							<Button
 								type="submit"
 								disabled={isSaving}
-								className="w-full md:w-auto">
+								className="w-full sm:w-auto">
 								{isSaving ? (
 									<>
 										<Loader2 className="size-4 mr-2 animate-spin" />
@@ -308,6 +414,227 @@ export default function SettingsManager({
 					</form>
 				</CardContent>
 			</Card>
+
+			{/* Security Settings */}
+			<Card>
+				<CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+					<div className="flex items-center gap-2">
+						<Lock className="size-4 sm:size-5" />
+						<CardTitle className="text-lg sm:text-xl">Security</CardTitle>
+					</div>
+					<CardDescription className="text-xs sm:text-sm">
+						Manage your password and account security
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
+					{hasPassword ? (
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="text-sm font-medium">Password</p>
+									<p className="text-xs text-muted-foreground">
+										Last updated: Recently
+									</p>
+								</div>
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									onClick={() => setChangePasswordDialogOpen(true)}
+									className="gap-2">
+									<Key className="size-3 sm:size-4" />
+									Change Password
+								</Button>
+							</div>
+						</div>
+					) : (
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="text-sm font-medium">No password set</p>
+									<p className="text-xs text-muted-foreground">
+										You're using social login. Set a password to enable
+										email/password login.
+									</p>
+								</div>
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									onClick={() => setChangePasswordDialogOpen(true)}
+									className="gap-2">
+									<Key className="size-3 sm:size-4" />
+									Set Password
+								</Button>
+							</div>
+						</div>
+					)}
+				</CardContent>
+			</Card>
+
+			{/* Linked Accounts */}
+			<Card>
+				<CardHeader class="px-4 sm:px-6 pt-4 sm:pt-6">
+					<div className="flex items-center gap-2">
+						<LinkIcon className="size-4 sm:size-5" />
+						<CardTitle className="text-lg sm:text-xl">
+							Linked Accounts
+						</CardTitle>
+					</div>
+					<CardDescription className="text-xs sm:text-sm">
+						Manage your social account connections
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="px-4 sm:px-6 pb-4 sm:pb-6">
+					{linkedProviders.length > 0 ? (
+						<div className="space-y-3">
+							{linkedProviders.map((provider) => (
+								<div
+									key={provider}
+									className="flex items-center justify-between p-3 rounded-lg border bg-card">
+									<div className="flex items-center gap-3">
+										<span className="text-xl">{getProviderIcon(provider)}</span>
+										<div>
+											<p className="text-sm font-medium">
+												{getProviderName(provider)}
+											</p>
+											<p className="text-xs text-muted-foreground">
+												Connected account
+											</p>
+										</div>
+									</div>
+									<Badge variant="default" className="gap-1.5">
+										<CheckCircle2 className="size-3" />
+										Connected
+									</Badge>
+								</div>
+							))}
+						</div>
+					) : (
+						<div className="text-center py-6">
+							<LinkIcon className="size-12 text-muted-foreground mx-auto mb-3" />
+							<p className="text-sm text-muted-foreground mb-2">
+								No social accounts linked
+							</p>
+							<p className="text-xs text-muted-foreground">
+								You can link social accounts when signing in
+							</p>
+						</div>
+					)}
+				</CardContent>
+			</Card>
+
+			{/* Change Password Dialog */}
+			<Dialog
+				open={changePasswordDialogOpen}
+				onOpenChange={setChangePasswordDialogOpen}>
+				<DialogContent className="w-[95vw] sm:w-full max-w-md">
+					<DialogHeader>
+						<DialogTitle className="text-lg sm:text-xl">
+							{hasPassword ? 'Change Password' : 'Set Password'}
+						</DialogTitle>
+						<DialogDescription className="text-sm">
+							{hasPassword
+								? 'Enter your current password and choose a new one'
+								: 'Set a password to enable email/password login'}
+						</DialogDescription>
+					</DialogHeader>
+					<form onSubmit={handleChangePassword} className="space-y-4">
+						{hasPassword && (
+							<div className="space-y-2">
+								<Label htmlFor="currentPassword">Current Password *</Label>
+								<Input
+									id="currentPassword"
+									type="password"
+									value={passwordData.currentPassword}
+									onChange={(e) =>
+										setPasswordData({
+											...passwordData,
+											currentPassword: e.target.value,
+										})
+									}
+									required={hasPassword}
+									minLength={8}
+								/>
+							</div>
+						)}
+						<div className="space-y-2">
+							<Label htmlFor="newPassword">
+								{hasPassword ? 'New Password *' : 'Password *'}
+							</Label>
+							<Input
+								id="newPassword"
+								type="password"
+								value={passwordData.newPassword}
+								onChange={(e) =>
+									setPasswordData({
+										...passwordData,
+										newPassword: e.target.value,
+									})
+								}
+								required
+								minLength={8}
+								placeholder="At least 8 characters"
+							/>
+							<p className="text-xs text-muted-foreground">
+								Password must be at least 8 characters long
+							</p>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="confirmPassword">
+								{hasPassword ? 'Confirm New Password *' : 'Confirm Password *'}
+							</Label>
+							<Input
+								id="confirmPassword"
+								type="password"
+								value={passwordData.confirmPassword}
+								onChange={(e) =>
+									setPasswordData({
+										...passwordData,
+										confirmPassword: e.target.value,
+									})
+								}
+								required
+								minLength={8}
+								placeholder="Confirm your password"
+							/>
+						</div>
+						<DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => {
+									setChangePasswordDialogOpen(false);
+									setPasswordData({
+										currentPassword: '',
+										newPassword: '',
+										confirmPassword: '',
+									});
+								}}
+								disabled={isChangingPassword}
+								className="w-full sm:w-auto">
+								Cancel
+							</Button>
+							<Button
+								type="submit"
+								disabled={isChangingPassword}
+								className="w-full sm:w-auto">
+								{isChangingPassword ? (
+									<>
+										<Loader2 className="size-4 mr-2 animate-spin" />
+										Updating...
+									</>
+								) : (
+									<>
+										<Key className="size-4 mr-2" />
+										{hasPassword ? 'Change Password' : 'Set Password'}
+									</>
+								)}
+							</Button>
+						</DialogFooter>
+					</form>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

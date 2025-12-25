@@ -13,13 +13,17 @@ const getCurrentUser = () => {
 		return Astro.locals.user;
 	} else {
 		// Redirect to login page if the user is not authenticated
-		Astro.redirect('/login');
+		const currentUrl = Astro.url.pathname + Astro.url.search;
+		Astro.redirect(`/login?redirect=${encodeURIComponent(currentUrl)}`);
 		return null;
 	}
 };
 
 const user = await getCurrentUser();
-if (!user) return Astro.redirect('/login');
+if (!user) {
+	const currentUrl = Astro.url.pathname + Astro.url.search;
+	return Astro.redirect(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+}
 
 // Load cart items with product images
 const cartItems = await db

@@ -4,11 +4,11 @@ import { CircuitBoard, ShoppingBag } from "lucide-react";
 import cmkLogo from "public/cmklogo.png";
 import Cart from "@/components/cart/Cart.astro";
 import CartItemCount from "@/components/cart/CartItemCount.tsx";
-import { HeaderUserMenu } from "./HeaderUserMenu";
-import NotificationBell from "./NotificationBell";
-import { ModeToggle } from "./ModeToggle";
-import { Button } from "./ui/button";
 import { getCurrentUser } from "@/lib/auth-server";
+import { HeaderUserMenu } from "./HeaderUserMenu";
+import { ModeToggle } from "./ModeToggle";
+import NotificationBell from "./NotificationBell";
+import { Button } from "./ui/button";
 
 interface Props {
   cart?: boolean;
@@ -75,7 +75,7 @@ const user = await getCurrentUser(Astro.request as Request);
           <Cart
             classes="font-bold py-2 px-4 rounded flex items-center gap-2"
             variant="outline"
-            server:defer
+            server:defer={true}
           >
             <ShoppingBag /> <CartItemCount client:load />
           </Cart>
@@ -122,7 +122,7 @@ const user = await getCurrentUser(Astro.request as Request);
       <Cart
         classes="font-bold py-2 px-4 rounded flex items-center gap-2 cart"
         variant="outline"
-        server:defer
+        server:defer={true}
       >
         <ShoppingBag />
         <CartItemCount client:load />

@@ -17,50 +17,45 @@ interface Props {
 
 const { classes, variant } = Astro.props;
 
-const getCurrentUser = () => {
-	if (Astro.locals.user) {
-		return Astro.locals.user;
-	} else {
-		// Redirect to login page if the user is not authenticated
-		Astro.redirect('/login');
-		return null;
-	}
-};
+const user = Astro.locals.user;
 
-const user = await getCurrentUser();
-if (!user) {
-	return null;
+// Load cart items with product images (empty if user not authenticated)
+let cart: Array<{
+	cart: typeof cartTable.$inferSelect;
+	products: typeof productsTable.$inferSelect;
+	image: string | null;
+}> = [];
+
+if (user) {
+	const cartItems = await db
+		.select({
+			cart: cartTable,
+			products: productsTable,
+		})
+		.from(cartTable)
+		.where(eq(cartTable.userId, user.id))
+		.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
+
+	// Load images for each product
+	cart = await Promise.all(
+		cartItems.map(async (item) => {
+			const [firstImage] = await db
+				.select({
+					image: imageTable,
+				})
+				.from(productImageTable)
+				.where(eq(productImageTable.productId, item.products.id))
+				.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
+				.orderBy(productImageTable.priority)
+				.limit(1);
+
+			return {
+				...item,
+				image: firstImage?.image?.image || null,
+			};
+		})
+	);
 }
-
-// Load cart items with product images
-const cartItems = await db
-	.select({
-		cart: cartTable,
-		products: productsTable,
-	})
-	.from(cartTable)
-	.where(eq(cartTable.userId, user.id))
-	.innerJoin(productsTable, eq(cartTable.productId, productsTable.id));
-
-// Load images for each product
-const cart = await Promise.all(
-	cartItems.map(async (item) => {
-		const [firstImage] = await db
-			.select({
-				image: imageTable,
-			})
-			.from(productImageTable)
-			.where(eq(productImageTable.productId, item.products.id))
-			.leftJoin(imageTable, eq(productImageTable.image, imageTable.id))
-			.orderBy(productImageTable.priority)
-			.limit(1);
-
-		return {
-			...item,
-			image: firstImage?.image?.image || null,
-		};
-	})
-);
 ---
 <InternalCart newCart={cart} client:load classes={classes} variant={variant}>
 	<slot/>

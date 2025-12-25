@@ -93,6 +93,18 @@ export const cart = {
 				.onConflictDoNothing()
 				.returning();
 
+			// Log cart add event
+			await logSecurityEvent(
+				'CART_ADD',
+				user.id,
+				{
+					productId: Number(productId),
+					action: 'add_to_cart',
+				},
+				context.request.headers.get('x-forwarded-for') || null,
+				context.request.headers.get('user-agent') || null,
+			);
+
 			const newCart = await db
 				.select({
 					cart: cartTable,
@@ -137,11 +149,14 @@ export const cart = {
 
 			return await db.transaction(async (tx) => {
 				let set = {};
+				let action = '';
 
 				if (increment) {
 					set = { quantity: sql`${cartTable.quantity} + 1` };
+					action = 'increment';
 				} else if (decrement) {
 					set = { quantity: sql`${cartTable.quantity} - 1` };
+					action = 'decrement';
 				}
 
 				await tx
@@ -153,6 +168,20 @@ export const cart = {
 							eq(cartTable.productId, Number(productId)),
 						),
 					);
+
+				// Log cart update event
+				if (action) {
+					await logSecurityEvent(
+						'CART_UPDATE',
+						user.id,
+						{
+							productId: Number(productId),
+							action,
+						},
+						context.request.headers.get('x-forwarded-for') || null,
+						context.request.headers.get('user-agent') || null,
+					);
+				}
 
 				const cart = await tx
 					.select({
@@ -204,6 +233,18 @@ export const cart = {
 							eq(cartTable.productId, Number(productId)),
 						),
 					);
+
+				// Log cart remove event
+				await logSecurityEvent(
+					'CART_REMOVE',
+					user.id,
+					{
+						productId: Number(productId),
+						action: 'remove_from_cart',
+					},
+					context.request.headers.get('x-forwarded-for') || null,
+					context.request.headers.get('user-agent') || null,
+				);
 
 				const cart = await tx
 					.select({
@@ -338,6 +379,24 @@ export const cart = {
 				.update(ordersTable)
 				.set({ stripeSessionId: session.id })
 				.where(eq(ordersTable.id, orderId));
+
+			// Log order creation
+			const totalAmount = line_items.reduce((sum, item) => {
+				return sum + item.price_data.unit_amount * item.quantity;
+			}, 0);
+
+			await logSecurityEvent(
+				'ORDER_CREATED',
+				user.id,
+				{
+					orderId,
+					stripeSessionId: session.id,
+					totalAmount: totalAmount / 100,
+					itemCount: cart.length,
+				},
+				context.request.headers.get('x-forwarded-for') || null,
+				context.request.headers.get('user-agent') || null,
+			);
 
 			// Update payment intent metadata with the actual session ID
 			try {

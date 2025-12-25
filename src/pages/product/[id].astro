@@ -1,9 +1,11 @@
 ---
+import { actions } from 'astro:actions';
 import { CDN_URL } from 'astro:env/client';
 import { and, eq } from 'drizzle-orm';
 import { Heart, ShoppingCart } from 'lucide-react';
 import Cart from '@/components/cart/Cart.astro';
 import ProductImage from '@/components/images/ProductImage.astro';
+import SuggestedProducts from '@/components/products/SuggestedProducts';
 import ReviewSection from '@/components/reviews/ReviewSection.astro';
 import { Button } from '@/components/ui/button';
 import {
@@ -62,6 +64,11 @@ const { product, images, isInWishlist } = await db.transaction(async (tx) => {
 });
 
 if (!product) {
+  return Astro.redirect('/');
+}
+
+// Redirect non-admin users if product is not visible
+if (!product.visible && (!user || user.role !== 'admin')) {
   return Astro.redirect('/');
 }
 
@@ -177,7 +184,7 @@ const mainImage = images[0]?.image?.image;
                       size="lg"
                       class="w-full font-semibold text-base h-12 gap-2"
                       client:load
-                      server:defer
+                      server:defer={true}
                     >
                       <ShoppingCart class="w-5 h-5" />
                       Add to Cart
@@ -185,7 +192,7 @@ const mainImage = images[0]?.image?.image;
                     <Cart
                       classes="w-full font-semibold text-base h-12 gap-2"
                       variant="outline"
-                      server:defer
+                      server:defer={true}
                     >
                       <ShoppingCart class="w-5 h-5" />
                       View Cart
@@ -232,6 +239,14 @@ const mainImage = images[0]?.image?.image;
               <ReviewSection product={product} />
             </CardContent>
           </Card>
+
+          {/* Suggested Products */}
+          <SuggestedProducts
+            productId={product.id}
+            categoryId={product.category}
+            productType={product.type}
+            client:load
+          />
         </div>
       </div>
     ) : (

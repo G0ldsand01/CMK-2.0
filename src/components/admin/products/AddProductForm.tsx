@@ -103,6 +103,11 @@ export default function AddProductForm({
 			} else {
 				toast.success('Product added successfully');
 				setIsOpen(false);
+				// Reset form
+				const form = event.currentTarget;
+				form.reset();
+				setSelectedType(types[0] || '');
+				setSelectedCategory(categories[0] || { id: 0, name: '' });
 				if (onProductAdded) {
 					onProductAdded();
 				}
