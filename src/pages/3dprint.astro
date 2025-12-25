@@ -874,11 +874,32 @@ import Layout from "../layouts/Layout.astro";
       }
       
       nextBtn.disabled = true;
-      nextBtn.textContent = "Creating checkout...";
+      nextBtn.textContent = "Uploading file...";
       errorBox.classList.add("hidden");
       
       try {
-        // Create Stripe session directly (no CDN upload)
+        // First, upload the file to CDN
+        const formData = new FormData();
+        formData.append("file", file);
+        
+        const uploadRes = await fetch("/api/3dprint/upload", {
+          method: "POST",
+          body: formData,
+        });
+        
+        const uploadJson = await uploadRes.json();
+        
+        if (!uploadJson.success || !uploadJson.url) {
+          errorBox.textContent = uploadJson.error || "Failed to upload file.";
+          errorBox.classList.remove("hidden");
+          nextBtn.disabled = false;
+          nextBtn.textContent = "Checkout";
+          return;
+        }
+        
+        // File uploaded successfully, now create Stripe session
+        nextBtn.textContent = "Creating checkout...";
+        
         const humanColor = selectedMaterial.name.split(" ").pop();
         const body = {
           firstName: firstName.value.trim(),
@@ -895,10 +916,12 @@ import Layout from "../layouts/Layout.astro";
           infill: infillSlider.value,
           notes: notes.value,
           filename: file.name,
+          filesize: file.size,
           volumeCm3: lastVolume,
           dims: lastDims,
           printer: lastPrinter.replace(/mm/g, "").trim(),
           price: parseFloat(costEl.textContent),
+          fileUrl: uploadJson.url, // Add the uploaded file URL
         };
         
         const res = await fetch("/api/stripe/create-session", {
