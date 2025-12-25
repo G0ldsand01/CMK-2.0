@@ -5,6 +5,7 @@ import {
 	HelpCircle,
 	HomeIcon,
 	Package,
+	Printer,
 	Settings,
 	ShoppingBag,
 	ShoppingCartIcon,
@@ -73,6 +74,11 @@ const data = {
 					title: 'My Orders',
 					url: '/dashboard/orders',
 					icon: Package,
+				},
+				{
+					title: 'My 3D Print Orders',
+					url: '/dashboard/3dprint-orders',
+					icon: Printer,
 				},
 				{
 					title: 'Wishlist',

@@ -4,6 +4,7 @@ import {
 	LayoutDashboard,
 	List,
 	Package,
+	Printer,
 	ShoppingCartIcon,
 	Star,
 	Tag,
@@ -91,6 +92,11 @@ const data = {
 					title: 'Manage Orders',
 					url: '/dashboard/admin/orders',
 					icon: Package,
+				},
+				{
+					title: '3D Print Orders',
+					url: '/dashboard/admin/3dprint-orders',
+					icon: Printer,
 				},
 				{
 					title: 'Manage Coupons',
