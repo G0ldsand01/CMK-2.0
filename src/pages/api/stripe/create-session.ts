@@ -1,3 +1,4 @@
+import { WEBSITE_URL } from 'astro:env/server';
 import type { APIRoute } from 'astro';
 import { ordersTable } from '@/db/schema';
 import db from '@/lib/db';
@@ -12,6 +13,16 @@ const STORAGE_BASE_URL = import.meta.env.STORAGE_BASE_URL || '';
 
 // ✅ Retourne l’URL du site à partir de l’environnement
 function getSiteUrl(): string {
+	// Use WEBSITE_URL from environment first
+	const websiteUrl = WEBSITE_URL?.trim();
+	if (
+		websiteUrl &&
+		(websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://'))
+	) {
+		return websiteUrl.replace(/\/$/, '');
+	}
+
+	// Fallback to SITE if WEBSITE_URL is not available
 	const envSite = import.meta.env.SITE?.trim();
 	if (
 		envSite &&
@@ -19,8 +30,9 @@ function getSiteUrl(): string {
 	) {
 		return envSite.replace(/\/$/, '');
 	}
-	// Fallback local
-	return 'http://localhost:4321';
+
+	// Last resort: throw error instead of using localhost
+	throw new Error('WEBSITE_URL or SITE environment variable must be set');
 }
 
 // ✅ Utilise une URL fournie dans la requête ou fallback vers celle du site
