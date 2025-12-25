@@ -112,7 +112,8 @@ async function fetchStripeMetrics() {
           }
         }
 
-        // Also check metadata for customer info
+        // Also check metadata for customer info and download URL
+        let downloadUrl: string | undefined;
         if (order.metadata) {
           if (order.metadata.firstName && order.metadata.lastName) {
             customerName = `${order.metadata.firstName} ${order.metadata.lastName}`;
@@ -120,6 +121,8 @@ async function fetchStripeMetrics() {
           if (order.metadata.email) {
             customerEmail = order.metadata.email;
           }
+          // Récupérer l'URL de téléchargement du fichier 3D
+          downloadUrl = order.metadata.file_url || order.metadata.download_url;
         }
 
         const createdDate = new Date(order.created * 1000);
@@ -142,6 +145,7 @@ async function fetchStripeMetrics() {
           customerEmail,
           last4,
           brand: brand ? brand.charAt(0).toUpperCase() + brand.slice(1) : undefined,
+          downloadUrl,
         };
       })
     );

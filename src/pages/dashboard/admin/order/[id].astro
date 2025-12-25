@@ -8,6 +8,7 @@ import {
   CheckCircle2, 
   Clock, 
   DollarSign, 
+  Download,
   Package, 
   RefreshCw, 
   XCircle,
@@ -24,6 +25,7 @@ import {
 } from '@/db/schema';
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout.astro';
 import { getCurrentUser } from '@/lib/auth-server';
+import { stripe } from '@/lib/stripe';
 import db from '@/lib/db';
 
 const currentUser = await getCurrentUser(Astro.request);
@@ -47,6 +49,15 @@ const [order] = await db
 
 if (!order) {
   return Astro.redirect('/dashboard/admin/orders');
+}
+
+// Récupérer les métadonnées de la session Stripe pour obtenir le lien de téléchargement
+let downloadUrl: string | null = null;
+try {
+  const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+  downloadUrl = session.metadata?.file_url || session.metadata?.download_url || null;
+} catch (error) {
+  console.error('Error retrieving Stripe session:', error);
 }
 
 // Get user info
@@ -290,6 +301,23 @@ const StatusIcon = statusInfo.icon;
                 {order.stripeSessionId}
               </code>
             </div>
+            {downloadUrl && (
+              <div class="pt-2 border-t">
+                <p class="text-xs sm:text-sm text-muted-foreground mb-2">3D Model Download</p>
+                <a 
+                  href={downloadUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline font-medium"
+                >
+                  <Download class="size-3 sm:size-4" />
+                  Download Model File
+                </a>
+                <p class="text-[10px] sm:text-xs text-muted-foreground mt-1 break-all">
+                  {downloadUrl}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

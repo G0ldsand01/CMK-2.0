@@ -6,6 +6,7 @@ import {
 	Clock,
 	Copy,
 	DollarSign,
+	Download,
 	Search,
 	X,
 	XCircle,
@@ -35,6 +36,7 @@ type Transaction = {
 	customerEmail?: string;
 	last4?: string;
 	brand?: string;
+	downloadUrl?: string;
 };
 
 type SortField = 'date' | 'amount' | 'currency' | 'status' | null;
@@ -298,13 +300,26 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 											</Badge>
 										</TableCell>
 										<TableCell className="px-6 py-4">
-											<div className="flex flex-col">
-												<span className="text-sm font-medium text-foreground">
-													{order.createdFormatted}
-												</span>
-												<span className="text-xs text-muted-foreground">
-													{order.createdTime}
-												</span>
+											<div className="flex flex-col gap-1">
+												<div className="flex flex-col">
+													<span className="text-sm font-medium text-foreground">
+														{order.createdFormatted}
+													</span>
+													<span className="text-xs text-muted-foreground">
+														{order.createdTime}
+													</span>
+												</div>
+												{order.downloadUrl && (
+													<a
+														href={order.downloadUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1 w-fit"
+														onClick={(e) => e.stopPropagation()}>
+														<Download className="size-3" />
+														Download Model
+													</a>
+												)}
 											</div>
 										</TableCell>
 									</TableRow>

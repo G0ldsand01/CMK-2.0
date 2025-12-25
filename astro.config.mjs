@@ -64,6 +64,11 @@ export default defineConfig({
 				access: 'secret',
 				context: 'server',
 			}),
+			BLOB_READ_WRITE_TOKEN: envField.string({
+				access: 'secret',
+				context: 'server',
+				optional: true,
+			}),
 
 			/*
 			Stripe

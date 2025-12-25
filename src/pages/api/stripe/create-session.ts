@@ -106,7 +106,21 @@ export const POST: APIRoute = async ({ request }) => {
 
 		// === File URL ===
 		// File will be uploaded later or provided separately
-		const fileUrl = data.fileUrl || data.file_url || '';
+		let fileUrl = data.fileUrl || data.file_url || '';
+
+		// Convertir l'URL relative en URL absolue si nécessaire
+		if (
+			fileUrl &&
+			!fileUrl.startsWith('http://') &&
+			!fileUrl.startsWith('https://')
+		) {
+			// Si c'est une URL relative, la convertir en URL absolue
+			if (fileUrl.startsWith('/')) {
+				fileUrl = `${SITE_URL}${fileUrl}`;
+			} else {
+				fileUrl = `${SITE_URL}/${fileUrl}`;
+			}
+		}
 
 		// === Metadata ===
 		const material = data.material || 'PLA';
@@ -124,6 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
 			description += ` | Notes: ${data.notes}`;
 		}
 		if (fileUrl) {
+			// Utiliser un format de lien cliquable pour Stripe
 			description += ` | Download: ${fileUrl}`;
 		}
 
